@@ -482,6 +482,78 @@
     .tab-content { display: none; animation: feedbackIn 0.3s ease; }
     .tab-content.active { display: block; }
 
+    /* Accordion in Lessons */
+    .lesson-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .lesson-header {
+      padding: 18px 22px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .lesson-header:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .lesson-header h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .lesson-icon-status {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+      color: var(--accent);
+    }
+
+    .lesson-item.active .lesson-icon-status {
+      transform: rotate(180deg);
+    }
+
+    .lesson-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+      background: rgba(0,0,0,0.1);
+    }
+
+    .lesson-item.active .lesson-content {
+      max-height: 1000px;
+      transition: max-height 0.4s cubic-bezier(1, 0, 1, 0);
+    }
+
+    .lesson-body {
+      padding: 20px 22px;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+    }
+
+    .lesson-category-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: block;
+    }
+
     @media (max-width: 600px) {
       .hero h1 { font-size: 1.5rem; }
       .stats-bar { grid-template-columns: repeat(2, 1fr); }
@@ -522,6 +594,7 @@
       <div class="hero-icon">🧠</div>
       <h1>Психологічні квізи</h1>
       <p>Перевір знання з психології. Розблоковуй досягнення та піднімай свій рівень!</p>
+      <button class="btn-primary" style="margin-top: 20px; max-width: 250px; margin-left: auto; margin-right: auto;" onclick="showScreen('lessons')">Вивчати теорію 📚</button>
     </div>
 
     <div id="factCard"></div>
@@ -998,30 +1071,45 @@ function renderLessons() {
   list.innerHTML = '';
 
   quizzes.forEach(quiz => {
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    card.style.cursor = 'default';
-    card.innerHTML = `
-      <div class="quiz-card-inner">
-        <div class="quiz-card-top">
-          <div class="quiz-card-icon">${quiz.icon}</div>
-          <span class="quiz-badge badge-${quiz.badge}">${quiz.badgeText}</span>
+    const categoryTitle = document.createElement('div');
+    categoryTitle.className = 'section-title';
+    categoryTitle.innerHTML = `${quiz.icon} ${quiz.title}`;
+    list.appendChild(categoryTitle);
+
+    quiz.questions.forEach((q, i) => {
+      const item = document.createElement('div');
+      item.className = 'lesson-item';
+      item.innerHTML = `
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <div>
+            <span class="lesson-category-tag">${quiz.title.split(' ')[0]} — Питання ${i + 1}</span>
+            <h4>${q.q}</h4>
+          </div>
+          <div class="lesson-icon-status">▾</div>
         </div>
-        <h3>${quiz.title}</h3>
-        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">Основні теми цього модуля:</p>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          ${quiz.questions.slice(0, 5).map((q, i) => `
-            <div style="font-size: 0.88rem; display: flex; align-items: flex-start; gap: 8px;">
-              <span style="color: var(--accent); font-weight: 700;">${i + 1}.</span>
-              <span>${q.q.split('?')[0]}?</span>
-            </div>
-          `).join('')}
+        <div class="lesson-content">
+          <div class="lesson-body">
+            <p>${q.info}</p>
+          </div>
         </div>
-        <button class="btn-primary" style="margin-top: 16px; width: 100%; padding: 10px;" onclick="startQuiz('${quiz.id}')">Пройти квіз</button>
-      </div>
-    `;
-    list.appendChild(card);
+      `;
+      list.appendChild(item);
+    });
   });
+}
+
+function toggleLesson(header) {
+  const item = header.parentElement;
+  const isActive = item.classList.contains('active');
+  
+  // Close other open lessons in the same list if wanted (optional)
+  // document.querySelectorAll('.lesson-item').forEach(li => li.classList.remove('active'));
+  
+  if (isActive) {
+    item.classList.remove('active');
+  } else {
+    item.classList.add('active');
+  }
 }
 
 // =================== HOME ===================
