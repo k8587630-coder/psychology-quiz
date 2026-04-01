@@ -53,42 +53,20 @@
 
     /* Animated background */
     .bg-animation {
-      position: fixed;
-      top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
+      pointer-events: none; z-index: 0; overflow: hidden;
     }
 
     .bg-animation .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.4;
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.4;
       animation: float 20s ease-in-out infinite;
     }
 
-    .orb:nth-child(1) {
-      width: 400px; height: 400px;
-      background: #7f5af0;
-      top: -100px; left: -100px;
-      animation-delay: 0s;
-    }
-
-    .orb:nth-child(2) {
-      width: 350px; height: 350px;
-      background: #2cb67d;
-      bottom: -80px; right: -80px;
-      animation-delay: -7s;
-    }
-
-    .orb:nth-child(3) {
-      width: 300px; height: 300px;
-      background: #e16162;
-      top: 50%; left: 50%;
-      animation-delay: -14s;
-    }
+    .orb:nth-child(1) { width: 400px; height: 400px; background: #7f5af0; top: -100px; left: -100px; }
+    .orb:nth-child(2) { width: 350px; height: 350px; background: #2cb67d; bottom: -80px; right: -80px; animation-delay: -7s; }
+    .orb:nth-child(3) { width: 300px; height: 300px; background: #e16162; top: 50%; left: 50%; animation-delay: -14s; }
 
     @keyframes float {
       0%, 100% { transform: translate(0, 0) scale(1); }
@@ -97,22 +75,12 @@
       75% { transform: translate(60px, 40px) scale(1.05); }
     }
 
-    /* Particles */
-    .particles {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
+    .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 
     .particle {
-      position: absolute;
-      width: 3px; height: 3px;
-      background: var(--accent-light);
-      border-radius: 50%;
-      opacity: 0;
-      animation: sparkle 4s ease-in-out infinite;
+      position: absolute; width: 3px; height: 3px;
+      background: var(--accent-light); border-radius: 50%;
+      opacity: 0; animation: sparkle 4s ease-in-out infinite;
     }
 
     @keyframes sparkle {
@@ -120,322 +88,195 @@
       50% { opacity: 0.6; transform: translateY(-30px); }
     }
 
-    /* Main container */
-    .app {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      min-height: 100vh;
-    }
+    .app { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 20px; min-height: 100vh; }
 
     /* Top bar */
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 0;
-      margin-bottom: 20px;
-    }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; margin-bottom: 20px; }
 
     .logo {
-      font-size: 1.4rem;
-      font-weight: 800;
+      font-size: 1.4rem; font-weight: 800; cursor: pointer;
       background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      cursor: pointer;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
-    .topbar-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+    .topbar-actions { display: flex; gap: 10px; align-items: center; }
 
     .icon-btn {
-      width: 42px; height: 42px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--bg-card);
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: all 0.2s;
+      width: 42px; height: 42px; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--bg-card);
+      color: var(--text-secondary); display: flex; align-items: center;
+      justify-content: center; cursor: pointer; font-size: 1.1rem; transition: all 0.2s;
     }
 
-    .icon-btn:hover {
-      background: var(--bg-card-hover);
-      color: var(--text-primary);
-      transform: translateY(-1px);
+    .icon-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); transform: translateY(-1px); }
+
+    /* Level badge in topbar */
+    .level-badge-mini {
+      padding: 6px 14px; border-radius: 12px; font-size: 0.78rem;
+      font-weight: 700; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--accent); cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; gap: 6px;
     }
 
-    /* Screen transitions */
-    .screen {
-      display: none;
-      animation: screenIn 0.5s ease;
-    }
+    .level-badge-mini:hover { background: var(--bg-card-hover); transform: translateY(-1px); }
 
-    .screen.active {
-      display: block;
-    }
+    .screen { display: none; animation: screenIn 0.5s ease; }
+    .screen.active { display: block; }
 
     @keyframes screenIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Home screen */
-    .hero {
-      text-align: center;
-      padding: 40px 0 30px;
-    }
-
-    .hero-icon {
-      font-size: 3.5rem;
-      margin-bottom: 16px;
-      display: inline-block;
-      animation: pulse 2s ease-in-out infinite;
-    }
+    /* Hero */
+    .hero { text-align: center; padding: 30px 0 20px; }
+    .hero-icon { font-size: 3.5rem; margin-bottom: 16px; display: inline-block; animation: pulse 2s ease-in-out infinite; }
 
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.1); }
     }
 
-    .hero h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-      line-height: 1.2;
+    .hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: 10px; }
+    .hero p { color: var(--text-secondary); font-size: 1rem; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+    /* Fact of the day */
+    .fact-card {
+      background: linear-gradient(135deg, var(--accent-glow), transparent);
+      border: 1px solid var(--accent); border-radius: 20px;
+      padding: 20px 24px; margin: 20px 0; position: relative; overflow: hidden;
     }
 
-    .hero p {
-      color: var(--text-secondary);
-      font-size: 1rem;
-      max-width: 500px;
-      margin: 0 auto;
-      line-height: 1.6;
+    .fact-card::before {
+      content: ''; position: absolute; top: -50%; right: -20%;
+      width: 200px; height: 200px; background: var(--accent);
+      border-radius: 50%; filter: blur(60px); opacity: 0.15;
     }
+
+    .fact-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--accent-light); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .fact-text { font-size: 0.95rem; line-height: 1.7; color: var(--text-primary); position: relative; }
 
     /* Stats bar */
-    .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin: 30px 0;
-    }
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
 
     .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      text-align: center;
-      transition: transform 0.2s;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; text-align: center; transition: transform 0.2s;
     }
 
-    .stat-card:hover {
-      transform: translateY(-2px);
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-value { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 0.68rem; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* User level card */
+    .level-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 20px 24px; margin: 20px 0;
+      display: flex; align-items: center; gap: 18px;
     }
 
-    .stat-value {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--accent);
-    }
+    .level-icon { font-size: 2.5rem; flex-shrink: 0; }
 
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+    .level-info { flex: 1; }
+    .level-title { font-size: 1rem; font-weight: 700; margin-bottom: 2px; }
+    .level-subtitle { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px; }
+
+    .xp-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .xp-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 4px; transition: width 0.8s ease; }
+    .xp-text { font-size: 0.72rem; color: var(--text-secondary); margin-top: 4px; text-align: right; }
+
+    /* Section title */
+    .section-title { font-size: 1.05rem; font-weight: 700; margin: 24px 0 14px; display: flex; align-items: center; gap: 8px; }
 
     /* Quiz cards */
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .quiz-grid {
-      display: grid;
-      gap: 16px;
-    }
+    .quiz-grid { display: grid; gap: 14px; }
 
     .quiz-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 24px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 22px; cursor: pointer;
+      transition: all 0.3s ease; position: relative; overflow: hidden;
     }
 
     .quiz-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
+      content: ''; position: absolute; top: 0; left: 0;
       width: 100%; height: 100%;
       background: linear-gradient(135deg, var(--accent-glow), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
+      opacity: 0; transition: opacity 0.3s;
     }
 
-    .quiz-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 8px 30px var(--accent-glow);
-    }
+    .quiz-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 8px 30px var(--accent-glow); }
+    .quiz-card:hover::before { opacity: 1; }
 
-    .quiz-card:hover::before {
-      opacity: 1;
-    }
+    .quiz-card-inner { position: relative; z-index: 1; }
 
-    .quiz-card-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .quiz-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .quiz-card-icon {
-      font-size: 2.2rem;
-    }
+    .quiz-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .quiz-card-icon { font-size: 2rem; }
 
     .quiz-badge {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      padding: 4px 10px; border-radius: 20px; font-size: 0.68rem;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
     }
 
-    .badge-easy {
-      background: var(--success-bg);
-      color: var(--success);
-    }
+    .badge-easy { background: var(--success-bg); color: var(--success); }
+    .badge-medium { background: rgba(249, 188, 96, 0.15); color: var(--warning); }
+    .badge-hard { background: var(--error-bg); color: var(--error); }
+    .badge-marathon { background: var(--accent-glow); color: var(--accent-light); }
 
-    .badge-medium {
-      background: rgba(249, 188, 96, 0.15);
-      color: var(--warning);
-    }
+    .quiz-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+    .quiz-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px; }
+    .quiz-card-footer { display: flex; justify-content: space-between; align-items: center; }
+    .quiz-card-meta { font-size: 0.75rem; color: var(--text-secondary); }
+    .quiz-best-score { font-size: 0.75rem; color: var(--accent); font-weight: 600; }
 
-    .badge-hard {
-      background: var(--error-bg);
-      color: var(--error);
-    }
+    /* Marathon card special */
+    .quiz-card.marathon { border: 1px dashed var(--accent); }
 
-    .quiz-card h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .quiz-card-desc {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 14px;
-    }
-
-    .quiz-card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .quiz-card-meta {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-    }
-
-    .quiz-best-score {
-      font-size: 0.78rem;
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    /* Quiz play screen */
-    .quiz-play-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .quiz-play-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-    }
+    /* Quiz play */
+    .quiz-play-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .quiz-play-title { font-size: 1rem; font-weight: 700; color: var(--text-secondary); }
 
     .timer {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      padding: 8px 14px;
-      background: var(--bg-card);
-      border-radius: 12px;
-      border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 6px; font-size: 0.9rem;
+      font-weight: 600; color: var(--text-secondary); padding: 8px 14px;
+      background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border);
     }
 
     .timer.warning { color: var(--warning); }
-    .timer.danger { color: var(--error); }
+    .timer.danger { color: var(--error); animation: timerPulse 0.5s ease-in-out infinite; }
 
-    .progress-container {
-      margin-bottom: 28px;
+    @keyframes timerPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
-    .progress-info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
+    .streak-badge {
+      display: none; align-items: center; gap: 5px; padding: 6px 12px;
+      background: rgba(249, 188, 96, 0.15); border: 1px solid rgba(249, 188, 96, 0.3);
+      border-radius: 12px; font-size: 0.82rem; font-weight: 700; color: var(--warning);
+      animation: streakPop 0.3s ease;
     }
 
-    .progress-track {
-      height: 6px;
-      background: var(--border);
-      border-radius: 3px;
-      overflow: hidden;
+    .streak-badge.show { display: flex; }
+
+    @keyframes streakPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.15); }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-light));
-      border-radius: 3px;
-      transition: width 0.5s ease;
-    }
+    .progress-container { margin-bottom: 24px; }
+    .progress-info { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px; }
+    .progress-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 3px; transition: width 0.5s ease; }
 
-    /* Question card */
     .question-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 32px;
-      animation: cardIn 0.4s ease;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 24px; padding: 30px; animation: cardIn 0.4s ease;
     }
 
     @keyframes cardIn {
@@ -443,181 +284,89 @@
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    .q-number {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
+    .q-number { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 700; margin-bottom: 10px; }
+    .q-text { font-size: 1.15rem; font-weight: 600; line-height: 1.5; margin-bottom: 24px; }
 
-    .q-text {
-      font-size: 1.2rem;
-      font-weight: 600;
-      line-height: 1.5;
-      margin-bottom: 28px;
-    }
-
-    /* Options */
-    .options {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .options { display: flex; flex-direction: column; gap: 10px; }
 
     .opt-btn {
-      width: 100%;
-      text-align: left;
-      padding: 18px 22px;
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      font-family: inherit;
-      line-height: 1.4;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      width: 100%; text-align: left; padding: 16px 20px;
+      border: 2px solid var(--border); border-radius: 16px;
+      background: var(--bg-secondary); color: var(--text-primary);
+      font-size: 0.93rem; cursor: pointer; transition: all 0.25s ease;
+      font-family: inherit; line-height: 1.4;
+      display: flex; align-items: center; gap: 14px;
     }
 
     .opt-letter {
-      flex-shrink: 0;
-      width: 32px; height: 32px;
-      border-radius: 10px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      transition: all 0.25s;
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 10px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.82rem; color: var(--text-secondary); transition: all 0.25s;
     }
 
-    .opt-btn:hover:not(:disabled) {
-      border-color: var(--accent);
-      background: var(--bg-card-hover);
-      transform: translateX(4px);
-    }
-
-    .opt-btn:hover:not(:disabled) .opt-letter {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
+    .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--bg-card-hover); transform: translateX(4px); }
+    .opt-btn:hover:not(:disabled) .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
     .opt-btn:disabled { cursor: default; }
 
-    .opt-btn.correct {
-      border-color: var(--success);
-      background: var(--success-bg);
+    .opt-btn.correct { border-color: var(--success); background: var(--success-bg); }
+    .opt-btn.correct .opt-letter { background: var(--success); color: #fff; border-color: var(--success); }
+    .opt-btn.wrong { border-color: var(--error); background: var(--error-bg); }
+    .opt-btn.wrong .opt-letter { background: var(--error); color: #fff; border-color: var(--error); }
+
+    /* XP popup */
+    .xp-popup {
+      position: fixed; top: 80px; right: 30px; z-index: 200;
+      padding: 12px 20px; border-radius: 14px;
+      background: var(--accent); color: #fff; font-weight: 700;
+      font-size: 0.95rem; pointer-events: none;
+      animation: xpFloat 1.5s ease forwards;
     }
 
-    .opt-btn.correct .opt-letter {
-      background: var(--success);
-      color: #fff;
-      border-color: var(--success);
+    @keyframes xpFloat {
+      0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+      20% { opacity: 1; transform: translateY(0) scale(1); }
+      80% { opacity: 1; transform: translateY(-10px); }
+      100% { opacity: 0; transform: translateY(-30px); }
     }
 
-    .opt-btn.wrong {
-      border-color: var(--error);
-      background: var(--error-bg);
-    }
-
-    .opt-btn.wrong .opt-letter {
-      background: var(--error);
-      color: #fff;
-      border-color: var(--error);
-    }
-
-    /* Feedback banner */
     .feedback {
-      margin-top: 24px;
-      padding: 20px 24px;
-      border-radius: 16px;
-      display: none;
-      animation: feedbackIn 0.4s ease;
+      margin-top: 20px; padding: 18px 22px; border-radius: 16px;
+      display: none; animation: feedbackIn 0.4s ease;
     }
 
     .feedback.show { display: block; }
-
-    .feedback.correct-fb {
-      background: var(--success-bg);
-      border: 1px solid rgba(44, 182, 125, 0.3);
-    }
-
-    .feedback.wrong-fb {
-      background: var(--error-bg);
-      border: 1px solid rgba(225, 97, 98, 0.3);
-    }
+    .feedback.correct-fb { background: var(--success-bg); border: 1px solid rgba(44, 182, 125, 0.3); }
+    .feedback.wrong-fb { background: var(--error-bg); border: 1px solid rgba(225, 97, 98, 0.3); }
 
     @keyframes feedbackIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .feedback-header {
-      font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .feedback-header { font-weight: 700; font-size: 1rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
     .correct-fb .feedback-header { color: var(--success); }
     .wrong-fb .feedback-header { color: var(--error); }
+    .feedback-text { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; }
 
-    .feedback-text {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
-
-    /* Action button */
     .action-btn {
-      display: none;
-      margin-top: 24px;
-      width: 100%;
-      padding: 18px;
-      border: none;
-      border-radius: 16px;
+      display: none; margin-top: 20px; width: 100%; padding: 16px;
+      border: none; border-radius: 16px;
       background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      color: #fff;
-      font-size: 1.05rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
+      color: #fff; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
     }
 
     .action-btn.show { display: block; animation: feedbackIn 0.3s ease; }
+    .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
 
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px var(--accent-glow);
-    }
-
-    /* Results screen */
+    /* Results */
     .results-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 40px 32px;
-      text-align: center;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 24px; padding: 36px 28px; text-align: center;
     }
 
-    .results-icon {
-      font-size: 4rem;
-      margin-bottom: 10px;
-      display: inline-block;
-      animation: bounce 0.6s ease;
-    }
+    .results-icon { font-size: 3.5rem; margin-bottom: 10px; display: inline-block; animation: bounce 0.6s ease; }
 
     @keyframes bounce {
       0% { transform: scale(0); }
@@ -625,274 +374,173 @@
       100% { transform: scale(1); }
     }
 
-    .results-title {
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
+    .results-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
+    .results-subtitle { color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem; }
 
-    .results-subtitle {
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-    }
+    .score-circle { width: 130px; height: 130px; margin: 0 auto 20px; position: relative; }
+    .score-circle svg { transform: rotate(-90deg); }
+    .score-circle-bg { fill: none; stroke: var(--border); stroke-width: 8; }
+    .score-circle-fill { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 408; stroke-dashoffset: 408; transition: stroke-dashoffset 1.5s ease; }
+    .score-circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; font-weight: 800; color: var(--accent); }
 
-    .score-circle {
-      width: 140px; height: 140px;
-      margin: 0 auto 24px;
-      position: relative;
-    }
+    .results-message { color: var(--text-secondary); line-height: 1.7; max-width: 480px; margin: 0 auto 20px; font-size: 0.9rem; }
 
-    .score-circle svg {
-      transform: rotate(-90deg);
-    }
+    .results-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
 
-    .score-circle-bg {
-      fill: none;
-      stroke: var(--border);
-      stroke-width: 8;
-    }
-
-    .score-circle-fill {
-      fill: none;
-      stroke: var(--accent);
-      stroke-width: 8;
-      stroke-linecap: round;
-      stroke-dasharray: 408;
-      stroke-dashoffset: 408;
-      transition: stroke-dashoffset 1.5s ease;
-    }
-
-    .score-circle-text {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--accent);
-    }
-
-    .results-message {
-      color: var(--text-secondary);
-      line-height: 1.7;
-      max-width: 480px;
-      margin: 0 auto 28px;
-      font-size: 0.95rem;
-    }
-
-    .results-details {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .detail-item {
-      padding: 14px;
-      background: var(--bg-secondary);
-      border-radius: 14px;
-      text-align: center;
-    }
-
-    .detail-value {
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
-
+    .detail-item { padding: 12px; background: var(--bg-secondary); border-radius: 14px; text-align: center; }
+    .detail-value { font-size: 1.1rem; font-weight: 700; }
     .detail-value.green { color: var(--success); }
     .detail-value.red { color: var(--error); }
     .detail-value.purple { color: var(--accent); }
+    .detail-label { font-size: 0.68rem; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; }
 
-    .detail-label {
-      font-size: 0.72rem;
-      color: var(--text-secondary);
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    /* Achievement unlocked banner */
+    .achievement-banner {
+      margin: 20px 0; padding: 18px 22px; border-radius: 16px;
+      background: linear-gradient(135deg, rgba(249, 188, 96, 0.15), rgba(127, 90, 240, 0.1));
+      border: 1px solid rgba(249, 188, 96, 0.3);
+      animation: feedbackIn 0.5s ease;
     }
 
-    .results-actions {
-      display: flex;
-      gap: 12px;
+    .achievement-banner-title {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--warning); margin-bottom: 10px;
     }
+
+    .achievement-item {
+      display: flex; align-items: center; gap: 12px; padding: 8px 0;
+    }
+
+    .achievement-item-icon { font-size: 1.8rem; }
+    .achievement-item-name { font-weight: 700; font-size: 0.9rem; }
+    .achievement-item-desc { font-size: 0.78rem; color: var(--text-secondary); }
+
+    .results-actions { display: flex; gap: 12px; }
 
     .btn-primary, .btn-secondary {
-      flex: 1;
-      padding: 16px;
-      border-radius: 14px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.2s;
-      border: none;
+      flex: 1; padding: 14px; border-radius: 14px; font-size: 0.93rem;
+      font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; border: none;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      color: #fff;
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
+
+    .btn-secondary { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--bg-card-hover); transform: translateY(-2px); }
+
+    /* Achievements screen */
+    .achievements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    .ach-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 18px; text-align: center;
+      transition: transform 0.2s; position: relative; overflow: hidden;
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px var(--accent-glow);
-    }
+    .ach-card.locked { opacity: 0.45; }
+    .ach-card.unlocked { border-color: var(--warning); }
 
-    .btn-secondary {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-card-hover);
-      transform: translateY(-2px);
-    }
+    .ach-card:hover { transform: translateY(-2px); }
+    .ach-icon { font-size: 2.2rem; margin-bottom: 8px; }
+    .ach-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+    .ach-desc { font-size: 0.72rem; color: var(--text-secondary); line-height: 1.4; }
+    .ach-date { font-size: 0.65rem; color: var(--accent); margin-top: 6px; }
 
     /* Stats screen */
-    .stats-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    .stats-header { text-align: center; margin-bottom: 24px; }
+    .stats-header h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
 
-    .stats-header h2 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .stats-overview {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .stats-overview .stat-card {
-      padding: 20px;
-    }
-
-    .history-section {
-      margin-top: 20px;
-    }
+    .stats-overview { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+    .stats-overview .stat-card { padding: 18px; }
 
     .history-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 20px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 18px; margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center;
     }
 
-    .history-info h4 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 4px;
+    .history-info h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 3px; }
+    .history-date { font-size: 0.75rem; color: var(--text-secondary); }
+    .history-score { font-size: 1rem; font-weight: 700; color: var(--accent); }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+    .empty-state-icon { font-size: 3rem; margin-bottom: 12px; }
+
+    #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+
+    /* Tab navigation for stats */
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg-secondary); border-radius: 14px; padding: 4px; }
+
+    .tab-btn {
+      flex: 1; padding: 10px; border: none; border-radius: 11px;
+      background: transparent; color: var(--text-secondary); font-size: 0.82rem;
+      font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s;
     }
 
-    .history-date {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-    }
+    .tab-btn.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-    .history-score {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
+    .tab-content { display: none; animation: feedbackIn 0.3s ease; }
+    .tab-content.active { display: block; }
 
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-secondary);
-    }
-
-    .empty-state-icon {
-      font-size: 3rem;
-      margin-bottom: 12px;
-    }
-
-    /* Confetti canvas */
-    #confetti {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    /* Responsive */
     @media (max-width: 600px) {
       .hero h1 { font-size: 1.5rem; }
-      .stats-bar { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .stat-card { padding: 14px 10px; }
-      .stat-value { font-size: 1.2rem; }
-      .question-card { padding: 24px 20px; }
-      .results-card { padding: 30px 20px; }
-      .results-details { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .question-card { padding: 22px 18px; }
+      .results-card { padding: 28px 18px; }
       .results-actions { flex-direction: column; }
-      .stats-overview { grid-template-columns: 1fr 1fr; }
+      .achievements-grid { grid-template-columns: 1fr 1fr; }
+      .quiz-play-header { flex-wrap: wrap; gap: 8px; }
     }
   </style>
 </head>
 <body>
 
-<div class="bg-animation">
-  <div class="orb"></div>
-  <div class="orb"></div>
-  <div class="orb"></div>
-</div>
-
+<div class="bg-animation"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
 <div class="particles" id="particles"></div>
 <canvas id="confetti"></canvas>
 
 <div class="app">
-  <!-- Top bar -->
   <div class="topbar">
     <div class="logo" onclick="showScreen('home')">PsyQuiz</div>
     <div class="topbar-actions">
+      <div class="level-badge-mini" id="levelBadgeMini" onclick="showScreen('stats');switchTab('achievements')"></div>
       <button class="icon-btn" onclick="showScreen('stats')" title="Статистика">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
       </button>
-      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Змінити тему">
+      <button class="icon-btn" onclick="toggleTheme()" title="Тема">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
     </div>
   </div>
 
-  <!-- HOME SCREEN -->
+  <!-- HOME -->
   <div class="screen active" id="screen-home">
     <div class="hero">
       <div class="hero-icon">🧠</div>
       <h1>Психологічні квізи</h1>
-      <p>Перевір свої знання з психології. Дізнайся, як працює людський розум, емоції та поведінка.</p>
+      <p>Перевір знання з психології. Розблоковуй досягнення та піднімай свій рівень!</p>
     </div>
 
+    <div id="factCard"></div>
+
+    <div class="level-card" id="levelCard" onclick="showScreen('stats');switchTab('achievements')"></div>
+
     <div class="stats-bar">
-      <div class="stat-card">
-        <div class="stat-value" id="totalPlayed">0</div>
-        <div class="stat-label">Пройдено</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="avgScore">0%</div>
-        <div class="stat-label">Середній бал</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="bestStreak">0</div>
-        <div class="stat-label">Рекорд серії</div>
-      </div>
+      <div class="stat-card"><div class="stat-value" id="totalPlayed">0</div><div class="stat-label">Пройдено</div></div>
+      <div class="stat-card"><div class="stat-value" id="avgScore">0%</div><div class="stat-label">Середній</div></div>
+      <div class="stat-card"><div class="stat-value" id="bestStreak">0</div><div class="stat-label">Серія</div></div>
+      <div class="stat-card"><div class="stat-value" id="totalXP">0</div><div class="stat-label">XP</div></div>
     </div>
 
     <div class="section-title">Обери квіз</div>
     <div class="quiz-grid" id="quizGrid"></div>
   </div>
 
-  <!-- QUIZ SCREEN -->
+  <!-- QUIZ -->
   <div class="screen" id="screen-quiz">
     <div class="quiz-play-header">
       <div class="quiz-play-title" id="playTitle"></div>
+      <div class="streak-badge" id="streakBadge">🔥 <span id="streakCount">0</span></div>
       <div class="timer" id="timer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span id="timerValue">30</span>
@@ -904,9 +552,7 @@
         <span id="qProgress">1 / 10</span>
         <span id="qScore">0 правильних</span>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="qProgressBar" style="width:10%"></div>
-      </div>
+      <div class="progress-track"><div class="progress-fill" id="qProgressBar" style="width:10%"></div></div>
     </div>
 
     <div class="question-card" id="questionCard">
@@ -921,7 +567,7 @@
     </div>
   </div>
 
-  <!-- RESULTS SCREEN -->
+  <!-- RESULTS -->
   <div class="screen" id="screen-results">
     <div class="results-card">
       <div class="results-icon" id="resIcon"></div>
@@ -929,7 +575,7 @@
       <div class="results-subtitle" id="resSub"></div>
 
       <div class="score-circle">
-        <svg width="140" height="140" viewBox="0 0 140 140">
+        <svg width="130" height="130" viewBox="0 0 140 140">
           <circle class="score-circle-bg" cx="70" cy="70" r="65"/>
           <circle class="score-circle-fill" id="scoreCircle" cx="70" cy="70" r="65"/>
         </svg>
@@ -939,56 +585,48 @@
       <div class="results-message" id="resMessage"></div>
 
       <div class="results-details">
-        <div class="detail-item">
-          <div class="detail-value green" id="resCorrect">0</div>
-          <div class="detail-label">Правильних</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-value red" id="resWrong">0</div>
-          <div class="detail-label">Помилок</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-value purple" id="resTime">0s</div>
-          <div class="detail-label">Час</div>
-        </div>
+        <div class="detail-item"><div class="detail-value green" id="resCorrect">0</div><div class="detail-label">Правильних</div></div>
+        <div class="detail-item"><div class="detail-value red" id="resWrong">0</div><div class="detail-label">Помилок</div></div>
+        <div class="detail-item"><div class="detail-value purple" id="resTime">0s</div><div class="detail-label">Час</div></div>
       </div>
+
+      <div id="newAchievements"></div>
 
       <div class="results-actions">
         <button class="btn-secondary" onclick="showScreen('home')">До меню</button>
-        <button class="btn-primary" id="retryBtn">Спробувати ще</button>
+        <button class="btn-primary" id="retryBtn">Ще раз</button>
       </div>
     </div>
   </div>
 
-  <!-- STATS SCREEN -->
+  <!-- STATS -->
   <div class="screen" id="screen-stats">
     <div class="stats-header">
-      <h2>Твоя статистика</h2>
-      <p style="color:var(--text-secondary)">Історія проходжень та досягнення</p>
+      <h2>Профіль</h2>
+      <p style="color:var(--text-secondary)">Статистика, історія та досягнення</p>
     </div>
 
-    <div class="stats-overview">
-      <div class="stat-card">
-        <div class="stat-value" id="sTotalPlayed">0</div>
-        <div class="stat-label">Квізів пройдено</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="sTotalQuestions">0</div>
-        <div class="stat-label">Питань загалом</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="sAvgScore">0%</div>
-        <div class="stat-label">Середній бал</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="sBestScore">0%</div>
-        <div class="stat-label">Найкращий</div>
-      </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('stats')">Статистика</button>
+      <button class="tab-btn" onclick="switchTab('achievements')">Досягнення</button>
     </div>
 
-    <div class="history-section">
+    <div class="tab-content active" id="tab-stats">
+      <div class="stats-overview">
+        <div class="stat-card"><div class="stat-value" id="sTotalPlayed">0</div><div class="stat-label">Квізів</div></div>
+        <div class="stat-card"><div class="stat-value" id="sTotalQuestions">0</div><div class="stat-label">Питань</div></div>
+        <div class="stat-card"><div class="stat-value" id="sAvgScore">0%</div><div class="stat-label">Середній</div></div>
+        <div class="stat-card"><div class="stat-value" id="sBestScore">0%</div><div class="stat-label">Найкращий</div></div>
+      </div>
+
       <div class="section-title">Історія</div>
       <div id="historyList"></div>
+    </div>
+
+    <div class="tab-content" id="tab-achievements">
+      <div class="level-card" id="levelCardStats"></div>
+      <div class="section-title">Досягнення</div>
+      <div class="achievements-grid" id="achievementsGrid"></div>
     </div>
 
     <button class="btn-secondary" style="width:100%;margin-top:20px;" onclick="showScreen('home')">Назад</button>
@@ -996,312 +634,197 @@
 </div>
 
 <script>
-// ===================== QUIZ DATA =====================
+// =================== QUIZ DATA ===================
 const quizzes = [
   {
-    id: 'cognitive',
-    title: 'Як працює наш розум?',
-    desc: 'Когнітивна психологія: пам\'ять, мислення, спотворення сприйняття та прийняття рішень.',
-    icon: '🧠',
-    badge: 'medium',
-    badgeText: 'Середній',
+    id: 'cognitive', title: 'Як працює наш розум?',
+    desc: 'Когнітивна психологія: пам\'ять, мислення, спотворення сприйняття.',
+    icon: '🧠', badge: 'medium', badgeText: 'Середній',
     questions: [
-      {
-        q: "Що таке «ефект Даннінга-Крюгера»?",
-        opts: ["Люди з низьким рівнем компетенції переоцінюють свої здібності", "Люди краще запам'ятовують незавершені справи", "Люди схильні підкорятись авторитету", "Люди поводяться інакше під спостереженням"],
-        ans: 0,
-        info: "Ефект Даннінга-Крюгера — це когнітивне спотворення, при якому люди з низьким рівнем кваліфікації переоцінюють свої здібності, а експерти — навпаки, недооцінюють себе. Для усвідомлення своєї некомпетентності потрібна саме та компетенція, якої бракує. Описаний у 1999 році."
-      },
-      {
-        q: "Яка частина мозку найбільше відповідає за переживання страху?",
-        opts: ["Гіпокамп", "Мигдалеподібне тіло (амігдала)", "Префронтальна кора", "Мозочок"],
-        ans: 1,
-        info: "Амігдала — невелика структура в скроневій частці мозку, яка миттєво оцінює загрозу ще до свідомого усвідомлення. Саме тому ми відсмикуємо руку від гарячого раніше, ніж зрозуміємо біль. Гіпокамп відповідає за пам'ять, а префронтальна кора — за прийняття рішень."
-      },
-      {
-        q: "Що описує «піраміда потреб» Маслоу?",
-        opts: ["Стадії розвитку дитини", "Ієрархію потреб від базових до вищих", "Етапи переживання горя", "Типи темпераменту"],
-        ans: 1,
-        info: "Піраміда Маслоу описує ієрархію потреб: фізіологічні (їжа, сон) → безпека → соціальні (любов, дружба) → визнання → самоактуалізація. Вищі потреби стають важливими лише коли задоволені базові. Хоча модель частково переглянута, вона залишається основою розуміння мотивації."
-      },
-      {
-        q: "Що таке «когнітивний дисонанс»?",
-        opts: ["Нездатність зосередитись", "Дискомфорт від суперечливих переконань або дій", "Погіршення пам'яті з віком", "Страх перед рішеннями"],
-        ans: 1,
-        info: "Когнітивний дисонанс — внутрішній дискомфорт, коли дії суперечать переконанням. Наприклад, людина знає що куріння шкідливе, але курить. Щоб зменшити дисонанс, ми або змінюємо поведінку, або своє ставлення. Теорію запропонував Леон Фестінгер у 1957 році."
-      },
-      {
-        q: "Скільки об'єктів утримує робоча пам'ять?",
-        opts: ["3 ± 1", "5 ± 2", "7 ± 2", "12 ± 3"],
-        ans: 2,
-        info: "«Магічне число Міллера» (1956) — робоча пам'ять утримує 7 ± 2 елементи. Ось чому телефонні номери мають 7 цифр! Сучасні дослідження уточнюють: без групування реальна ємність ближча до 4 елементів. Ми обходимо обмеження, групуючи інформацію в «чанки»."
-      },
-      {
-        q: "Що таке «ефект ореолу» (halo effect)?",
-        opts: ["Тенденція бачити себе кращим за інших", "Запам'ятовування яскравих подій краще", "Одна позитивна якість впливає на сприйняття всіх інших", "Прагнення відповідати очікуванням"],
-        ans: 2,
-        info: "Ефект ореолу — позитивне враження від однієї якості поширюється на сприйняття інших. Привабливих людей вважаємо розумнішими та добрішими. Працює і навпаки: одна негативна риса псує все враження («ефект рогів»). Описав Торндайк у 1920 році."
-      },
-      {
-        q: "Що таке «зона найближчого розвитку» Виготського?",
-        opts: ["Вік абстрактного мислення", "Область між тим, що може сама дитина і що може з допомогою", "Частина мозку, що розвивається останньою", "Період підліткової кризи"],
-        ans: 1,
-        info: "ЗНР — відстань між тим, що дитина може сама, і тим, що може з допомогою дорослого. Саме тут відбувається найефективніше навчання! Занадто легко — нудно, занадто складно — фрустрація, а в ЗНР — ідеальний виклик. Принцип використовують навіть у дизайні відеоігор."
-      },
-      {
-        q: "Що таке «ефект прайміngу» (priming)?",
-        opts: ["Звичка відкладати справи на потім", "Вплив попереднього стимулу на реакцію до наступного", "Покращення навичок через повторення", "Втрата мотивації при відсутності нагороди"],
-        ans: 1,
-        info: "Праймінг — це несвідомий вплив попереднього стимулу на обробку наступного. Якщо вам показати слово «лікар», ви швидше розпізнаєте слово «медсестра». Це доводить, що наш мозок працює через мережі асоціацій, і ми навіть не усвідомлюємо, як попередній досвід впливає на наші рішення."
-      },
-      {
-        q: "Що описує «крива забування» Еббінгауза?",
-        opts: ["Зниження IQ з віком", "Швидку втрату нової інформації без повторення", "Зменшення мотивації з часом", "Погіршення рефлексів"],
-        ans: 1,
-        info: "Герман Еббінгауз (1885) показав, що ми забуваємо ~50% нового за першу годину, ~70% за добу. Але кожне повторення робить криву забування більш пологою! Звідси метод інтервального повторення: повторюй через 1 день, 3 дні, тиждень — і запам'ятаєш надовго."
-      },
-      {
-        q: "Що таке «підтверджувальне упередження» (confirmation bias)?",
-        opts: ["Довіра до авторитетних джерел", "Схильність шукати інформацію, що підтверджує наші переконання", "Прийняття рішень на основі емоцій", "Довіра до першого враження"],
-        ans: 1,
-        info: "Підтверджувальне упередження — ми несвідомо шукаємо, запам'ятовуємо та інтерпретуємо інформацію так, щоб вона підтверджувала те, у що ми вже віримо. Це одне з найпотужніших когнітивних спотворень, яке впливає на все — від наукових досліджень до політичних поглядів."
-      }
+      { q: "Що таке «ефект Даннінга-Крюгера»?", opts: ["Люди з низьким рівнем компетенції переоцінюють свої здібності", "Люди краще запам'ятовують незавершені справи", "Люди схильні підкорятись авторитету", "Люди поводяться інакше під спостереженням"], ans: 0, info: "Ефект Даннінга-Крюгера — когнітивне спотворення: некваліфіковані люди переоцінюють себе, а експерти — недооцінюють. Для усвідомлення некомпетентності потрібна саме та компетенція, якої бракує. Описаний у 1999 році." },
+      { q: "Яка частина мозку відповідає за страх?", opts: ["Гіпокамп", "Амігдала (мигдалеподібне тіло)", "Префронтальна кора", "Мозочок"], ans: 1, info: "Амігдала миттєво оцінює загрозу ще до свідомого усвідомлення. Саме тому ми відсмикуємо руку від гарячого раніше, ніж зрозуміємо біль. Гіпокамп відповідає за пам'ять, префронтальна кора — за рішення." },
+      { q: "Що описує «піраміда потреб» Маслоу?", opts: ["Стадії розвитку дитини", "Ієрархію потреб від базових до вищих", "Етапи переживання горя", "Типи темпераменту"], ans: 1, info: "Піраміда Маслоу: фізіологія → безпека → любов/дружба → визнання → самоактуалізація. Вищі потреби важливі лише коли задоволені базові. Модель частково переглянута, але залишається основою розуміння мотивації." },
+      { q: "Що таке «когнітивний дисонанс»?", opts: ["Нездатність зосередитись", "Дискомфорт від суперечливих переконань", "Погіршення пам'яті з віком", "Страх перед рішеннями"], ans: 1, info: "Когнітивний дисонанс — дискомфорт, коли дії суперечать переконанням. Людина знає що куріння шкідливе, але курить. Щоб зменшити дисонанс, ми змінюємо поведінку або ставлення. Теорія Фестінгера, 1957." },
+      { q: "Скільки об'єктів утримує робоча пам'ять?", opts: ["3 ± 1", "5 ± 2", "7 ± 2", "12 ± 3"], ans: 2, info: "«Магічне число Міллера» (1956) — 7 ± 2 елементи. Тому телефонні номери мають 7 цифр! Ми обходимо обмеження, групуючи інформацію в «чанки» — наприклад, «1945» як одна дата замість 4 цифр." },
+      { q: "Що таке «ефект ореолу»?", opts: ["Бачити себе кращим за інших", "Запам'ятовувати яскраві події краще", "Одна позитивна якість впливає на сприйняття всіх інших", "Прагнення відповідати очікуванням"], ans: 2, info: "Ефект ореолу: позитивне враження від однієї якості поширюється на всі інші. Привабливих людей вважаємо розумнішими. Працює і навпаки — «ефект рогів». Описав Торндайк у 1920 році." },
+      { q: "Що таке «зона найближчого розвитку» Виготського?", opts: ["Вік абстрактного мислення", "Область між тим що може дитина сама і з допомогою", "Частина мозку що розвивається останньою", "Підліткова криза"], ans: 1, info: "ЗНР — відстань між тим, що дитина може сама, і тим, що з допомогою дорослого. Тут найефективніше навчання! Занадто легко — нудно, занадто складно — фрустрація. Принцип використовують навіть у дизайні відеоігор." },
+      { q: "Що таке «ефект праймінгу»?", opts: ["Звичка відкладати справи", "Вплив попереднього стимулу на реакцію", "Покращення навичок через повторення", "Втрата мотивації"], ans: 1, info: "Праймінг — несвідомий вплив попереднього стимулу на обробку наступного. Побачивши слово «лікар», ви швидше розпізнаєте «медсестра». Мозок працює через мережі асоціацій — попередній досвід впливає на рішення." },
+      { q: "Що описує «крива забування» Еббінгауза?", opts: ["Зниження IQ з віком", "Швидку втрату інформації без повторення", "Зменшення мотивації", "Погіршення рефлексів"], ans: 1, info: "Еббінгауз (1885): ми забуваємо ~50% за першу годину, ~70% за добу. Але повторення робить криву пологішою! Метод інтервального повторення: через 1 день, 3 дні, тиждень — і запам'ятаєш надовго." },
+      { q: "Що таке «підтверджувальне упередження»?", opts: ["Довіра до авторитетів", "Пошук інформації що підтверджує наші переконання", "Рішення на основі емоцій", "Довіра до першого враження"], ans: 1, info: "Ми несвідомо шукаємо інформацію що підтверджує наші переконання. Одне з найпотужніших когнітивних спотворень — впливає на все від науки до політики. У соцмережах створює «ехо-камери»." }
     ]
   },
   {
-    id: 'emotions',
-    title: 'Емоції та почуття',
-    desc: 'Базові емоції, емоційний інтелект, стрес, захисні механізми та вигорання.',
-    icon: '💜',
-    badge: 'easy',
-    badgeText: 'Легкий',
+    id: 'emotions', title: 'Емоції та почуття',
+    desc: 'Базові емоції, емоційний інтелект, стрес, захисні механізми, вигорання.',
+    icon: '💜', badge: 'easy', badgeText: 'Легкий',
     questions: [
-      {
-        q: "Скільки базових емоцій виділив Пол Екман?",
-        opts: ["4", "6", "8", "12"],
-        ans: 1,
-        info: "Пол Екман визначив 6 універсальних базових емоцій, які однаково виражаються у всіх культурах: радість, сум, гнів, страх, здивування та огида. Пізніше він додав ще кілька (зніяковілість, збудження), але класична модель — шість. Його роботи лягли в основу серіалу «Обмани мене»."
-      },
-      {
-        q: "Що таке «емоційний інтелект» (EQ)?",
-        opts: ["Кількість емоцій, які людина може назвати", "Здатність розпізнавати, розуміти та керувати емоціями", "Швидкість емоційних реакцій", "Схильність до емпатії"],
-        ans: 1,
-        info: "Емоційний інтелект (EQ) — здатність розпізнавати свої та чужі емоції, розуміти їх причини та ефективно керувати ними. Деніел Гоулман популяризував цю ідею у 1995 році, показавши що EQ часто важливіший за IQ для успіху в житті та кар'єрі. EQ можна розвивати!"
-      },
-      {
-        q: "Який захисний механізм описує перенесення неприйнятних бажань на інших?",
-        opts: ["Витіснення", "Проєкція", "Раціоналізація", "Сублімація"],
-        ans: 1,
-        info: "Проєкція — захисний механізм, коли людина несвідомо приписує іншим свої неприйнятні думки чи почуття. Наприклад, людина, яка сама схильна до брехні, підозрює всіх у нечесності. Фрейд описав багато захисних механізмів, і проєкція — один із найпоширеніших."
-      },
-      {
-        q: "Що відбувається в організмі під час стресу (реакція «бий або тікай»)?",
-        opts: ["Сповільнюється серцебиття", "Виділяються адреналін і кортизол", "Активізується травлення", "Знижується тиск крові"],
-        ans: 1,
-        info: "При стресі наднирники виділяють адреналін та кортизол. Серце б'ється швидше, м'язи напружуються, зір загострюється, травлення зупиняється — тіло готується до бою або втечі. Ця реакція еволюційно врятувала нас від хижаків, але в сучасному світі хронічний стрес шкодить здоров'ю."
-      },
-      {
-        q: "Які 5 стадій горя описала Елізабет Кюблер-Росс?",
-        opts: ["Шок, плач, гнів, сум, забуття", "Заперечення, гнів, торг, депресія, прийняття", "Тривога, страх, відчай, адаптація, зцілення", "Ізоляція, агресія, апатія, пошук сенсу, відновлення"],
-        ans: 1,
-        info: "П'ять стадій: заперечення, гнів, торг, депресія, прийняття. Важливо: вони не йдуть послідовно — людина може переживати їх у будь-якому порядку, повертатись або пропускати. Прийняття не означає «все добре» — це визнання нової реальності."
-      },
-      {
-        q: "Що таке «емоційне вигорання» (burnout)?",
-        opts: ["Різкий напад паніки", "Хронічне виснаження від тривалого стресу на роботі", "Короткочасна втрата пам'яті", "Агресивна реакція на критику"],
-        ans: 1,
-        info: "Вигорання — стан хронічного виснаження через тривалий стрес. Три ключові ознаки: емоційне виснаження (нема сил), деперсоналізація (байдужість до людей), знижена ефективність. ВООЗ офіційно визнала вигорання проблемою здоров'я. Важливо: це не лінь, а серйозний стан!"
-      },
-      {
-        q: "Що таке «сублімація» за Фрейдом?",
-        opts: ["Забування травматичних подій", "Перенаправлення неприйнятних імпульсів у соціально прийнятну діяльність", "Повернення до дитячої поведінки", "Відмова визнавати проблему"],
-        ans: 1,
-        info: "Сублімація — «найздоровіший» захисний механізм. Людина перенаправляє агресію чи інші сильні імпульси у творчість, спорт, науку. Наприклад, агресивна людина стає боксером. Фрейд вважав, що вся цивілізація побудована на сублімації."
-      },
-      {
-        q: "Що таке «алекситимія»?",
-        opts: ["Надмірна емоційність", "Нездатність розпізнавати та описувати свої емоції", "Страх перед натовпом", "Залежність від чужих емоцій"],
-        ans: 1,
-        info: "Алекситимія (буквально «без слів для почуттів») — стан, при якому людина не може розпізнати та описати свої емоції. Вона відчуває щось, але не може зрозуміти що саме — радість це, тривога чи злість. Це не хвороба, а особливість, яка є у близько 10% людей."
-      },
-      {
-        q: "Яка емоція, за дослідженнями, є найкоротшою?",
-        opts: ["Сум", "Страх", "Здивування", "Гнів"],
-        ans: 2,
-        info: "Здивування — найкоротша з базових емоцій, вона триває лише кілька секунд, після чого змінюється на іншу емоцію (радість, страх, гнів — залежно від ситуації). А найтривалішою емоцією є сум — дослідження показали, що він може тривати до 240 разів довше за інші емоції!"
-      },
-      {
-        q: "Що таке «резилієнтність» (resilience)?",
-        opts: ["Здатність уникати стресу", "Здатність відновлюватись після труднощів", "Контроль над іншими людьми", "Відсутність негативних емоцій"],
-        ans: 1,
-        info: "Резилієнтність — це психологічна стійкість, здатність «пружинити» після ударів долі. Це НЕ відсутність страждань, а вміння проходити через них і відновлюватись. Хороша новина: резилієнтність — це не вроджена якість, а навичка, яку можна розвивати через соціальні зв'язки, оптимізм та саморефлексію."
-      }
+      { q: "Скільки базових емоцій виділив Пол Екман?", opts: ["4", "6", "8", "12"], ans: 1, info: "6 універсальних емоцій: радість, сум, гнів, страх, здивування, огида. Однакові у всіх культурах. Роботи Екмана стали основою серіалу «Обмани мене»." },
+      { q: "Що таке «емоційний інтелект» (EQ)?", opts: ["Кількість емоцій які можна назвати", "Здатність розпізнавати і керувати емоціями", "Швидкість емоційних реакцій", "Схильність до емпатії"], ans: 1, info: "EQ — здатність розпізнавати свої та чужі емоції і керувати ними. Гоулман (1995) показав що EQ часто важливіший за IQ для успіху. І головне — EQ можна розвивати!" },
+      { q: "Який захисний механізм — перенесення бажань на інших?", opts: ["Витіснення", "Проєкція", "Раціоналізація", "Сублімація"], ans: 1, info: "Проєкція — приписування іншим своїх неприйнятних думок. Людина, схильна до брехні, підозрює всіх у нечесності. Один з найпоширеніших захисних механізмів за Фрейдом." },
+      { q: "Що відбувається при реакції «бий або тікай»?", opts: ["Сповільнюється серцебиття", "Виділяються адреналін і кортизол", "Активізується травлення", "Знижується тиск"], ans: 1, info: "Наднирники виділяють адреналін та кортизол: серце б'ється швидше, м'язи напружуються, травлення зупиняється. Еволюційно це рятувало від хижаків, але хронічний стрес шкодить здоров'ю." },
+      { q: "5 стадій горя за Кюблер-Росс?", opts: ["Шок, плач, гнів, сум, забуття", "Заперечення, гнів, торг, депресія, прийняття", "Тривога, страх, відчай, адаптація, зцілення", "Ізоляція, агресія, апатія, пошук сенсу, відновлення"], ans: 1, info: "Стадії не обов'язково йдуть послідовно — людина може повертатись або пропускати. Прийняття не означає «все добре» — це визнання нової реальності." },
+      { q: "Що таке «емоційне вигорання»?", opts: ["Напад паніки", "Хронічне виснаження від тривалого стресу", "Втрата пам'яті", "Агресія на критику"], ans: 1, info: "Три ознаки: емоційне виснаження, деперсоналізація (байдужість), знижена ефективність. ВООЗ визнала вигорання проблемою здоров'я. Це не лінь — це серйозний стан!" },
+      { q: "Що таке «сублімація» за Фрейдом?", opts: ["Забування травм", "Перенаправлення імпульсів у прийнятну діяльність", "Повернення до дитячої поведінки", "Відмова визнавати проблему"], ans: 1, info: "Сублімація — найздоровіший захисний механізм. Агресивна людина стає боксером, тривожна — пише музику. Фрейд вважав що вся цивілізація побудована на сублімації." },
+      { q: "Що таке «алекситимія»?", opts: ["Надмірна емоційність", "Нездатність розпізнавати свої емоції", "Страх натовпу", "Залежність від чужих емоцій"], ans: 1, info: "Алекситимія — «без слів для почуттів». Людина відчуває щось, але не може зрозуміти що. Це не хвороба, а особливість, яка є у ~10% людей. Можна покращити через терапію." },
+      { q: "Яка емоція найкоротша?", opts: ["Сум", "Страх", "Здивування", "Гнів"], ans: 2, info: "Здивування — найкоротша емоція, лише кілька секунд, після чого змінюється на іншу. А найтриваліша — сум, може тривати до 240 разів довше за інші емоції!" },
+      { q: "Що таке «резилієнтність»?", opts: ["Уникання стресу", "Здатність відновлюватись після труднощів", "Контроль над іншими", "Відсутність негативних емоцій"], ans: 1, info: "Резилієнтність — психологічна «пружність». НЕ відсутність страждань, а вміння проходити через них. Розвивається через соціальні зв'язки, оптимізм, саморефлексію — це навичка, не вроджена якість!" }
     ]
   },
   {
-    id: 'personality',
-    title: 'Психологія особистості',
-    desc: 'Темперамент, характер, Big Five, інтроверсія та екстраверсія, локус контролю.',
-    icon: '🎭',
-    badge: 'medium',
-    badgeText: 'Середній',
+    id: 'personality', title: 'Психологія особистості',
+    desc: 'Темперамент, Big Five, інтроверсія/екстраверсія, локус контролю.',
+    icon: '🎭', badge: 'medium', badgeText: 'Середній',
     questions: [
-      {
-        q: "Хто описав 4 типи темпераменту (сангвінік, холерик, меланхолік, флегматик)?",
-        opts: ["Аристотель", "Гіппократ", "Фрейд", "Юнг"],
-        ans: 1,
-        info: "Гіппократ (~400 р. до н.е.) пов'язав темперамент з чотирма «соками тіла»: кров (сангвінік — енергійний), жовч (холерик — запальний), чорна жовч (меланхолік — задумливий), слиз (флегматик — спокійний). Хоча теорія «соків» застаріла, сама класифікація використовується й сьогодні."
-      },
-      {
-        q: "Яка модель особистості вважається найбільш науково обґрунтованою сьогодні?",
-        opts: ["16 типів Маєрс-Бріггс (MBTI)", "Велика п'ятірка (Big Five / OCEAN)", "Соціоніка", "Еннеаграма"],
-        ans: 1,
-        info: "Big Five (OCEAN) — найнадійніша модель у науковій психології. П'ять факторів: Openness (відкритість), Conscientiousness (сумлінність), Extraversion (екстраверсія), Agreeableness (доброзичливість), Neuroticism (нейротизм). На відміну від MBTI, ці фактори підтверджені сотнями досліджень."
-      },
-      {
-        q: "Хто ввів поняття «інтроверсія» та «екстраверсія»?",
-        opts: ["Фрейд", "Юнг", "Адлер", "Айзенк"],
-        ans: 1,
-        info: "Карл Густав Юнг описав ці поняття у 1921 році. Екстраверти «заряджаються» від спілкування, інтроверти — від самотності. Важливо: інтроверсія — це НЕ сором'язливість! Інтроверт може чудово спілкуватись, але після цього потребує час на відновлення енергії."
-      },
-      {
-        q: "Що таке «локус контролю»?",
-        opts: ["Частина мозку, що контролює рухи", "Переконання людини про те, хто контролює її життя", "Здатність контролювати інших", "Вміння тримати емоції під контролем"],
-        ans: 1,
-        info: "Локус контролю (Джуліан Роттер, 1954) — це переконання про те, хто керує твоїм життям. Внутрішній локус: «я сам відповідаю за свої успіхи та невдачі». Зовнішній: «все залежить від обставин, удачі, інших людей». Люди з внутрішнім локусом зазвичай успішніші та щасливіші."
-      },
-      {
-        q: "Що таке «self-efficacy» (самоефективність) за Бандурою?",
-        opts: ["Рівень IQ людини", "Віра людини у свою здатність досягти мети", "Здатність працювати без допомоги", "Швидкість навчання новим навичкам"],
-        ans: 1,
-        info: "Самоефективність за Альбертом Бандурою — це віра людини у свою здатність виконати завдання. Не плутати з самооцінкою! Самоефективність конкретна: «я вірю, що зможу вивчити програмування». Вона формується через: власний досвід успіху, спостереження за іншими, підтримку, та фізіологічний стан."
-      },
-      {
-        q: "Що таке «вивчена безпорадність» (learned helplessness)?",
-        opts: ["Небажання вчитись у школі", "Стан, коли людина перестає намагатись після повторних невдач", "Залежність від допомоги інших", "Страх перед іспитами"],
-        ans: 1,
-        info: "Вивчена безпорадність (Мартін Селігман, 1967) — коли після багатьох невдач людина перестає навіть намагатись, навіть коли ситуація змінилась. Класичний приклад: учень, якого постійно критикують, перестає старатись. Цікаво, що Селігман пізніше заснував позитивну психологію — науку про щастя та сильні сторони."
-      },
-      {
-        q: "Що таке «Тінь» в аналітичній психології Юнга?",
-        opts: ["Депресивний стан", "Несвідома темна сторона особистості", "Страх темряви", "Вплив минулого на теперішнє"],
-        ans: 1,
-        info: "Тінь за Юнгом — це частина нашого несвідомого, яка містить якості, які ми не хочемо визнавати в собі: агресію, заздрість, егоїзм. Юнг вважав, що інтеграція Тіні — визнання та прийняття цих якостей — є важливим кроком до психологічної цілісності та зрілості."
-      },
-      {
-        q: "Хто розробив «ієрархію особистісних конструктів»?",
-        opts: ["Карл Роджерс", "Джордж Келлі", "Абрахам Маслоу", "Гордон Олпорт"],
-        ans: 1,
-        info: "Джордж Келлі (1955) запропонував теорію особистісних конструктів — ідею, що кожна людина є «науковцем», який будує свою картину світу через пари протилежностей (конструкти): добрий-злий, сильний-слабкий. Ми бачимо світ через ці «окуляри» і можемо їх змінювати."
-      },
-      {
-        q: "Що таке «нарцисичний розлад особистості»?",
-        opts: ["Любов до селфі", "Патологічна грандіозність та відсутність емпатії", "Надмірна сором'язливість", "Страх бути відкинутим"],
-        ans: 1,
-        info: "Нарцисичний розлад — серйозний психічний стан, а не просто «егоїзм». Ознаки: грандіозне відчуття власної важливості, потреба в захопленні, нездатність до емпатії. Парадоксально, під маскою грандіозності часто ховається крихка самооцінка. Це стосується менше 1% населення."
-      },
-      {
-        q: "Яка різниця між характером і темпераментом?",
-        opts: ["Це синоніми", "Темперамент вроджений, характер — набутий", "Характер вроджений, темперамент — набутий", "Темперамент стосується інтелекту"],
-        ans: 1,
-        info: "Темперамент — вроджена біологічна основа: швидкість реакцій, енергійність, емоційність. Характер формується протягом життя під впливом виховання, досвіду, культури. Наприклад, холерик (темперамент — запальний) може розвинути терплячість (характер) через досвід і самовиховання."
-      }
+      { q: "Хто описав 4 типи темпераменту?", opts: ["Аристотель", "Гіппократ", "Фрейд", "Юнг"], ans: 1, info: "Гіппократ (~400 до н.е.) пов'язав темперамент з «соками тіла»: сангвінік — енергійний, холерик — запальний, меланхолік — задумливий, флегматик — спокійний." },
+      { q: "Найнауковіша модель особистості?", opts: ["MBTI (16 типів)", "Big Five (OCEAN)", "Соціоніка", "Еннеаграма"], ans: 1, info: "Big Five: Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism. На відміну від MBTI, підтверджена сотнями досліджень. Вимірює спектр, а не тип." },
+      { q: "Хто ввів «інтроверсію» та «екстраверсію»?", opts: ["Фрейд", "Юнг", "Адлер", "Айзенк"], ans: 1, info: "Юнг (1921). Екстраверти «заряджаються» від спілкування, інтроверти — від самотності. Інтроверсія — це НЕ сором'язливість! Інтроверт може чудово спілкуватись, але потребує час на відновлення." },
+      { q: "Що таке «локус контролю»?", opts: ["Частина мозку для рухів", "Переконання хто контролює твоє життя", "Здатність контролювати інших", "Контроль емоцій"], ans: 1, info: "Роттер (1954): внутрішній локус — «я відповідаю за успіхи і невдачі», зовнішній — «все залежить від обставин». Люди з внутрішнім локусом зазвичай успішніші та щасливіші." },
+      { q: "Що таке «self-efficacy» за Бандурою?", opts: ["Рівень IQ", "Віра у свою здатність досягти мети", "Робота без допомоги", "Швидкість навчання"], ans: 1, info: "Самоефективність — віра у здатність виконати конкретне завдання. Формується через: власний успіх, спостереження за іншими, підтримку, фізіологічний стан. Не плутати з самооцінкою!" },
+      { q: "Що таке «вивчена безпорадність»?", opts: ["Небажання вчитись", "Людина перестає намагатись після невдач", "Залежність від допомоги", "Страх іспитів"], ans: 1, info: "Селігман (1967): після багатьох невдач людина перестає намагатись, навіть коли ситуація змінилась. Цікаво: Селігман пізніше заснував позитивну психологію — науку про щастя!" },
+      { q: "Що таке «Тінь» у Юнга?", opts: ["Депресія", "Несвідома темна сторона особистості", "Страх темряви", "Вплив минулого"], ans: 1, info: "Тінь — частина несвідомого з якостями, які ми не визнаємо: агресія, заздрість, егоїзм. Юнг вважав інтеграцію Тіні — визнання цих якостей — важливим кроком до зрілості." },
+      { q: "Хто розробив «особистісні конструкти»?", opts: ["Роджерс", "Джордж Келлі", "Маслоу", "Олпорт"], ans: 1, info: "Келлі (1955): кожна людина — «науковець» що будує картину світу через пари протилежностей (конструкти): добрий-злий, сильний-слабкий. Ми бачимо світ через ці «окуляри» і можемо їх змінювати." },
+      { q: "Нарцисичний розлад — це...", opts: ["Любов до селфі", "Патологічна грандіозність і відсутність емпатії", "Сором'язливість", "Страх бути відкинутим"], ans: 1, info: "Серйозний психічний стан, не просто «егоїзм». Під маскою грандіозності часто — крихка самооцінка. Стосується менше 1% населення." },
+      { q: "Різниця між характером і темпераментом?", opts: ["Синоніми", "Темперамент вроджений, характер набутий", "Характер вроджений, темперамент набутий", "Темперамент про інтелект"], ans: 1, info: "Темперамент — вроджена біологічна основа (швидкість, енергійність). Характер формується через виховання та досвід. Холерик може розвинути терплячість через самовиховання." }
     ]
   },
   {
-    id: 'social',
-    title: 'Соціальна психологія',
-    desc: 'Конформізм, підкорення, групове мислення, знамениті експерименти та соціальний вплив.',
-    icon: '👥',
-    badge: 'hard',
-    badgeText: 'Складний',
+    id: 'social', title: 'Соціальна психологія',
+    desc: 'Конформізм, підкорення, групове мислення, знамениті експерименти.',
+    icon: '👥', badge: 'hard', badgeText: 'Складний',
     questions: [
-      {
-        q: "Що показав експеримент Соломона Аша з лініями?",
-        opts: ["Люди не можуть оцінити довжину ліній", "Люди підкоряються тиску групи навіть коли група очевидно помиляється", "Лінії створюють оптичні ілюзії", "Люди краще працюють у групі"],
-        ans: 1,
-        info: "Експеримент Аша (1951): учасник мав назвати яка лінія довша — завдання елементарне. Але коли підставні учасники давали очевидно неправильну відповідь, ~75% піддослідних хоча б раз погодились з групою! Це доводить силу конформізму — нашу схильність підлаштовуватись під думку більшості."
-      },
-      {
-        q: "Що досліджував Стенлі Мілгрем у своєму знаменитому експерименті?",
-        opts: ["Вплив натовпу на індивіда", "Підкорення авторитету навіть при неетичних наказах", "Ефект свідка", "Групове мислення"],
-        ans: 1,
-        info: "Експеримент Мілгрема (1963): учасники мали давати «електрошок» іншій людині (актору) за наказом «вченого». 65% дійшли до максимального «смертельного» удару! Це показало, що звичайні люди здатні на жорстокість, коли їх направляє авторитет. Експеримент проведений після суду над нацистами."
-      },
-      {
-        q: "Що таке «ефект свідка» (bystander effect)?",
-        opts: ["Краща продуктивність при спостерігачах", "Чим більше свідків — тим менше шансів на допомогу", "Свідки завжди точно описують події", "Люди наслідують поведінку інших"],
-        ans: 1,
-        info: "Чим більше людей навколо, тим менша ймовірність, що хтось допоможе. Кожен думає: «хтось інший допоможе». Досліджено після випадку Кітті Дженовезе (1964). Порада: якщо потрібна допомога — звертайся до конкретної людини: «Ви, в червоній куртці, викличте швидку!»"
-      },
-      {
-        q: "Що таке «Стенфордський тюремний експеримент»?",
-        opts: ["Дослідження впливу ізоляції на інтелект", "Дослідження як соціальні ролі змінюють поведінку", "Тест на агресивність ув'язнених", "Вивчення тюремних ієрархій"],
-        ans: 1,
-        info: "Філіп Зімбардо (1971) розділив студентів на «охоронців» і «ув'язнених». За кілька днів «охоронці» стали жорстокими, а «ув'язнені» — пасивними. Експеримент зупинили на 6-й день з 14. Це показало, що ситуація та роль можуть радикально змінити поведінку навіть хороших людей."
-      },
-      {
-        q: "Що таке «групове мислення» (groupthink)?",
-        opts: ["Колективний розум завжди правильний", "Прагнення групи до одностайності на шкоду якості рішень", "Здатність групи вирішувати складні задачі", "Синхронне мислення у великих колективах"],
-        ans: 1,
-        info: "Групове мислення (Ірвінг Дженіс, 1972) — коли група настільки прагне до єдності, що ігнорує альтернативні точки зору та критичне мислення. Це призвело до катастрофічних рішень, як-от вторгнення в Затоку Свиней. Протиотрута: призначати «адвоката диявола» та заохочувати інакодумство."
-      },
-      {
-        q: "Що таке «соціальна фасилітація»?",
-        opts: ["Допомога людям у соціалізації", "Покращення продуктивності простих задач у присутності інших", "Здатність впливати на інших", "Прагнення допомагати незнайомцям"],
-        ans: 1,
-        info: "Соціальна фасилітація — ми краще виконуємо прості/знайомі завдання, коли хтось дивиться. Але складні/нові завдання, навпаки, виконуємо гірше! Причина: присутність інших підвищує збудження, що допомагає при рутинних задачах, але заважає при складних. Відкрив Норман Тріплетт (1898)."
-      },
-      {
-        q: "Що таке «когнітивна упередженість підтвердження» у контексті соціальних груп?",
-        opts: ["Довіра до групи замість фактів", "Пошук людей, які поділяють наші погляди (ехо-камера)", "Автоматична згода з лідером", "Неприйняття нових членів групи"],
-        ans: 1,
-        info: "У соціальному контексті confirmation bias створює «ехо-камери» — ми оточуємо себе однодумцями, читаємо лише те, що підтверджує наші погляди. Соцмережі посилюють цей ефект алгоритмами. Результат: поляризація суспільства та нерозуміння «іншої сторони»."
-      },
-      {
-        q: "Що таке «ефект Пігмаліона» (Розенталя)?",
-        opts: ["Люди закохуються у власні творіння", "Очікування вчителя впливають на успішність учнів", "Красиві люди отримують більше допомоги", "Першокласники завжди слухають вчителів"],
-        ans: 1,
-        info: "Ефект Пігмаліона (Розенталь і Якобсон, 1968): вчителям сказали, що деякі учні — «інтелектуально обдаровані» (насправді обрані випадково). Через рік ці учні справді показали кращі результати! Вчителі несвідомо давали їм більше уваги та підтримки. Висновок: віра в людину може реально змінити її."
-      },
-      {
-        q: "Що описує «теорія соціальної ідентичності» Генрі Тайфела?",
-        opts: ["Як ми обираємо друзів", "Як належність до групи впливає на самооцінку та ставлення до «чужих»", "Як формується ідентичність у підлітків", "Як соцмережі впливають на самооцінку"],
-        ans: 1,
-        info: "Тайфел показав, що навіть мінімального поділу на «своїх» і «чужих» достатньо, щоб люди надавали перевагу своїй групі. Ми черпаємо самооцінку з груп, до яких належимо (нація, команда, фанати). Звідси — упередження проти «чужих» та гордість за «своїх», навіть без реальних підстав."
-      },
-      {
-        q: "Що таке «дифузія відповідальності»?",
-        opts: ["Розподіл обов'язків у команді", "Зменшення особистої відповідальності зі збільшенням групи", "Делегування повноважень керівником", "Колективна відповідальність за рішення"],
-        ans: 1,
-        info: "Дифузія відповідальності — чим більше людей у групі, тим менше кожен відчуває особисту відповідальність. «Це не моя справа, хтось інший зробить». Це механізм, що лежить в основі ефекту свідка. У великих командах кожен працює менш інтенсивно (соціальне лінивство), бо «розчиняється» у групі."
-      }
+      { q: "Що показав експеримент Аша з лініями?", opts: ["Люди не оцінюють довжину", "Люди підкоряються групі навіть коли вона помиляється", "Лінії — оптична ілюзія", "Люди краще працюють у групі"], ans: 1, info: "Аш (1951): ~75% хоча б раз погодились з очевидно неправильною відповіддю групи. Конформізм — наша схильність підлаштовуватись під більшість, навіть коли вона помиляється." },
+      { q: "Що досліджував Мілгрем?", opts: ["Вплив натовпу", "Підкорення авторитету при неетичних наказах", "Ефект свідка", "Групове мислення"], ans: 1, info: "Мілгрем (1963): 65% дійшли до «смертельного» удару за наказом «вченого». Звичайні люди здатні на жорстокість під тиском авторитету. Проведено після суду над нацистами." },
+      { q: "Що таке «ефект свідка»?", opts: ["Краща продуктивність при спостерігачах", "Більше свідків — менше шансів на допомогу", "Свідки точно описують події", "Наслідування поведінки інших"], ans: 1, info: "Чим більше людей, тим менше шансів що хтось допоможе. Кожен думає: «хтось інший зробить». Порада: звертайся до конкретної людини: «Ви, в червоній куртці, викличте швидку!»" },
+      { q: "Стенфордський тюремний експеримент показав...", opts: ["Вплив ізоляції на IQ", "Як ролі змінюють поведінку", "Агресивність ув'язнених", "Тюремні ієрархії"], ans: 1, info: "Зімбардо (1971): студенти-«охоронці» стали жорстокими за кілька днів. Ситуація та роль можуть радикально змінити поведінку навіть хороших людей. Зупинено на 6-й з 14 днів." },
+      { q: "Що таке «групове мислення»?", opts: ["Колективний розум завжди правий", "Прагнення єдності на шкоду якості рішень", "Здатність групи вирішувати задачі", "Синхронне мислення"], ans: 1, info: "Дженіс (1972): група настільки прагне єдності, що ігнорує критику. Призвело до катастроф. Протиотрута: призначати «адвоката диявола» та заохочувати інакодумство." },
+      { q: "Що таке «соціальна фасилітація»?", opts: ["Допомога в соціалізації", "Покращення простих задач при спостерігачах", "Вплив на інших", "Допомога незнайомцям"], ans: 1, info: "Прості задачі виконуємо краще при спостерігачах, складні — гірше! Присутність інших підвищує збудження: допомагає при рутині, заважає при складному. Тріплетт, 1898." },
+      { q: "«Ехо-камера» у соцмережах — це...", opts: ["Довіра до групи замість фактів", "Оточення себе однодумцями", "Згода з лідером", "Неприйняття нових членів"], ans: 1, info: "Confirmation bias у соціальному контексті: ми оточуємо себе однодумцями, читаємо лише те що підтверджує погляди. Алгоритми соцмереж посилюють ефект, створюючи поляризацію." },
+      { q: "Що таке «ефект Пігмаліона»?", opts: ["Закохуємось у свої творіння", "Очікування вчителя впливають на успішність", "Красивим допомагають більше", "Першокласники слухають вчителів"], ans: 1, info: "Розенталь і Якобсон (1968): випадково обрані учні, названі «обдарованими», справді показали кращі результати! Вчителі несвідомо давали більше уваги. Висновок: віра в людину реально змінює її." },
+      { q: "Теорія соціальної ідентичності Тайфела:", opts: ["Як обираємо друзів", "Як належність до групи впливає на ставлення до чужих", "Ідентичність підлітків", "Соцмережі і самооцінка"], ans: 1, info: "Навіть мінімального поділу на «своїх» і «чужих» достатньо для упередження. Ми черпаємо самооцінку з груп (нація, команда). Звідси гордість за «своїх» навіть без підстав." },
+      { q: "Що таке «дифузія відповідальності»?", opts: ["Розподіл обов'язків", "Зменшення відповідальності зі збільшенням групи", "Делегування", "Колективна відповідальність"], ans: 1, info: "Чим більше людей, тим менше кожен відчуває відповідальність. «Не моя справа, хтось зробить». Механізм ефекту свідка. У великих командах кожен працює менш інтенсивно — «соціальне лінивство»." }
+    ]
+  },
+  {
+    id: 'development', title: 'Психологія розвитку',
+    desc: 'Стадії розвитку від дитинства до старості, вікові кризи, прив\'язаність.',
+    icon: '🌱', badge: 'medium', badgeText: 'Середній',
+    questions: [
+      { q: "Хто описав 8 стадій психосоціального розвитку?", opts: ["Фрейд", "Ерік Еріксон", "Піаже", "Виготський"], ans: 1, info: "Еріксон описав 8 стадій від народження до старості. Кожна має свій конфлікт: довіра vs недовіра (0-1 рік), автономія vs сором (1-3), ініціатива vs провина (3-6) і так далі до мудрості у старості." },
+      { q: "Що таке «теорія прив'язаності» Боулбі?", opts: ["Діти прив'язуються до іграшок", "Ранній зв'язок з опікуном визначає майбутні стосунки", "Діти копіюють поведінку батьків", "Прив'язаність зникає з віком"], ans: 1, info: "Джон Боулбі показав: якість зв'язку з основним опікуном у перші роки життя формує «внутрішню робочу модель» стосунків. Безпечна прив'язаність → здорові стосунки у дорослому віці. Небезпечна → труднощі з довірою." },
+      { q: "За Піаже, на якій стадії дитина починає логічно мислити?", opts: ["Сенсомоторна (0-2)", "Доопераційна (2-7)", "Конкретних операцій (7-11)", "Формальних операцій (11+)"], ans: 2, info: "На стадії конкретних операцій (7-11 років) дитина починає логічно мислити, розуміє збереження (вода в різних склянках — однакова кількість). Але абстрактне мислення з'являється лише на стадії формальних операцій (11+)." },
+      { q: "Що таке «криза ідентичності» за Еріксоном?", opts: ["Втрата пам'яті у підлітків", "Пошук відповіді «хто я?» у підлітковому віці", "Депресія при виході на пенсію", "Конфлікт з батьками"], ans: 1, info: "Підлітковий вік (12-18) — стадія «ідентичність vs сплутаність ролей». Підліток шукає відповідь: «Хто я? Що я ціную? Ким хочу бути?» Успішне проходження дає цілісну ідентичність, невдача — невизначеність." },
+      { q: "Що таке «об'єктна сталість» за Піаже?", opts: ["Любов до конкретної іграшки", "Розуміння що предмет існує навіть коли його не видно", "Здатність тримати предмети", "Впізнавання знайомих предметів"], ans: 1, info: "Об'єктна сталість (до 8-12 місяців) — розуміння що предмет існує навіть коли зник з поля зору. До цього: якщо іграшку сховали — вона «зникла». Саме тому малюки так люблять гру «ку-ку»!" },
+      { q: "Типи прив'язаності за Мері Ейнсворт:", opts: ["Сильна і слабка", "Безпечна, тривожна, уникаюча", "Материнська і батьківська", "Фізична і емоційна"], ans: 1, info: "Ейнсворт (експеримент «Незнайома ситуація»): безпечна — дитина спокійна, шукає маму; тривожна — чіпляється, плаче; уникаюча — байдужа до розлуки. Пізніше додали дезорганізовану. ~60% дітей мають безпечну прив'язаність." },
+      { q: "Що таке «зона найближчого розвитку»?", opts: ["Де дитина грається", "Різниця між тим що може сама і з допомогою", "Швидкість росту мозку", "Оптимальний вік для школи"], ans: 1, info: "Виготський: навчання найефективніше коли завдання трохи складніше за те, що дитина може сама. Занадто легко — нудно. Занадто складно — стрес. У ЗНР — ідеальний виклик з підтримкою." },
+      { q: "Коли починається «криза середнього віку»?", opts: ["25-30 років", "35-50 років", "55-65 років", "Такої кризи не існує"], ans: 1, info: "35-50 років: переоцінка досягнень, страх старіння, питання «чи правильно я живу?». Хоча не всі її переживають, дослідження показують що задоволеність життям часто має U-форму — знижується до 40-50 і потім зростає." },
+      { q: "Що таке «теорія розуму» (Theory of Mind)?", opts: ["Наукова теорія про мозок", "Розуміння що інші мають свої думки і почуття", "Здатність читати думки", "Теорія Фрейда про свідомість"], ans: 1, info: "Theory of Mind — розуміння що інші люди мають свої думки, бажання та переконання, відмінні від наших. Розвивається у 3-5 років. Діти з аутизмом часто мають труднощі з цією здатністю." },
+      { q: "Що таке «імпринтинг» за Конрадом Лоренцом?", opts: ["Навчання через покарання", "Критичний період привʼязування до першого побаченого обʼєкта", "Запамʼятовування через повторення", "Копіювання поведінки батьків"], ans: 1, info: "Лоренц показав: гусенята прив'язуються до першого рухомого об'єкта, побаченого після народження — зазвичай матері, але можуть і до людини! Це відбувається у «критичний період» — короткий вікно часу. У людей прив'язаність формується повільніше, але принцип схожий." }
+    ]
+  },
+  {
+    id: 'neuro', title: 'Нейропсихологія',
+    desc: 'Мозок, нейромедіатори, сон, свідомість, оптичні ілюзії.',
+    icon: '🔬', badge: 'hard', badgeText: 'Складний',
+    questions: [
+      { q: "Який нейромедіатор називають «гормоном щастя»?", opts: ["Адреналін", "Серотонін", "Кортизол", "Ацетилхолін"], ans: 1, info: "Серотонін регулює настрій, сон, апетит. Його дефіцит пов'язують з депресією. Антидепресанти (SSRI) працюють, збільшуючи рівень серотоніну. Цікаво: ~95% серотоніну виробляється в кишечнику, а не в мозку!" },
+      { q: "Скільки нейронів у мозку людини?", opts: ["1 мільйон", "100 мільйонів", "86 мільярдів", "1 трильйон"], ans: 2, info: "~86 мільярдів нейронів, кожен з яких має до 10 000 зв'язків з іншими. Загалом ~100 трильйонів синапсів! Це більше ніж зірок у нашій галактиці. Мозок — найскладніший відомий об'єкт у Всесвіті." },
+      { q: "Що таке «нейропластичність»?", opts: ["Мозок не змінюється після дитинства", "Здатність мозку змінювати свою структуру", "Гнучкість черепа", "Швидкість нервових імпульсів"], ans: 1, info: "Нейропластичність — здатність мозку формувати нові зв'язки протягом усього життя. Лондонські таксисти мають збільшений гіпокамп (навігація), музиканти — розвинену моторну кору. Мозок змінюється від того, що ми робимо!" },
+      { q: "Яка фаза сну відповідає за яскраві сни?", opts: ["Повільна (NREM)", "Швидка (REM)", "Фаза засинання", "Глибокий сон"], ans: 1, info: "REM (Rapid Eye Movement) — фаза швидких рухів очей, коли ми бачимо яскраві сни. Мозок активний майже як при пробудженні, але тіло паралізоване (щоб ми не «грали» свої сни). REM важлива для пам'яті та емоцій." },
+      { q: "«Розщеплений мозок» — що це?", opts: ["Шизофренія", "Розрізання зв'язку між півкулями", "Травма голови", "Багатозадачність"], ans: 1, info: "Експерименти Сперрі (Нобелівська премія, 1981): при розрізанні мозолистого тіла (зв'язку між півкулями) ліва і права півкулі працюють незалежно. Ліва — мова і логіка, права — просторове мислення і розпізнавання облич." },
+      { q: "Що таке «дзеркальні нейрони»?", opts: ["Нейрони що працюють під час сну", "Нейрони що активуються і при дії і при спостереженні", "Нейрони відповідальні за зір", "Нейрони що дублюють інформацію"], ans: 1, info: "Дзеркальні нейрони активуються і коли ми виконуємо дію, і коли спостерігаємо як її виконує інший. Вважають основою емпатії та навчання через імітацію. Відкриті випадково Ріццолатті (1990-ті) у макак." },
+      { q: "Допамін — це нейромедіатор...", opts: ["Страху", "Болю", "Мотивації та нагороди", "Сну"], ans: 2, info: "Допамін — «молекула мотивації». Виділяється НЕ від задоволення, а від очікування нагороди. Тому ми часто більше хочемо щось, ніж насолоджуємось отриманим. Залежності (ігри, соцмережі) — це «зламана» допамінова система." },
+      { q: "Чому оптичні ілюзії обманюють мозок?", opts: ["Очі працюють неправильно", "Мозок інтерпретує інформацію на основі припущень", "Недостатнє освітлення", "Вроджений дефект зору"], ans: 1, info: "Мозок не просто «бачить» — він інтерпретує і добудовує зображення на основі досвіду. Ілюзії виникають коли ці припущення не відповідають реальності. Це доводить: ми бачимо не «реальність», а модель реальності, побудовану мозком." },
+      { q: "Що відбувається з мозком під час медитації?", opts: ["Мозок вимикається", "Активізується префронтальна кора, знижується активність амігдали", "Всі нейрони працюють одночасно", "Нічого не змінюється"], ans: 1, info: "Медитація посилює префронтальну кору (контроль, увага) і зменшує активність амігдали (страх, тривога). Регулярна практика фізично змінює мозок: збільшується сіра речовина, покращуються зв'язки між регіонами. Це нейропластичність в дії!" },
+      { q: "Що таке «фантомний біль»?", opts: ["Уявний біль при тривозі", "Біль у ампутованій кінцівці", "Біль від спогадів", "Психосоматичний біль"], ans: 1, info: "Фантомний біль — відчуття болю в кінцівці, якої вже немає. Відчувають до 80% ампутантів! Мозок зберігає «карту тіла» і продовжує посилати/очікувати сигнали. Рамачандран винайшов «дзеркальну терапію» для лікування — мозок можна «переучити»." }
     ]
   }
 ];
 
-// ===================== STATE =====================
+// =================== FACTS OF THE DAY ===================
+const facts = [
+  "Мозок споживає ~20% енергії тіла, хоча важить лише 2% від маси. Він ніколи повністю не «вимикається» — навіть уві сні.",
+  "Люди приймають ~35 000 рішень на день. Більшість — несвідомо. Ось чому ввечері важче робити складний вибір — «рішення-втома».",
+  "Посмішка може покращити настрій навіть якщо вона «штучна». Це «гіпотеза лицьового зворотного зв'язку» — м'язи обличчя впливають на емоції.",
+  "Ми запам'ятовуємо негативні події краще за позитивні. Це «негативне упередження» — еволюційний механізм виживання.",
+  "Колір може впливати на поведінку: червоний підвищує пульс, синій заспокоює. Тому лікарні часто пофарбовані у блакитні тони.",
+  "Мозок не відрізняє реальний і уявний досвід на рівні нейронів. Тому візуалізація успіху реально покращує результати у спорті.",
+  "Ми можемо утримувати увагу в середньому 8 секунд. У 2000 році було 12 секунд. Смартфони змінюють наш мозок.",
+  "Запах — єдине відчуття, яке йде прямо до емоційних центрів мозку, оминаючи таламус. Тому запахи так сильно пов'язані зі спогадами.",
+  "Мозок генерує достатньо електрики щоб засвітити невелику лампочку — ~12-25 ват потужності у стані активного мислення.",
+  "«Ефект Зейгарник»: ми краще запам'ятовуємо незавершені справи. Тому кліфхенгери в серіалах так ефективні — мозок хоче «закрити гештальт».",
+  "Об'єм інформації яку мозок може зберігати оцінюють у ~2.5 петабайти — це 3 мільйони годин відео.",
+  "Сміх заразний через дзеркальні нейрони. Ми несвідомо копіюємо емоції інших — це основа емпатії та соціальних зв'язків.",
+  "Музика активує більше ділянок мозку одночасно ніж будь-яка інша діяльність — тому музична терапія така ефективна.",
+  "Рішення, прийняті на повний сечовий міхур, виявляються більш раціональними. Самоконтроль в одній сфері посилює його в інших."
+];
+
+// =================== ACHIEVEMENTS ===================
+const ACHIEVEMENTS = [
+  { id: 'first_quiz', name: 'Перший крок', desc: 'Пройди свій перший квіз', icon: '🎯', check: (s) => s.totalPlayed >= 1 },
+  { id: 'perfect', name: 'Бездоганно!', desc: 'Отримай 100% в будь-якому квізі', icon: '💎', check: (s) => s.results.some(r => r.percentage === 100) },
+  { id: 'all_quizzes', name: 'Дослідник', desc: 'Пройди всі 6 квізів', icon: '🗺️', check: (s) => { const ids = new Set(s.results.map(r => r.quizId)); return quizzes.filter(q => q.id !== 'marathon').every(q => ids.has(q.id)); } },
+  { id: 'five_quizzes', name: 'Завзятий', desc: 'Пройди 5 квізів', icon: '🔥', check: (s) => s.totalPlayed >= 5 },
+  { id: 'ten_quizzes', name: 'Марафонець', desc: 'Пройди 10 квізів', icon: '🏃', check: (s) => s.totalPlayed >= 10 },
+  { id: 'streak_5', name: 'На хвилі', desc: 'Серія з 5 правильних відповідей', icon: '⚡', check: (s) => s.bestStreak >= 5 },
+  { id: 'streak_10', name: 'Нестримний', desc: 'Серія з 10 правильних відповідей', icon: '🌊', check: (s) => s.bestStreak >= 10 },
+  { id: 'speed_demon', name: 'Блискавка', desc: 'Пройди квіз за менше ніж 2 хвилини', icon: '⚡', check: (s) => s.results.some(r => r.timeSpent < 120 && r.percentage >= 70) },
+  { id: 'brain_master', name: 'Майстер розуму', desc: '90%+ у когнітивній психології', icon: '🧠', check: (s) => s.results.some(r => r.quizId === 'cognitive' && r.percentage >= 90) },
+  { id: 'heart_master', name: 'Знавець емоцій', desc: '90%+ в емоціях та почуттях', icon: '💜', check: (s) => s.results.some(r => r.quizId === 'emotions' && r.percentage >= 90) },
+  { id: 'social_master', name: 'Соціальний гуру', desc: '90%+ у соціальній психології', icon: '👥', check: (s) => s.results.some(r => r.quizId === 'social' && r.percentage >= 90) },
+  { id: 'neuro_master', name: 'Нейронауковець', desc: '90%+ у нейропсихології', icon: '🔬', check: (s) => s.results.some(r => r.quizId === 'neuro' && r.percentage >= 90) },
+  { id: 'night_owl', name: 'Нічна сова', desc: 'Пройди квіз після 23:00', icon: '🦉', check: (s) => s.results.some(r => { const h = new Date(r.date).getHours(); return h >= 23 || h < 5; }) },
+  { id: 'collector', name: 'Колекціонер', desc: 'Набери 500 XP', icon: '💰', check: (s) => (s.xp || 0) >= 500 },
+  { id: 'legend', name: 'Легенда', desc: 'Набери 2000 XP', icon: '👑', check: (s) => (s.xp || 0) >= 2000 },
+  { id: 'marathon_done', name: 'Витривалий', desc: 'Пройди марафон', icon: '🏅', check: (s) => s.results.some(r => r.quizId === 'marathon') }
+];
+
+// =================== LEVELS ===================
+const LEVELS = [
+  { name: 'Новачок', icon: '🌱', minXP: 0 },
+  { name: 'Учень', icon: '📖', minXP: 100 },
+  { name: 'Дослідник', icon: '🔍', minXP: 300 },
+  { name: 'Знавець', icon: '🎓', minXP: 600 },
+  { name: 'Експерт', icon: '⭐', minXP: 1000 },
+  { name: 'Майстер', icon: '🏆', minXP: 1500 },
+  { name: 'Гуру', icon: '🧙', minXP: 2500 },
+  { name: 'Легенда', icon: '👑', minXP: 4000 }
+];
+
+function getLevel(xp) {
+  let lvl = LEVELS[0];
+  for (const l of LEVELS) {
+    if (xp >= l.minXP) lvl = l;
+  }
+  const idx = LEVELS.indexOf(lvl);
+  const next = LEVELS[idx + 1];
+  const isMax = !next;
+  const progress = !isMax ? ((xp - lvl.minXP) / (next.minXP - lvl.minXP)) * 100 : 100;
+  return { ...lvl, index: idx + 1, total: LEVELS.length, progress: Math.min(100, progress), xp, nextXP: next ? next.minXP : lvl.minXP, isMax };
+}
+
+// =================== STATE ===================
 let state = {
-  currentQuiz: null,
-  currentQ: 0,
-  score: 0,
-  answered: false,
-  timerInterval: null,
-  timeLeft: 30,
-  totalTime: 0,
-  streak: 0,
-  maxStreak: 0
+  currentQuiz: null, currentQ: 0, score: 0, answered: false,
+  timerInterval: null, timeLeft: 30, totalTime: 0,
+  streak: 0, maxStreak: 0
 };
 
-// ===================== STORAGE =====================
+// =================== STORAGE ===================
 function getStorage() {
-  try {
-    return JSON.parse(localStorage.getItem('psyquiz') || '{}');
-  } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem('psyquiz') || '{}'); } catch { return {}; }
 }
 
 function saveStorage(data) {
   localStorage.setItem('psyquiz', JSON.stringify(data));
+}
+
+function calcXP(score, total, timeSpent) {
+  let xp = score * 10; // 10 XP per correct
+  const pct = (score / total) * 100;
+  if (pct === 100) xp += 50; // perfect bonus
+  else if (pct >= 90) xp += 25;
+  if (timeSpent < 120 && pct >= 70) xp += 20; // speed bonus
+  return xp;
 }
 
 function saveResult(quizId, score, total, timeSpent) {
@@ -1310,49 +833,52 @@ function saveResult(quizId, score, total, timeSpent) {
   if (!data.bestScores) data.bestScores = {};
 
   const pct = Math.round((score / total) * 100);
+  const earnedXP = calcXP(score, total, timeSpent);
 
-  data.results.unshift({
-    quizId,
-    score,
-    total,
-    percentage: pct,
-    date: new Date().toISOString(),
-    timeSpent
-  });
-
-  // Keep only last 50 results
+  data.results.unshift({ quizId, score, total, percentage: pct, date: new Date().toISOString(), timeSpent });
   if (data.results.length > 50) data.results = data.results.slice(0, 50);
 
-  // Update best score
-  if (!data.bestScores[quizId] || pct > data.bestScores[quizId]) {
-    data.bestScores[quizId] = pct;
-  }
+  if (!data.bestScores[quizId] || pct > data.bestScores[quizId]) data.bestScores[quizId] = pct;
+  if (!data.bestStreak || state.maxStreak > data.bestStreak) data.bestStreak = state.maxStreak;
 
-  // Update best streak
-  if (!data.bestStreak || state.maxStreak > data.bestStreak) {
-    data.bestStreak = state.maxStreak;
-  }
+  data.xp = (data.xp || 0) + earnedXP;
+
+  // Check achievements
+  const stats = getStatsFromData(data);
+  if (!data.achievements) data.achievements = {};
+  const newAch = [];
+
+  ACHIEVEMENTS.forEach(a => {
+    if (!data.achievements[a.id] && a.check(stats)) {
+      data.achievements[a.id] = new Date().toISOString();
+      newAch.push(a);
+    }
+  });
 
   saveStorage(data);
+  return { earnedXP, newAchievements: newAch };
 }
 
-function getStats() {
-  const data = getStorage();
+function getStatsFromData(data) {
   const results = data.results || [];
-  const totalPlayed = results.length;
-  const totalQuestions = results.reduce((s, r) => s + r.total, 0);
-  const avgScore = totalPlayed ? Math.round(results.reduce((s, r) => s + r.percentage, 0) / totalPlayed) : 0;
-  const bestScore = totalPlayed ? Math.max(...results.map(r => r.percentage)) : 0;
-  const bestStreak = data.bestStreak || 0;
-  return { totalPlayed, totalQuestions, avgScore, bestScore, bestStreak, results, bestScores: data.bestScores || {} };
+  return {
+    totalPlayed: results.length,
+    totalQuestions: results.reduce((s, r) => s + r.total, 0),
+    avgScore: results.length ? Math.round(results.reduce((s, r) => s + r.percentage, 0) / results.length) : 0,
+    bestScore: results.length ? Math.max(...results.map(r => r.percentage)) : 0,
+    bestStreak: data.bestStreak || 0,
+    xp: data.xp || 0,
+    results, bestScores: data.bestScores || {},
+    achievements: data.achievements || {}
+  };
 }
 
-// ===================== THEME =====================
+function getStats() { return getStatsFromData(getStorage()); }
+
+// =================== THEME ===================
 function initTheme() {
   const data = getStorage();
-  if (data.theme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-  }
+  if (data.theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
 }
 
 function toggleTheme() {
@@ -1363,21 +889,21 @@ function toggleTheme() {
   saveStorage(data);
 }
 
-// ===================== PARTICLES =====================
+// =================== PARTICLES ===================
 function initParticles() {
-  const container = document.getElementById('particles');
-  for (let i = 0; i < 30; i++) {
+  const c = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     p.style.left = Math.random() * 100 + '%';
     p.style.top = Math.random() * 100 + '%';
     p.style.animationDelay = Math.random() * 4 + 's';
     p.style.animationDuration = (3 + Math.random() * 3) + 's';
-    container.appendChild(p);
+    c.appendChild(p);
   }
 }
 
-// ===================== CONFETTI =====================
+// =================== CONFETTI ===================
 function launchConfetti() {
   const canvas = document.getElementById('confetti');
   const ctx = canvas.getContext('2d');
@@ -1386,20 +912,14 @@ function launchConfetti() {
 
   const pieces = [];
   const colors = ['#7f5af0', '#2cb67d', '#f9bc60', '#e16162', '#a78bfa', '#34d399'];
-
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 100; i++) {
     pieces.push({
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      vx: (Math.random() - 0.5) * 16,
-      vy: (Math.random() - 0.8) * 16,
-      w: 6 + Math.random() * 6,
-      h: 4 + Math.random() * 4,
+      x: canvas.width / 2, y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 16, vy: (Math.random() - 0.8) * 16,
+      w: 5 + Math.random() * 6, h: 3 + Math.random() * 4,
       color: colors[Math.floor(Math.random() * colors.length)],
-      rotation: Math.random() * 360,
-      rotSpeed: (Math.random() - 0.5) * 12,
-      gravity: 0.15 + Math.random() * 0.1,
-      opacity: 1
+      rotation: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 12,
+      gravity: 0.15 + Math.random() * 0.1, opacity: 1
     });
   }
 
@@ -1407,18 +927,12 @@ function launchConfetti() {
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let alive = false;
-
     pieces.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += p.gravity;
-      p.rotation += p.rotSpeed;
-      p.opacity -= 0.008;
-
+      p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
+      p.rotation += p.rotSpeed; p.opacity -= 0.008;
       if (p.opacity > 0) {
         alive = true;
-        ctx.save();
-        ctx.translate(p.x, p.y);
+        ctx.save(); ctx.translate(p.x, p.y);
         ctx.rotate(p.rotation * Math.PI / 180);
         ctx.globalAlpha = Math.max(0, p.opacity);
         ctx.fillStyle = p.color;
@@ -1426,57 +940,123 @@ function launchConfetti() {
         ctx.restore();
       }
     });
-
     frame++;
-    if (alive && frame < 200) requestAnimationFrame(animate);
+    if (alive && frame < 180) requestAnimationFrame(animate);
     else ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   animate();
 }
 
-// ===================== SCREENS =====================
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-
-  if (name === 'home') renderHome();
-  if (name === 'stats') renderStats();
+// =================== XP POPUP ===================
+function showXPPopup(xp) {
+  const el = document.createElement('div');
+  el.className = 'xp-popup';
+  el.textContent = `+${xp} XP`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1600);
 }
 
-// ===================== HOME =====================
+// =================== SCREENS ===================
+function showScreen(name) {
+  if (name !== 'quiz') clearInterval(state.timerInterval);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  if (name === 'home') renderHome();
+  if (name === 'stats') renderStats();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =================== TABS ===================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (tab === 'stats' && i === 0) || (tab === 'achievements' && i === 1));
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'achievements') renderAchievements();
+}
+
+// =================== HOME ===================
 function renderHome() {
   const stats = getStats();
+  const level = getLevel(stats.xp);
+
   document.getElementById('totalPlayed').textContent = stats.totalPlayed;
   document.getElementById('avgScore').textContent = stats.avgScore + '%';
   document.getElementById('bestStreak').textContent = stats.bestStreak;
+  document.getElementById('totalXP').textContent = stats.xp;
 
+  // Level badge mini
+  document.getElementById('levelBadgeMini').innerHTML = `${level.icon} ${level.name}`;
+
+  // Level card
+  document.getElementById('levelCard').innerHTML = `
+    <div class="level-icon">${level.icon}</div>
+    <div class="level-info">
+      <div class="level-title">Рівень ${level.index}: ${level.name}</div>
+      <div class="level-subtitle">${!level.isMax ? `До наступного рівня: ${level.nextXP - level.xp} XP` : 'Максимальний рівень!'}</div>
+      <div class="xp-bar"><div class="xp-fill" style="width:${level.progress}%"></div></div>
+      <div class="xp-text">${level.xp} ${!level.isMax ? `/ ${level.nextXP}` : ''} XP</div>
+    </div>
+  `;
+
+  // Fact of the day
+  const today = new Date();
+  const factIndex = (today.getFullYear() * 366 + today.getMonth() * 31 + today.getDate()) % facts.length;
+  document.getElementById('factCard').innerHTML = `
+    <div class="fact-card">
+      <div class="fact-label">💡 Факт дня</div>
+      <div class="fact-text">${facts[factIndex]}</div>
+    </div>
+  `;
+
+  // Quiz grid
   const grid = document.getElementById('quizGrid');
   grid.innerHTML = '';
 
+  // Regular quizzes
   quizzes.forEach(quiz => {
     const best = stats.bestScores[quiz.id];
     const card = document.createElement('div');
     card.className = 'quiz-card';
     card.onclick = () => startQuiz(quiz.id);
-    card.innerHTML = `
-      <div class="quiz-card-inner">
-        <div class="quiz-card-top">
-          <div class="quiz-card-icon">${quiz.icon}</div>
-          <span class="quiz-badge badge-${quiz.badge}">${quiz.badgeText}</span>
-        </div>
-        <h3>${quiz.title}</h3>
-        <div class="quiz-card-desc">${quiz.desc}</div>
-        <div class="quiz-card-footer">
-          <span class="quiz-card-meta">${quiz.questions.length} питань</span>
-          ${best !== undefined ? `<span class="quiz-best-score">Рекорд: ${best}%</span>` : '<span class="quiz-card-meta">Ще не пройдено</span>'}
-        </div>
+    card.innerHTML = `<div class="quiz-card-inner">
+      <div class="quiz-card-top">
+        <div class="quiz-card-icon">${quiz.icon}</div>
+        <span class="quiz-badge badge-${quiz.badge}">${quiz.badgeText}</span>
       </div>
-    `;
+      <h3>${quiz.title}</h3>
+      <div class="quiz-card-desc">${quiz.desc}</div>
+      <div class="quiz-card-footer">
+        <span class="quiz-card-meta">${quiz.questions.length} питань</span>
+        ${best !== undefined ? `<span class="quiz-best-score">Рекорд: ${best}%</span>` : '<span class="quiz-card-meta">Не пройдено</span>'}
+      </div>
+    </div>`;
     grid.appendChild(card);
   });
+
+  // Marathon card
+  const totalQ = quizzes.reduce((s, q) => s + q.questions.length, 0);
+  const marathonCard = document.createElement('div');
+  marathonCard.className = 'quiz-card marathon';
+  marathonCard.onclick = () => startMarathon();
+  const mBest = stats.bestScores['marathon'];
+  marathonCard.innerHTML = `<div class="quiz-card-inner">
+    <div class="quiz-card-top">
+      <div class="quiz-card-icon">🏅</div>
+      <span class="quiz-badge badge-marathon">Марафон</span>
+    </div>
+    <h3>Марафон — усі питання</h3>
+    <div class="quiz-card-desc">Всі питання з усіх квізів підряд. Перевір повні знання з психології!</div>
+    <div class="quiz-card-footer">
+      <span class="quiz-card-meta">${totalQ} питань</span>
+      ${mBest !== undefined ? `<span class="quiz-best-score">Рекорд: ${mBest}%</span>` : '<span class="quiz-card-meta">Не пройдено</span>'}
+    </div>
+  </div>`;
+  grid.appendChild(marathonCard);
 }
 
-// ===================== QUIZ =====================
+// =================== QUIZ ===================
 function shuffleArray(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -1486,33 +1066,36 @@ function shuffleArray(arr) {
   return a;
 }
 
+function prepareQuestions(questions) {
+  return shuffleArray(questions).map(q => {
+    const indices = shuffleArray([0, 1, 2, 3]);
+    return { ...q, opts: indices.map(i => q.opts[i]), ans: indices.indexOf(q.ans) };
+  });
+}
+
 function startQuiz(quizId) {
   const quiz = quizzes.find(q => q.id === quizId);
   if (!quiz) return;
 
-  // Shuffle questions and options
-  const shuffled = shuffleArray(quiz.questions).map(q => {
-    const letters = ['A', 'B', 'C', 'D'];
-    const indices = [0, 1, 2, 3];
-    const shuffledIndices = shuffleArray(indices);
-    const newOpts = shuffledIndices.map(i => q.opts[i]);
-    const newAns = shuffledIndices.indexOf(q.ans);
-    return { ...q, opts: newOpts, ans: newAns };
-  });
-
   state = {
-    currentQuiz: { ...quiz, questions: shuffled },
-    currentQ: 0,
-    score: 0,
-    answered: false,
-    timerInterval: null,
-    timeLeft: 30,
-    totalTime: 0,
-    streak: 0,
-    maxStreak: 0
+    currentQuiz: { ...quiz, questions: prepareQuestions(quiz.questions) },
+    currentQ: 0, score: 0, answered: false,
+    timerInterval: null, timeLeft: 30, totalTime: 0, streak: 0, maxStreak: 0
   };
 
   document.getElementById('playTitle').textContent = quiz.icon + ' ' + quiz.title;
+  showScreen('quiz');
+  showQuestion();
+}
+
+function startMarathon() {
+  const allQ = quizzes.flatMap(q => q.questions);
+  state = {
+    currentQuiz: { id: 'marathon', title: 'Марафон', icon: '🏅', questions: prepareQuestions(allQ) },
+    currentQ: 0, score: 0, answered: false,
+    timerInterval: null, timeLeft: 30, totalTime: 0, streak: 0, maxStreak: 0
+  };
+  document.getElementById('playTitle').textContent = '🏅 Марафон';
   showScreen('quiz');
   showQuestion();
 }
@@ -1536,11 +1119,18 @@ function showQuestion() {
   timer.className = 'timer';
   document.getElementById('timerValue').textContent = '30';
 
-  // Recreate question card for animation
+  // Streak badge
+  const streakBadge = document.getElementById('streakBadge');
+  if (state.streak >= 3) {
+    streakBadge.classList.add('show');
+    document.getElementById('streakCount').textContent = state.streak;
+  } else {
+    streakBadge.classList.remove('show');
+  }
+
+  // Animate card
   const card = document.getElementById('questionCard');
-  card.style.animation = 'none';
-  card.offsetHeight; // trigger reflow
-  card.style.animation = '';
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
 
   const opts = document.getElementById('qOptions');
   opts.innerHTML = '';
@@ -1554,23 +1144,15 @@ function showQuestion() {
     opts.appendChild(btn);
   });
 
-  document.getElementById('qFeedback').classList.remove('show');
-  document.getElementById('qFeedback').classList.remove('correct-fb', 'wrong-fb');
+  document.getElementById('qFeedback').classList.remove('show', 'correct-fb', 'wrong-fb');
   document.getElementById('qNext').classList.remove('show');
 
-  // Start timer
   state.timerInterval = setInterval(() => {
-    state.timeLeft--;
-    state.totalTime++;
+    state.timeLeft--; state.totalTime++;
     document.getElementById('timerValue').textContent = state.timeLeft;
-
     if (state.timeLeft <= 10) timer.className = 'timer warning';
     if (state.timeLeft <= 5) timer.className = 'timer danger';
-
-    if (state.timeLeft <= 0) {
-      clearInterval(state.timerInterval);
-      selectAnswer(-1); // timeout
-    }
+    if (state.timeLeft <= 0) { clearInterval(state.timerInterval); selectAnswer(-1); }
   }, 1000);
 }
 
@@ -1590,38 +1172,42 @@ function selectAnswer(index) {
   });
 
   if (isCorrect) {
-    state.score++;
-    state.streak++;
+    state.score++; state.streak++;
     if (state.streak > state.maxStreak) state.maxStreak = state.streak;
     document.getElementById('qScore').textContent = `${state.score} правильних`;
+
+    // Update streak badge
+    if (state.streak >= 3) {
+      const sb = document.getElementById('streakBadge');
+      sb.classList.add('show');
+      document.getElementById('streakCount').textContent = state.streak;
+      sb.style.animation = 'none'; sb.offsetHeight; sb.style.animation = '';
+    }
   } else {
     state.streak = 0;
+    document.getElementById('streakBadge').classList.remove('show');
   }
 
-  // Feedback
   const fb = document.getElementById('qFeedback');
-  const fbHeader = document.getElementById('fbHeader');
-  const fbText = document.getElementById('fbText');
-
   fb.classList.remove('correct-fb', 'wrong-fb');
 
   if (index === -1) {
     fb.classList.add('wrong-fb');
-    fbHeader.textContent = "Час вийшов!";
+    document.getElementById('fbHeader').textContent = "⏰ Час вийшов!";
   } else if (isCorrect) {
     fb.classList.add('correct-fb');
-    const praise = ['Чудово!', 'Правильно!', 'Так тримати!', 'Бездоганно!', 'Точно!'][Math.floor(Math.random() * 5)];
-    fbHeader.textContent = praise;
+    const praise = ['Чудово!', 'Правильно!', 'Так тримати!', 'Бездоганно!', 'Точно в ціль!'][Math.floor(Math.random() * 5)];
+    document.getElementById('fbHeader').textContent = '✅ ' + praise;
   } else {
     fb.classList.add('wrong-fb');
-    fbHeader.textContent = "Не зовсім так...";
+    document.getElementById('fbHeader').textContent = "❌ Не зовсім так...";
   }
 
-  fbText.textContent = q.info;
+  document.getElementById('fbText').textContent = q.info;
   fb.classList.add('show');
 
   const nextBtn = document.getElementById('qNext');
-  nextBtn.textContent = state.currentQ < state.currentQuiz.questions.length - 1 ? 'Наступне питання' : 'Результати';
+  nextBtn.textContent = state.currentQ < state.currentQuiz.questions.length - 1 ? 'Наступне питання →' : 'Результати →';
   nextBtn.classList.add('show');
 }
 
@@ -1642,15 +1228,15 @@ function finishQuiz() {
   const total = quiz.questions.length;
   const pct = Math.round((state.score / total) * 100);
 
-  saveResult(quiz.id, state.score, total, state.totalTime);
+  const { earnedXP, newAchievements } = saveResult(quiz.id, state.score, total, state.totalTime);
 
   showScreen('results');
+  showXPPopup(earnedXP);
 
-  // Animate score circle
-  const circle = document.getElementById('scoreCircle');
-  const circumference = 2 * Math.PI * 65; // ~408
+  // Score circle animation
+  const circumference = 2 * Math.PI * 65;
   setTimeout(() => {
-    circle.style.strokeDashoffset = circumference - (circumference * pct / 100);
+    document.getElementById('scoreCircle').style.strokeDashoffset = circumference - (circumference * pct / 100);
   }, 100);
 
   document.getElementById('scoreText').textContent = pct + '%';
@@ -1664,17 +1250,17 @@ function finishQuiz() {
   let icon, title, sub, message;
   if (pct >= 90) {
     icon = '🏆'; title = 'Вражаюче!'; sub = quiz.title;
-    message = 'Ти чудово розбираєшся в цій темі! Твої знання на дуже високому рівні — продовжуй вивчати психологію, тобі це вдається!';
+    message = 'Ти чудово розбираєшся в цій темі! Твої знання на високому рівні — продовжуй вивчати психологію!';
     launchConfetti();
   } else if (pct >= 70) {
     icon = '🌟'; title = 'Чудовий результат!'; sub = quiz.title;
-    message = 'Ти маєш гарну базу знань. Деякі теми варто поглибити — перечитай пояснення до питань, де помилився, там багато цікавого.';
+    message = 'Гарна база знань! Перечитай пояснення до помилок — там багато цікавого.';
   } else if (pct >= 50) {
     icon = '📚'; title = 'Добрий старт!'; sub = quiz.title;
-    message = 'Ти вже знаєш основи, але є простір для росту. Кожне пояснення у квізі — це міні-урок. Спробуй ще раз!';
+    message = 'Ти вже знаєш основи. Кожне пояснення у квізі — це міні-урок. Спробуй ще раз!';
   } else {
     icon = '🌱'; title = 'Початок шляху!'; sub = quiz.title;
-    message = 'Не хвилюйся — кожна відповідь у цьому квізі навчила тебе чомусь новому. Психологія — захоплива наука, і ти вже на правильному шляху!';
+    message = 'Не хвилюйся — кожна відповідь навчила тебе чомусь новому. Психологія захоплива, спробуй ще!';
   }
 
   document.getElementById('resIcon').textContent = icon;
@@ -1682,10 +1268,36 @@ function finishQuiz() {
   document.getElementById('resSub').textContent = sub;
   document.getElementById('resMessage').textContent = message;
 
-  document.getElementById('retryBtn').onclick = () => startQuiz(quiz.id);
+  // New achievements
+  const achContainer = document.getElementById('newAchievements');
+  if (newAchievements.length > 0) {
+    achContainer.innerHTML = `
+      <div class="achievement-banner">
+        <div class="achievement-banner-title">🎉 Нові досягнення!</div>
+        ${newAchievements.map(a => `
+          <div class="achievement-item">
+            <div class="achievement-item-icon">${a.icon}</div>
+            <div>
+              <div class="achievement-item-name">${a.name}</div>
+              <div class="achievement-item-desc">${a.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    achContainer.innerHTML = '';
+  }
+
+  // Retry button
+  if (quiz.id === 'marathon') {
+    document.getElementById('retryBtn').onclick = () => startMarathon();
+  } else {
+    document.getElementById('retryBtn').onclick = () => startQuiz(quiz.id);
+  }
 }
 
-// ===================== STATS =====================
+// =================== STATS ===================
 function renderStats() {
   const stats = getStats();
 
@@ -1694,22 +1306,17 @@ function renderStats() {
   document.getElementById('sAvgScore').textContent = stats.avgScore + '%';
   document.getElementById('sBestScore').textContent = stats.bestScore + '%';
 
+  // History
   const list = document.getElementById('historyList');
   list.innerHTML = '';
 
   if (stats.results.length === 0) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">📊</div>
-        <p>Ще немає результатів.<br>Пройди свій перший квіз!</p>
-      </div>
-    `;
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📊</div><p>Ще немає результатів.<br>Пройди перший квіз!</p></div>`;
     return;
   }
 
   stats.results.slice(0, 20).forEach(r => {
-    const quiz = quizzes.find(q => q.id === r.quizId);
-    if (!quiz) return;
+    const quiz = quizzes.find(q => q.id === r.quizId) || { icon: '🏅', title: 'Марафон' };
     const date = new Date(r.date);
     const dateStr = date.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
@@ -1718,7 +1325,7 @@ function renderStats() {
     item.innerHTML = `
       <div class="history-info">
         <h4>${quiz.icon} ${quiz.title}</h4>
-        <div class="history-date">${dateStr} &bull; ${r.score}/${r.total} правильних</div>
+        <div class="history-date">${dateStr} · ${r.score}/${r.total}</div>
       </div>
       <div class="history-score">${r.percentage}%</div>
     `;
@@ -1726,7 +1333,45 @@ function renderStats() {
   });
 }
 
-// ===================== INIT =====================
+function renderAchievements() {
+  const stats = getStats();
+  const level = getLevel(stats.xp);
+
+  document.getElementById('levelCardStats').innerHTML = `
+    <div class="level-icon">${level.icon}</div>
+    <div class="level-info">
+      <div class="level-title">Рівень ${level.index}: ${level.name}</div>
+      <div class="level-subtitle">${!level.isMax ? `До наступного: ${level.nextXP - level.xp} XP` : 'Максимальний рівень!'}</div>
+      <div class="xp-bar"><div class="xp-fill" style="width:${level.progress}%"></div></div>
+      <div class="xp-text">${level.xp} ${!level.isMax ? `/ ${level.nextXP}` : ''} XP</div>
+    </div>
+  `;
+
+  const grid = document.getElementById('achievementsGrid');
+  grid.innerHTML = '';
+
+  ACHIEVEMENTS.forEach(a => {
+    const unlocked = stats.achievements[a.id];
+    const card = document.createElement('div');
+    card.className = 'ach-card ' + (unlocked ? 'unlocked' : 'locked');
+
+    let dateStr = '';
+    if (unlocked) {
+      const d = new Date(unlocked);
+      dateStr = d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
+    }
+
+    card.innerHTML = `
+      <div class="ach-icon">${unlocked ? a.icon : '🔒'}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${a.desc}</div>
+      ${unlocked ? `<div class="ach-date">${dateStr}</div>` : ''}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// =================== INIT ===================
 initTheme();
 initParticles();
 renderHome();
