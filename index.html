@@ -202,470 +202,126 @@
       transition: all 0.3s ease; position: relative; overflow: hidden;
     }
 
-    .quiz-card::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, var(--accent-glow), transparent);
-      opacity: 0; transition: opacity 0.3s;
-    }
-
     .quiz-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 8px 30px var(--accent-glow); }
-    .quiz-card:hover::before { opacity: 1; }
-
-    .quiz-card-inner { position: relative; z-index: 1; }
-
-    .quiz-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .quiz-card-icon { font-size: 2rem; }
-
-    .quiz-badge {
-      padding: 4px 10px; border-radius: 20px; font-size: 0.68rem;
-      font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-    }
-
-    .badge-easy { background: var(--success-bg); color: var(--success); }
-    .badge-medium { background: rgba(249, 188, 96, 0.15); color: var(--warning); }
-    .badge-hard { background: var(--error-bg); color: var(--error); }
-    .badge-marathon { background: var(--accent-glow); color: var(--accent-light); }
-
-    .quiz-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
-    .quiz-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px; }
-    .quiz-card-footer { display: flex; justify-content: space-between; align-items: center; }
-    .quiz-card-meta { font-size: 0.75rem; color: var(--text-secondary); }
-    .quiz-best-score { font-size: 0.75rem; color: var(--accent); font-weight: 600; }
-
-    /* Marathon card special */
-    .quiz-card.marathon { border: 1px dashed var(--accent); }
-
-    /* Quiz play */
-    .quiz-play-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .quiz-play-title { font-size: 1rem; font-weight: 700; color: var(--text-secondary); }
-
-    .timer {
-      display: flex; align-items: center; gap: 6px; font-size: 0.9rem;
-      font-weight: 600; color: var(--text-secondary); padding: 8px 14px;
-      background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border);
-    }
-
-    .timer.warning { color: var(--warning); }
-    .timer.danger { color: var(--error); animation: timerPulse 0.5s ease-in-out infinite; }
-
-    @keyframes timerPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .streak-badge {
-      display: none; align-items: center; gap: 5px; padding: 6px 12px;
-      background: rgba(249, 188, 96, 0.15); border: 1px solid rgba(249, 188, 96, 0.3);
-      border-radius: 12px; font-size: 0.82rem; font-weight: 700; color: var(--warning);
-      animation: streakPop 0.3s ease;
-    }
-
-    .streak-badge.show { display: flex; }
-
-    @keyframes streakPop {
-      0% { transform: scale(0.5); opacity: 0; }
-      70% { transform: scale(1.15); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .progress-container { margin-bottom: 24px; }
-    .progress-info { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px; }
-    .progress-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 3px; transition: width 0.5s ease; }
-
-    .question-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 24px; padding: 30px; animation: cardIn 0.4s ease;
-    }
-
-    @keyframes cardIn {
-      from { opacity: 0; transform: scale(0.96) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .q-number { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 700; margin-bottom: 10px; }
-    .q-text { font-size: 1.15rem; font-weight: 600; line-height: 1.5; margin-bottom: 24px; }
-
-    .options { display: flex; flex-direction: column; gap: 10px; }
-
-    .opt-btn {
-      width: 100%; text-align: left; padding: 16px 20px;
-      border: 2px solid var(--border); border-radius: 16px;
-      background: var(--bg-secondary); color: var(--text-primary);
-      font-size: 0.93rem; cursor: pointer; transition: all 0.25s ease;
-      font-family: inherit; line-height: 1.4;
-      display: flex; align-items: center; gap: 14px;
-    }
-
-    .opt-letter {
-      flex-shrink: 0; width: 30px; height: 30px; border-radius: 10px;
-      background: var(--bg-card); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.82rem; color: var(--text-secondary); transition: all 0.25s;
-    }
-
-    .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--bg-card-hover); transform: translateX(4px); }
-    .opt-btn:hover:not(:disabled) .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .opt-btn:disabled { cursor: default; }
-
-    .opt-btn.correct { border-color: var(--success); background: var(--success-bg); }
-    .opt-btn.correct .opt-letter { background: var(--success); color: #fff; border-color: var(--success); }
-    .opt-btn.wrong { border-color: var(--error); background: var(--error-bg); }
-    .opt-btn.wrong .opt-letter { background: var(--error); color: #fff; border-color: var(--error); }
-
-    /* XP popup */
-    .xp-popup {
-      position: fixed; top: 80px; right: 30px; z-index: 200;
-      padding: 12px 20px; border-radius: 14px;
-      background: var(--accent); color: #fff; font-weight: 700;
-      font-size: 0.95rem; pointer-events: none;
-      animation: xpFloat 1.5s ease forwards;
-    }
-
-    @keyframes xpFloat {
-      0% { opacity: 0; transform: translateY(20px) scale(0.8); }
-      20% { opacity: 1; transform: translateY(0) scale(1); }
-      80% { opacity: 1; transform: translateY(-10px); }
-      100% { opacity: 0; transform: translateY(-30px); }
-    }
-
-    .feedback {
-      margin-top: 20px; padding: 18px 22px; border-radius: 16px;
-      display: none; animation: feedbackIn 0.4s ease;
-    }
-
-    .feedback.show { display: block; }
-    .feedback.correct-fb { background: var(--success-bg); border: 1px solid rgba(44, 182, 125, 0.3); }
-    .feedback.wrong-fb { background: var(--error-bg); border: 1px solid rgba(225, 97, 98, 0.3); }
-
-    @keyframes feedbackIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .feedback-header { font-weight: 700; font-size: 1rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-    .correct-fb .feedback-header { color: var(--success); }
-    .wrong-fb .feedback-header { color: var(--error); }
-    .feedback-text { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; }
-
-    .action-btn {
-      display: none; margin-top: 20px; width: 100%; padding: 16px;
-      border: none; border-radius: 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      color: #fff; font-size: 1rem; font-weight: 700;
-      cursor: pointer; transition: all 0.2s; font-family: inherit;
-    }
-
-    .action-btn.show { display: block; animation: feedbackIn 0.3s ease; }
-    .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
-
-    /* Results */
-    .results-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 24px; padding: 36px 28px; text-align: center;
-    }
-
-    .results-icon { font-size: 3.5rem; margin-bottom: 10px; display: inline-block; animation: bounce 0.6s ease; }
-
-    @keyframes bounce {
-      0% { transform: scale(0); }
-      60% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    .results-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
-    .results-subtitle { color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem; }
-
-    .score-circle { width: 130px; height: 130px; margin: 0 auto 20px; position: relative; }
-    .score-circle svg { transform: rotate(-90deg); }
-    .score-circle-bg { fill: none; stroke: var(--border); stroke-width: 8; }
-    .score-circle-fill { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 408; stroke-dashoffset: 408; transition: stroke-dashoffset 1.5s ease; }
-    .score-circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; font-weight: 800; color: var(--accent); }
-
-    .results-message { color: var(--text-secondary); line-height: 1.7; max-width: 480px; margin: 0 auto 20px; font-size: 0.9rem; }
-
-    .results-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-
-    .detail-item { padding: 12px; background: var(--bg-secondary); border-radius: 14px; text-align: center; }
-    .detail-value { font-size: 1.1rem; font-weight: 700; }
-    .detail-value.green { color: var(--success); }
-    .detail-value.red { color: var(--error); }
-    .detail-value.purple { color: var(--accent); }
-    .detail-label { font-size: 0.68rem; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; }
-
-    /* Achievement unlocked banner */
-    .achievement-banner {
-      margin: 20px 0; padding: 18px 22px; border-radius: 16px;
-      background: linear-gradient(135deg, rgba(249, 188, 96, 0.15), rgba(127, 90, 240, 0.1));
-      border: 1px solid rgba(249, 188, 96, 0.3);
-      animation: feedbackIn 0.5s ease;
-    }
-
-    .achievement-banner-title {
-      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1.5px; color: var(--warning); margin-bottom: 10px;
-    }
-
-    .achievement-item {
-      display: flex; align-items: center; gap: 12px; padding: 8px 0;
-    }
-
-    .achievement-item-icon { font-size: 1.8rem; }
-    .achievement-item-name { font-weight: 700; font-size: 0.9rem; }
-    .achievement-item-desc { font-size: 0.78rem; color: var(--text-secondary); }
-
-    .results-actions { display: flex; gap: 12px; }
-
-    .btn-primary, .btn-secondary {
-      flex: 1; padding: 14px; border-radius: 14px; font-size: 0.93rem;
-      font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; border: none;
-    }
-
-    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
-
-    .btn-secondary { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); }
-    .btn-secondary:hover { background: var(--bg-card-hover); transform: translateY(-2px); }
-
-    /* Achievements screen */
-    .achievements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-
-    .ach-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 18px; text-align: center;
-      transition: transform 0.2s; position: relative; overflow: hidden;
-    }
-
-    .ach-card.locked { opacity: 0.45; }
-    .ach-card.unlocked { border-color: var(--warning); }
-
-    .ach-card:hover { transform: translateY(-2px); }
-    .ach-icon { font-size: 2.2rem; margin-bottom: 8px; }
-    .ach-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
-    .ach-desc { font-size: 0.72rem; color: var(--text-secondary); line-height: 1.4; }
-    .ach-date { font-size: 0.65rem; color: var(--accent); margin-top: 6px; }
-
-    /* Stats screen */
-    .stats-header { text-align: center; margin-bottom: 24px; }
-    .stats-header h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
-
-    .stats-overview { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-    .stats-overview .stat-card { padding: 18px; }
-
-    .history-item {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 16px 18px; margin-bottom: 8px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-
-    .history-info h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 3px; }
-    .history-date { font-size: 0.75rem; color: var(--text-secondary); }
-    .history-score { font-size: 1rem; font-weight: 700; color: var(--accent); }
-
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
-    .empty-state-icon { font-size: 3rem; margin-bottom: 12px; }
-
-    #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
-
-    /* Tab navigation for stats */
-    .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg-secondary); border-radius: 14px; padding: 4px; }
-
-    .tab-btn {
-      flex: 1; padding: 10px; border: none; border-radius: 11px;
-      background: transparent; color: var(--text-secondary); font-size: 0.82rem;
-      font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s;
-    }
-
-    .tab-btn.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-
-    .tab-content { display: none; animation: feedbackIn 0.3s ease; }
-    .tab-content.active { display: block; }
 
     /* Accordion in Lessons */
     .lesson-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      margin-bottom: 10px;
-      overflow: hidden;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; margin-bottom: 10px; overflow: hidden;
       transition: all 0.3s ease;
     }
 
     .lesson-header {
-      padding: 18px 22px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      user-select: none;
-      transition: background 0.2s;
+      padding: 18px 22px; cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center;
+      gap: 12px; user-select: none;
     }
 
-    .lesson-header:hover {
-      background: var(--bg-card-hover);
-    }
+    .lesson-header:hover { background: var(--bg-card-hover); }
 
-    .lesson-header h4 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      line-height: 1.4;
-      flex: 1;
-    }
+    .lesson-header h4 { font-size: 0.95rem; font-weight: 600; line-height: 1.4; flex: 1; }
 
-    .lesson-icon-status {
-      font-size: 1.2rem;
-      transition: transform 0.3s ease;
-      color: var(--accent);
-    }
+    .lesson-icon-status { font-size: 1.2rem; transition: transform 0.3s ease; color: var(--accent); }
 
-    .lesson-item.active .lesson-icon-status {
-      transform: rotate(180deg);
-    }
+    .lesson-item.active .lesson-icon-status { transform: rotate(180deg); }
 
     .lesson-content {
-      max-height: 0;
-      overflow: hidden;
+      max-height: 0; overflow: hidden;
       transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
       background: rgba(0,0,0,0.1);
     }
 
     .lesson-item.active .lesson-content {
-      max-height: 1000px;
-      transition: max-height 0.4s cubic-bezier(1, 0, 1, 0);
+      max-height: 1000px; transition: max-height 0.4s cubic-bezier(1, 0, 1, 0);
     }
 
     .lesson-body {
-      padding: 20px 22px;
-      font-size: 0.9rem;
-      line-height: 1.7;
-      color: var(--text-secondary);
-      border-top: 1px solid var(--border);
+      padding: 20px 22px; font-size: 0.9rem; line-height: 1.7;
+      color: var(--text-secondary); border-top: 1px solid var(--border);
     }
 
     .lesson-category-tag {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--accent);
-      margin-bottom: 6px;
-      display: block;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--accent); margin-bottom: 6px; display: block;
+    }
+
+    /* Icebreaker Styles */
+    .icebreaker-section {
+      background: var(--bg-card); border-radius: 24px; padding: 30px;
+      margin: 20px 0 30px; border: 1px solid var(--accent-glow); text-align: center;
+    }
+
+    .icebreaker-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+
+    .icebreaker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+
+    .animal-card { cursor: pointer; transition: all 0.3s; text-align: center; }
+
+    .animal-img-wrapper {
+      width: 100%; aspect-ratio: 1; border-radius: 50%;
+      overflow: hidden; border: 3px solid transparent; transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .animal-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+    .animal-card:hover { transform: scale(1.1); }
+    .animal-card:hover .animal-img-wrapper { border-color: var(--accent-light); }
+    .animal-card.selected .animal-img-wrapper { border-color: var(--success); box-shadow: 0 0 20px var(--success-bg); }
+
+    .animal-name { display: block; margin-top: 8px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
+
+    .icebreaker-feedback {
+      margin-top: 15px; padding: 12px; background: var(--success-bg);
+      border-radius: 12px; font-size: 0.9rem; color: var(--success);
+      display: none; animation: feedbackIn 0.4s ease;
     }
 
     /* Detailed Lesson View Styles */
     .lesson-hero {
-      position: relative;
-      height: 250px;
-      border-radius: 24px;
-      overflow: hidden;
-      margin-bottom: 30px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      position: relative; height: 250px; border-radius: 24px;
+      overflow: hidden; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     }
 
-    .lesson-hero img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .lesson-hero img { width: 100%; height: 100%; object-fit: cover; }
 
     .lesson-hero-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(0deg, rgba(15, 14, 23, 0.9) 0%, transparent 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 30px;
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 30px;
     }
 
-    .lesson-hero-title {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 8px;
-    }
+    .lesson-hero-title { font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
 
-    .lesson-rich-content {
-      line-height: 1.8;
-      font-size: 1.05rem;
-      color: var(--text-primary);
-    }
+    .lesson-rich-content { line-height: 1.8; font-size: 1.05rem; color: var(--text-primary); }
 
-    .lesson-rich-content h3 {
-      font-size: 1.4rem;
-      margin: 40px 0 15px;
-      color: var(--accent-light);
-    }
+    .lesson-rich-content h3 { font-size: 1.4rem; margin: 40px 0 15px; color: var(--accent-light); }
 
-    .lesson-rich-content p {
-      margin-bottom: 20px;
-      color: var(--text-secondary);
-    }
-
-    .lesson-rich-content b {
-      color: var(--text-primary);
-    }
+    .lesson-rich-content p { margin-bottom: 20px; color: var(--text-secondary); }
 
     .lesson-quote {
-      border-left: 4px solid var(--accent);
-      padding: 15px 25px;
-      margin: 30px 0;
-      background: var(--bg-card);
-      border-radius: 0 16px 16px 0;
-      font-style: italic;
+      border-left: 4px solid var(--accent); padding: 15px 25px;
+      margin: 30px 0; background: var(--bg-card); border-radius: 0 16px 16px 0; font-style: italic;
     }
 
     .lesson-module-card {
-      background: var(--bg-card);
-      border-radius: 20px;
-      padding: 20px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: all 0.3s;
-      text-align: center;
+      background: var(--bg-card); border-radius: 20px; padding: 20px;
+      border: 1px solid var(--border); cursor: pointer; transition: all 0.3s; text-align: center;
     }
 
-    .lesson-module-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--accent);
-      box-shadow: 0 10px 30px var(--accent-glow);
-    }
+    .lesson-module-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px var(--accent-glow); }
 
-    .lesson-module-card .icon {
-      font-size: 3rem;
-      margin-bottom: 12px;
-      display: block;
-    }
+    .lesson-module-card .icon { font-size: 3rem; margin-bottom: 12px; display: block; }
 
-    .lesson-module-card h4 {
-      font-size: 0.9rem;
-      font-weight: 700;
-    }
+    .illustration-box { margin: 30px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
 
-    .illustration-box {
-      margin: 30px 0;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
+    .illustration-box img { width: 100%; display: block; }
 
-    .illustration-box img {
-      width: 100%;
-      display: block;
-    }
-
-    .illustration-caption {
-      padding: 12px;
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      text-align: center;
-      background: var(--bg-card);
-    }
+    .illustration-caption { padding: 12px; font-size: 0.82rem; color: var(--text-secondary); text-align: center; background: var(--bg-card); }
 
     @media (max-width: 600px) {
+      .hero h1 { font-size: 1.5rem; }
+      .icebreaker-grid { grid-template-columns: repeat(2, 1fr); }
       .lesson-hero { height: 180px; }
       .lesson-hero-title { font-size: 1.4rem; }
       .lessonsModulesGrid { grid-template-columns: 1fr; }
@@ -686,7 +342,7 @@
       <button class="icon-btn" onclick="showScreen('stats')" title="Статистика">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
       </button>
-      <button class="icon-btn" onclick="showScreen('lessons')" title="Уроки">
+      <button class="icon-btn" onclick="showScreen('lessons')" title="Бібліотека">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       </button>
       <button class="icon-btn" onclick="toggleTheme()" title="Тема">
@@ -700,23 +356,35 @@
     <div class="hero">
       <div class="hero-icon">🧠</div>
       <h1>Психологічні квізи</h1>
-      <p>Перевір знання з психології. Розблоковуй досягнення та піднімай свій рівень!</p>
+      <p>Вивчай психологію через інтерактивні уроки та квізи.</p>
       <button class="btn-primary" style="margin-top: 20px; max-width: 250px; margin-left: auto; margin-right: auto;" onclick="showScreen('lessons')">Вивчати теорію 📚</button>
     </div>
-
     <div id="factCard"></div>
-
     <div class="level-card" id="levelCard" onclick="showScreen('stats');switchTab('achievements')"></div>
-
     <div class="stats-bar">
       <div class="stat-card"><div class="stat-value" id="totalPlayed">0</div><div class="stat-label">Пройдено</div></div>
       <div class="stat-card"><div class="stat-value" id="avgScore">0%</div><div class="stat-label">Середній</div></div>
       <div class="stat-card"><div class="stat-value" id="bestStreak">0</div><div class="stat-label">Серія</div></div>
       <div class="stat-card"><div class="stat-value" id="totalXP">0</div><div class="stat-label">XP</div></div>
     </div>
-
     <div class="section-title">Обери квіз</div>
     <div class="quiz-grid" id="quizGrid"></div>
+  </div>
+
+  <!-- LESSONS LIST -->
+  <div class="screen" id="screen-lessons">
+    <div class="stats-header">
+      <h2>Бібліотека знань</h2>
+      <p style="color:var(--text-secondary)">Обери модуль для глибокого вивчення</p>
+    </div>
+    <div id="lessonsModulesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;"></div>
+    <button class="btn-secondary" style="width:100%;" onclick="showScreen('home')">Назад до меню</button>
+  </div>
+
+  <!-- LESSON DETAIL VIEW -->
+  <div class="screen" id="screen-lesson-detail">
+    <div id="lessonDetailContent"></div>
+    <button class="btn-secondary" style="width:100%;margin-top:20px;margin-bottom:40px;" onclick="showScreen('lessons')">Назад до списку модулів</button>
   </div>
 
   <!-- QUIZ -->
@@ -729,15 +397,10 @@
         <span id="timerValue">30</span>
       </div>
     </div>
-
     <div class="progress-container">
-      <div class="progress-info">
-        <span id="qProgress">1 / 10</span>
-        <span id="qScore">0 правильних</span>
-      </div>
+      <div class="progress-info"><span id="qProgress">1 / 10</span><span id="qScore">0 правильних</span></div>
       <div class="progress-track"><div class="progress-fill" id="qProgressBar" style="width:10%"></div></div>
     </div>
-
     <div class="question-card" id="questionCard">
       <div class="q-number" id="qNum"></div>
       <div class="q-text" id="qText"></div>
@@ -756,62 +419,25 @@
       <div class="results-icon" id="resIcon"></div>
       <div class="results-title" id="resTitle"></div>
       <div class="results-subtitle" id="resSub"></div>
-
       <div class="score-circle">
-        <svg width="130" height="130" viewBox="0 0 140 140">
-          <circle class="score-circle-bg" cx="70" cy="70" r="65"/>
-          <circle class="score-circle-fill" id="scoreCircle" cx="70" cy="70" r="65"/>
-        </svg>
+        <svg width="130" height="130" viewBox="0 0 140 140"><circle class="score-circle-bg" cx="70" cy="70" r="65"/><circle class="score-circle-fill" id="scoreCircle" cx="70" cy="70" r="65"/></svg>
         <div class="score-circle-text" id="scoreText">0%</div>
       </div>
-
       <div class="results-message" id="resMessage"></div>
-
       <div class="results-details">
         <div class="detail-item"><div class="detail-value green" id="resCorrect">0</div><div class="detail-label">Правильних</div></div>
         <div class="detail-item"><div class="detail-value red" id="resWrong">0</div><div class="detail-label">Помилок</div></div>
         <div class="detail-item"><div class="detail-value purple" id="resTime">0s</div><div class="detail-label">Час</div></div>
       </div>
-
       <div id="newAchievements"></div>
-
-      <div class="results-actions">
-        <button class="btn-secondary" onclick="showScreen('home')">До меню</button>
-        <button class="btn-primary" id="retryBtn">Ще раз</button>
-      </div>
+      <div class="results-actions"><button class="btn-secondary" onclick="showScreen('home')">До меню</button><button class="btn-primary" id="retryBtn">Ще раз</button></div>
     </div>
-  </div>
-
-  <!-- LESSONS LIST -->
-  <div class="screen" id="screen-lessons">
-    <div class="stats-header">
-      <h2>Бібліотека знань</h2>
-      <p style="color:var(--text-secondary)">Обери модуль для глибокого вивчення</p>
-    </div>
-    
-    <div id="lessonsModulesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;"></div>
-    
-    <button class="btn-secondary" style="width:100%;" onclick="showScreen('home')">Назад до меню</button>
-  </div>
-
-  <!-- LESSON DETAIL VIEW -->
-  <div class="screen" id="screen-lesson-detail">
-    <div id="lessonDetailContent"></div>
-    <button class="btn-secondary" style="width:100%;margin-top:20px;margin-bottom:40px;" onclick="showScreen('lessons')">Назад до списку модулів</button>
   </div>
 
   <!-- STATS -->
   <div class="screen" id="screen-stats">
-    <div class="stats-header">
-      <h2>Профіль</h2>
-      <p style="color:var(--text-secondary)">Статистика, історія та досягнення</p>
-    </div>
-
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('stats')">Статистика</button>
-      <button class="tab-btn" onclick="switchTab('achievements')">Досягнення</button>
-    </div>
-
+    <div class="stats-header"><h2>Профіль</h2><p style="color:var(--text-secondary)">Статистика та досягнення</p></div>
+    <div class="tabs"><button class="tab-btn active" onclick="switchTab('stats')">Статистика</button><button class="tab-btn" onclick="switchTab('achievements')">Досягнення</button></div>
     <div class="tab-content active" id="tab-stats">
       <div class="stats-overview">
         <div class="stat-card"><div class="stat-value" id="sTotalPlayed">0</div><div class="stat-label">Квізів</div></div>
@@ -819,23 +445,16 @@
         <div class="stat-card"><div class="stat-value" id="sAvgScore">0%</div><div class="stat-label">Середній</div></div>
         <div class="stat-card"><div class="stat-value" id="sBestScore">0%</div><div class="stat-label">Найкращий</div></div>
       </div>
-
       <div class="section-title">Історія</div>
       <div id="historyList"></div>
     </div>
-
-    <div class="tab-content" id="tab-achievements">
-      <div class="level-card" id="levelCardStats"></div>
-      <div class="section-title">Досягнення</div>
-      <div class="achievements-grid" id="achievementsGrid"></div>
-    </div>
-
+    <div class="tab-content" id="tab-achievements"><div class="level-card" id="levelCardStats"></div><div class="section-title">Досягнення</div><div class="achievements-grid" id="achievementsGrid"></div></div>
     <button class="btn-secondary" style="width:100%;margin-top:20px;" onclick="showScreen('home')">Назад</button>
   </div>
 </div>
 
 <script>
-// =================== QUIZ DATA ===================
+// =================== DATA ===================
 const quizzes = [
   {
     id: 'cognitive', title: 'Як працює наш розум?',
@@ -871,916 +490,209 @@ const quizzes = [
       { q: "Що таке «резилієнтність»?", opts: ["Уникання стресу", "Здатність відновлюватись після труднощів", "Контроль над іншими", "Відсутність негативних емоцій"], ans: 1, info: "Резилієнтність — психологічна «пружність». НЕ відсутність страждань, а вміння проходити через них. Розвивається через соціальні зв'язки, оптимізм, саморефлексію — це навичка, не вроджена якість!" }
     ]
   },
-  {
-    id: 'personality', title: 'Психологія особистості',
-    desc: 'Темперамент, Big Five, інтроверсія/екстраверсія, локус контролю.',
-    icon: '🎭', badge: 'medium', badgeText: 'Середній',
-    questions: [
-      { q: "Хто описав 4 типи темпераменту?", opts: ["Аристотель", "Гіппократ", "Фрейд", "Юнг"], ans: 1, info: "Гіппократ (~400 до н.е.) пов'язав темперамент з «соками тіла»: сангвінік — енергійний, холерик — запальний, меланхолік — задумливий, флегматик — спокійний." },
-      { q: "Найнауковіша модель особистості?", opts: ["MBTI (16 типів)", "Big Five (OCEAN)", "Соціоніка", "Еннеаграма"], ans: 1, info: "Big Five: Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism. На відміну від MBTI, підтверджена сотнями досліджень. Вимірює спектр, а не тип." },
-      { q: "Хто ввів «інтроверсію» та «екстраверсію»?", opts: ["Фрейд", "Юнг", "Адлер", "Айзенк"], ans: 1, info: "Юнг (1921). Екстраверти «заряджаються» від спілкування, інтроверти — від самотності. Інтроверсія — це НЕ сором'язливість! Інтроверт може чудово спілкуватись, але потребує час на відновлення." },
-      { q: "Що таке «локус контролю»?", opts: ["Частина мозку для рухів", "Переконання хто контролює твоє життя", "Здатність контролювати інших", "Контроль емоцій"], ans: 1, info: "Роттер (1954): внутрішній локус — «я відповідаю за успіхи і невдачі», зовнішній — «все залежить від обставин». Люди з внутрішнім локусом зазвичай успішніші та щасливіші." },
-      { q: "Що таке «self-efficacy» за Бандурою?", opts: ["Рівень IQ", "Віра у свою здатність досягти мети", "Робота без допомоги", "Швидкість навчання"], ans: 1, info: "Самоефективність — віра у здатність виконати конкретне завдання. Формується через: власний успіх, спостереження за іншими, підтримку, фізіологічний стан. Не плутати з самооцінкою!" },
-      { q: "Що таке «вивчена безпорадність»?", opts: ["Небажання вчитись", "Людина перестає намагатись після невдач", "Залежність від допомоги", "Страх іспитів"], ans: 1, info: "Селігман (1967): після багатьох невдач людина перестає намагатись, навіть коли ситуація змінилась. Цікаво: Селігман пізніше заснував позитивну психологію — науку про щастя!" },
-      { q: "Що таке «Тінь» у Юнга?", opts: ["Депресія", "Несвідома темна сторона особистості", "Страх темряви", "Вплив минулого"], ans: 1, info: "Тінь — частина несвідомого з якостями, які ми не визнаємо: агресія, заздрість, егоїзм. Юнг вважав інтеграцію Тіні — визнання цих якостей — важливим кроком до зрілості." },
-      { q: "Хто розробив «особистісні конструкти»?", opts: ["Роджерс", "Джордж Келлі", "Маслоу", "Олпорт"], ans: 1, info: "Келлі (1955): кожна людина — «науковець» що будує картину світу через пари протилежностей (конструкти): добрий-злий, сильний-слабкий. Ми бачимо світ через ці «окуляри» і можемо їх змінювати." },
-      { q: "Нарцисичний розлад — це...", opts: ["Любов до селфі", "Патологічна грандіозність і відсутність емпатії", "Сором'язливість", "Страх бути відкинутим"], ans: 1, info: "Серйозний психічний стан, не просто «егоїзм». Під маскою грандіозності часто — крихка самооцінка. Стосується менше 1% населення." },
-      { q: "Різниця між характером і темпераментом?", opts: ["Синоніми", "Темперамент вроджений, характер набутий", "Характер вроджений, темперамент набутий", "Темперамент про інтелект"], ans: 1, info: "Темперамент — вроджена біологічна основа (швидкість, енергійність). Характер формується через виховання та досвід. Холерик може розвинути терплячість через самовиховання." }
-    ]
-  },
-  {
-    id: 'social', title: 'Соціальна психологія',
-    desc: 'Конформізм, підкорення, групове мислення, знамениті експерименти.',
-    icon: '👥', badge: 'hard', badgeText: 'Складний',
-    questions: [
-      { q: "Що показав експеримент Аша з лініями?", opts: ["Люди не оцінюють довжину", "Люди підкоряються групі навіть коли вона помиляється", "Лінії — оптична ілюзія", "Люди краще працюють у групі"], ans: 1, info: "Аш (1951): ~75% хоча б раз погодились з очевидно неправильною відповіддю групи. Конформізм — наша схильність підлаштовуватись під більшість, навіть коли вона помиляється." },
-      { q: "Що досліджував Мілгрем?", opts: ["Вплив натовпу", "Підкорення авторитету при неетичних наказах", "Ефект свідка", "Групове мислення"], ans: 1, info: "Мілгрем (1963): 65% дійшли до «смертельного» удару за наказом «вченого». Звичайні люди здатні на жорстокість під тиском авторитету. Проведено після суду над нацистами." },
-      { q: "Що таке «ефект свідка»?", opts: ["Краща продуктивність при спостерігачах", "Більше свідків — менше шансів на допомогу", "Свідки точно описують події", "Наслідування поведінки інших"], ans: 1, info: "Чим більше людей, тим менше шансів що хтось допоможе. Кожен думає: «хтось інший зробить». Порада: звертайся до конкретної людини: «Ви, в червоній куртці, викличте швидку!»" },
-      { q: "Стенфордський тюремний експеримент показав...", opts: ["Вплив ізоляції на IQ", "Як ролі змінюють поведінку", "Агресивність ув'язнених", "Тюремні ієрархії"], ans: 1, info: "Зімбардо (1971): студенти-«охоронці» стали жорстокими за кілька днів. Ситуація та роль можуть радикально змінити поведінку навіть хороших людей. Зупинено на 6-й з 14 днів." },
-      { q: "Що таке «групове мислення»?", opts: ["Колективний розум завжди правий", "Прагнення єдності на шкоду якості рішень", "Здатність групи вирішувати задачі", "Синхронне мислення"], ans: 1, info: "Дженіс (1972): група настільки прагне єдності, що ігнорує критику. Призвело до катастроф. Протиотрута: призначати «адвоката диявола» та заохочувати інакодумство." },
-      { q: "Що таке «соціальна фасилітація»?", opts: ["Допомога в соціалізації", "Покращення простих задач при спостерігачах", "Вплив на інших", "Допомога незнайомцям"], ans: 1, info: "Прості задачі виконуємо краще при спостерігачах, складні — гірше! Присутність інших підвищує збудження: допомагає при рутині, заважає при складному. Тріплетт, 1898." },
-      { q: "«Ехо-камера» у соцмережах — це...", opts: ["Довіра до групи замість фактів", "Оточення себе однодумцями", "Згода з лідером", "Неприйняття нових членів"], ans: 1, info: "Confirmation bias у соціальному контексті: ми оточуємо себе однодумцями, читаємо лише те що підтверджує погляди. Алгоритми соцмереж посилюють ефект, створюючи поляризацію." },
-      { q: "Що таке «ефект Пігмаліона»?", opts: ["Закохуємось у свої творіння", "Очікування вчителя впливають на успішність", "Красивим допомагають більше", "Першокласники слухають вчителів"], ans: 1, info: "Розенталь і Якобсон (1968): випадково обрані учні, названі «обдарованими», справді показали кращі результати! Вчителі несвідомо давали більше уваги. Висновок: віра в людину реально змінює її." },
-      { q: "Теорія соціальної ідентичності Тайфела:", opts: ["Як обираємо друзів", "Як належність до групи впливає на ставлення до чужих", "Ідентичність підлітків", "Соцмережі і самооцінка"], ans: 1, info: "Навіть мінімального поділу на «своїх» і «чужих» достатньо для упередження. Ми черпаємо самооцінку з груп (нація, команда). Звідси гордість за «своїх» навіть без підстав." },
-      { q: "Що таке «дифузія відповідальності»?", opts: ["Розподіл обов'язків", "Зменшення відповідальності зі збільшенням групи", "Делегування", "Колективна відповідальність"], ans: 1, info: "Чим більше людей, тим менше кожен відчуває відповідальність. «Не моя справа, хтось зробить». Механізм ефекту свідка. У великих командах кожен працює менш інтенсивно — «соціальне лінивство»." }
-    ]
-  },
-  {
-    id: 'development', title: 'Психологія розвитку',
-    desc: 'Стадії розвитку від дитинства до старості, вікові кризи, прив\'язаність.',
-    icon: '🌱', badge: 'medium', badgeText: 'Середній',
-    questions: [
-      { q: "Хто описав 8 стадій психосоціального розвитку?", opts: ["Фрейд", "Ерік Еріксон", "Піаже", "Виготський"], ans: 1, info: "Еріксон описав 8 стадій від народження до старості. Кожна має свій конфлікт: довіра vs недовіра (0-1 рік), автономія vs сором (1-3), ініціатива vs провина (3-6) і так далі до мудрості у старості." },
-      { q: "Що таке «теорія прив'язаності» Боулбі?", opts: ["Діти прив'язуються до іграшок", "Ранній зв'язок з опікуном визначає майбутні стосунки", "Діти копіюють поведінку батьків", "Прив'язаність зникає з віком"], ans: 1, info: "Джон Боулбі показав: якість зв'язку з основним опікуном у перші роки життя формує «внутрішню робочу модель» стосунків. Безпечна прив'язаність → здорові стосунки у дорослому віці. Небезпечна → труднощі з довірою." },
-      { q: "За Піаже, на якій стадії дитина починає логічно мислити?", opts: ["Сенсомоторна (0-2)", "Доопераційна (2-7)", "Конкретних операцій (7-11)", "Формальних операцій (11+)"], ans: 2, info: "На стадії конкретних операцій (7-11 років) дитина починає логічно мислити, розуміє збереження (вода в різних склянках — однакова кількість). Але абстрактне мислення з'являється лише на стадії формальних операцій (11+)." },
-      { q: "Що таке «криза ідентичності» за Еріксоном?", opts: ["Втрата пам'яті у підлітків", "Пошук відповіді «хто я?» у підлітковому віці", "Депресія при виході на пенсію", "Конфлікт з батьками"], ans: 1, info: "Підлітковий вік (12-18) — стадія «ідентичність vs сплутаність ролей». Підліток шукає відповідь: «Хто я? Що я ціную? Ким хочу бути?» Успішне проходження дає цілісну ідентичність, невдача — невизначеність." },
-      { q: "Що таке «об'єктна сталість» за Піаже?", opts: ["Любов до конкретної іграшки", "Розуміння що предмет існує навіть коли його не видно", "Здатність тримати предмети", "Впізнавання знайомих предметів"], ans: 1, info: "Об'єктна сталість (до 8-12 місяців) — розуміння що предмет існує навіть коли зник з поля зору. До цього: якщо іграшку сховали — вона «зникла». Саме тому малюки так люблять гру «ку-ку»!" },
-      { q: "Типи прив'язаності за Мері Ейнсворт:", opts: ["Сильна і слабка", "Безпечна, тривожна, уникаюча", "Материнська і батьківська", "Фізична і емоційна"], ans: 1, info: "Ейнсворт (експеримент «Незнайома ситуація»): безпечна — дитина спокійна, шукає маму; тривожна — чіпляється, плаче; уникаюча — байдужа до розлуки. Пізніше додали дезорганізовану. ~60% дітей мають безпечну прив'язаність." },
-      { q: "Що таке «зона найближчого розвитку»?", opts: ["Де дитина грається", "Різниця між тим що може сама і з допомогою", "Швидкість росту мозку", "Оптимальний вік для школи"], ans: 1, info: "Виготський: навчання найефективніше коли завдання трохи складніше за те, що дитина може сама. Занадто легко — нудно. Занадто складно — стрес. У ЗНР — ідеальний виклик з підтримкою." },
-      { q: "Коли починається «криза середнього віку»?", opts: ["25-30 років", "35-50 років", "55-65 років", "Такої кризи не існує"], ans: 1, info: "35-50 років: переоцінка досягнень, страх старіння, питання «чи правильно я живу?». Хоча не всі її переживають, дослідження показують що задоволеність життям часто має U-форму — знижується до 40-50 і потім зростає." },
-      { q: "Що таке «теорія розуму» (Theory of Mind)?", opts: ["Наукова теорія про мозок", "Розуміння що інші мають свої думки і почуття", "Здатність читати думки", "Теорія Фрейда про свідомість"], ans: 1, info: "Theory of Mind — розуміння що інші люди мають свої думки, бажання та переконання, відмінні від наших. Розвивається у 3-5 років. Діти з аутизмом часто мають труднощі з цією здатністю." },
-      { q: "Що таке «імпринтинг» за Конрадом Лоренцом?", opts: ["Навчання через покарання", "Критичний період привʼязування до першого побаченого обʼєкта", "Запамʼятовування через повторення", "Копіювання поведінки батьків"], ans: 1, info: "Лоренц показав: гусенята прив'язуються до першого рухомого об'єкта, побаченого після народження — зазвичай матері, але можуть і до людини! Це відбувається у «критичний період» — короткий вікно часу. У людей прив'язаність формується повільніше, але принцип схожий." }
-    ]
-  },
-  {
-    id: 'neuro', title: 'Нейропсихологія',
-    desc: 'Мозок, нейромедіатори, сон, свідомість, оптичні ілюзії.',
-    icon: '🔬', badge: 'hard', badgeText: 'Складний',
-    questions: [
-      { q: "Який нейромедіатор називають «гормоном щастя»?", opts: ["Адреналін", "Серотонін", "Кортизол", "Ацетилхолін"], ans: 1, info: "Серотонін регулює настрій, сон, апетит. Його дефіцит пов'язують з депресією. Антидепресанти (SSRI) працюють, збільшуючи рівень серотоніну. Цікаво: ~95% серотоніну виробляється в кишечнику, а не в мозку!" },
-      { q: "Скільки нейронів у мозку людини?", opts: ["1 мільйон", "100 мільйонів", "86 мільярдів", "1 трильйон"], ans: 2, info: "~86 мільярдів нейронів, кожен з яких має до 10 000 зв'язків з іншими. Загалом ~100 трильйонів синапсів! Це більше ніж зірок у нашій галактиці. Мозок — найскладніший відомий об'єкт у Всесвіті." },
-      { q: "Що таке «нейропластичність»?", opts: ["Мозок не змінюється після дитинства", "Здатність мозку змінювати свою структуру", "Гнучкість черепа", "Швидкість нервових імпульсів"], ans: 1, info: "Нейропластичність — здатність мозку формувати нові зв'язки протягом усього життя. Лондонські таксисти мають збільшений гіпокамп (навігація), музиканти — розвинену моторну кору. Мозок змінюється від того, що ми робимо!" },
-      { q: "Яка фаза сну відповідає за яскраві сни?", opts: ["Повільна (NREM)", "Швидка (REM)", "Фаза засинання", "Глибокий сон"], ans: 1, info: "REM (Rapid Eye Movement) — фаза швидких рухів очей, коли ми бачимо яскраві сни. Мозок активний майже як при пробудженні, але тіло паралізоване (щоб ми не «грали» свої сни). REM важлива для пам'яті та емоцій." },
-      { q: "«Розщеплений мозок» — що це?", opts: ["Шизофренія", "Розрізання зв'язку між півкулями", "Травма голови", "Багатозадачність"], ans: 1, info: "Експерименти Сперрі (Нобелівська премія, 1981): при розрізанні мозолистого тіла (зв'язку між півкулями) ліва і права півкулі працюють незалежно. Ліва — мова і логіка, права — просторове мислення і розпізнавання облич." },
-      { q: "Що таке «дзеркальні нейрони»?", opts: ["Нейрони що працюють під час сну", "Нейрони що активуються і при дії і при спостереженні", "Нейрони відповідальні за зір", "Нейрони що дублюють інформацію"], ans: 1, info: "Дзеркальні нейрони активуються і коли ми виконуємо дію, і коли спостерігаємо як її виконує інший. Вважають основою емпатії та навчання через імітацію. Відкриті випадково Ріццолатті (1990-ті) у макак." },
-      { q: "Допамін — це нейромедіатор...", opts: ["Страху", "Болю", "Мотивації та нагороди", "Сну"], ans: 2, info: "Допамін — «молекула мотивації». Виділяється НЕ від задоволення, а від очікування нагороди. Тому ми часто більше хочемо щось, ніж насолоджуємось отриманим. Залежності (ігри, соцмережі) — це «зламана» допамінова система." },
-      { q: "Чому оптичні ілюзії обманюють мозок?", opts: ["Очі працюють неправильно", "Мозок інтерпретує інформацію на основі припущень", "Недостатнє освітлення", "Вроджений дефект зору"], ans: 1, info: "Мозок не просто «бачить» — він інтерпретує і добудовує зображення на основі досвіду. Ілюзії виникають коли ці припущення не відповідають реальності. Це доводить: ми бачимо не «реальність», а модель реальності, побудовану мозком." },
-      { q: "Що відбувається з мозком під час медитації?", opts: ["Мозок вимикається", "Активізується префронтальна кора, знижується активність амігдали", "Всі нейрони працюють одночасно", "Нічого не змінюється"], ans: 1, info: "Медитація посилює префронтальну кору (контроль, увага) і зменшує активність амігдали (страх, тривога). Регулярна практика фізично змінює мозок: збільшується сіра речовина, покращуються зв'язки між регіонами. Це нейропластичність в дії!" },
-      { q: "Що таке «фантомний біль»?", opts: ["Уявний біль при тривозі", "Біль у ампутованій кінцівці", "Біль від спогадів", "Психосоматичний біль"], ans: 1, info: "Фантомний біль — відчуття болю в кінцівці, якої вже немає. Відчувають до 80% ампутантів! Мозок зберігає «карту тіла» і продовжує посилати/очікувати сигнали. Рамачандран винайшов «дзеркальну терапію» для лікування — мозок можна «переучити»." }
-    ]
-  }
+  { id: 'personality', title: 'Психологія особистості', icon: '🎭', badge: 'medium', badgeText: 'Середній', questions: [
+    { q: "Хто описав 4 типи темпераменту?", opts: ["Аристотель", "Гіппократ", "Фрейд", "Юнг"], ans: 1, info: "Гіппократ пов'язав темперамент з «соками тіла»: сангвінік, холерик, меланхолік, флегматик." },
+    { q: "Найнауковіша модель особистості?", opts: ["MBTI", "Big Five (OCEAN)", "Соціоніка", "Еннеаграма"], ans: 1, info: "Big Five вимірює спектр 5 головних рис: Відкритість, Сумлінність, Екстраверсія, Доброзичливість, Невротизм." },
+    { q: "Хто ввів «інтроверсію» та «екстраверсію»?", opts: ["Фрейд", "Юнг", "Адлер", "Айзенк"], ans: 1, info: "Юнг показав, що екстраверти отримують енергію зовні, а інтроверти — зсередини." },
+    { q: "Що таке «локус контролю»?", opts: ["Частина мозку", "Переконання хто контролює твоє життя", "Контроль інших", "Контроль емоцій"], ans: 1, info: "Внутрішній локус — «я відповідаю», зовнішній — «обставини винні»." },
+    { q: "Що таке «вивчена безпорадність»?", opts: ["Небажання вчитись", "Людина перестає намагатись після невдач", "Залежність", "Страх"], ans: 1, info: "Селігман показав, що після серії невдач мозок «здається»." }
+  ]},
+  { id: 'social', title: 'Соціальна психологія', icon: '👥', badge: 'hard', badgeText: 'Складний', questions: [
+    { q: "Що показав експеримент Аша?", opts: ["Люди підкоряються групі", "Люди краще працюють самі", "Лінії — ілюзія", "Група завжди права"], ans: 0, info: "Конформізм змушує нас погоджуватись з більшістю навіть коли вона помиляється." },
+    { q: "Що таке «ефект свідка»?", opts: ["Більше свідків — менше допомоги", "Свідки завжди брешуть", "Свідки допомагають", "Ефект натовпу"], ans: 0, info: "У великій групі відповідальність «розмивається», кожен чекає на іншого." }
+  ]},
+  { id: 'development', title: 'Психологія розвитку', icon: '🌱', badge: 'medium', badgeText: 'Середній', questions: [
+    { q: "Хто описав 8 стадій розвитку?", opts: ["Фрейд", "Ерік Еріксон", "Піаже", "Виготський"], ans: 1, info: "Еріксон виділив етапи від немовляти до глибокої мудрості старості." },
+    { q: "Криза ідентичності — це який вік?", opts: ["Дитячий", "Підлітковий", "Дорослий", "Старечий"], ans: 1, info: "Підліток шукає відповідь на питання «Хто я?»." }
+  ]},
+  { id: 'neuro', title: 'Нейропсихологія', icon: '🔬', badge: 'hard', badgeText: 'Складний', questions: [
+    { q: "Скільки нейронів у мозку?", opts: ["1 млн", "100 млн", "86 млрд", "1 трлн"], ans: 2, info: "~86 мільярдів нейронів створюють складну мережу твого розуму." },
+    { q: "Що таке «нейропластичність»?", opts: ["Нерухомість мозку", "Здатність мозку змінюватись", "Гнучкість кісток", "Швидкість реакції"], ans: 1, info: "Мозок змінює свою структуру від кожного нового досвіду." }
+  ]}
 ];
 
-// =================== FACTS OF THE DAY ===================
 const facts = [
-  "Мозок споживає ~20% енергії тіла, хоча важить лише 2% від маси. Він ніколи повністю не «вимикається» — навіть уві сні.",
-  "Люди приймають ~35 000 рішень на день. Більшість — несвідомо. Ось чому ввечері важче робити складний вибір — «рішення-втома».",
-  "Посмішка може покращити настрій навіть якщо вона «штучна». Це «гіпотеза лицьового зворотного зв'язку» — м'язи обличчя впливають на емоції.",
-  "Ми запам'ятовуємо негативні події краще за позитивні. Це «негативне упередження» — еволюційний механізм виживання.",
-  "Колір може впливати на поведінку: червоний підвищує пульс, синій заспокоює. Тому лікарні часто пофарбовані у блакитні тони.",
-  "Мозок не відрізняє реальний і уявний досвід на рівні нейронів. Тому візуалізація успіху реально покращує результати у спорті.",
-  "Ми можемо утримувати увагу в середньому 8 секунд. У 2000 році було 12 секунд. Смартфони змінюють наш мозок.",
-  "Запах — єдине відчуття, яке йде прямо до емоційних центрів мозку, оминаючи таламус. Тому запахи так сильно пов'язані зі спогадами.",
-  "Мозок генерує достатньо електрики щоб засвітити невелику лампочку — ~12-25 ват потужності у стані активного мислення.",
-  "«Ефект Зейгарник»: ми краще запам'ятовуємо незавершені справи. Тому кліфхенгери в серіалах так ефективні — мозок хоче «закрити гештальт».",
-  "Об'єм інформації яку мозок може зберігати оцінюють у ~2.5 петабайти — це 3 мільйони годин відео.",
-  "Сміх заразний через дзеркальні нейрони. Ми несвідомо копіюємо емоції інших — це основа емпатії та соціальних зв'язків.",
-  "Музика активує більше ділянок мозку одночасно ніж будь-яка інша діяльність — тому музична терапія така ефективна.",
-  "Рішення, прийняті на повний сечовий міхур, виявляються більш раціональними. Самоконтроль в одній сфері посилює його в інших."
+  "Мозок споживає ~20% енергії тіла.",
+  "Ми приймаємо ~35 000 рішень на день.",
+  "«Ефект Зейгарник»: ми краще пам'ятовуємо незавершені справи.",
+  "Нейропластичність дозволяє мозку вчитися все життя."
 ];
 
-// =================== ACHIEVEMENTS ===================
 const ACHIEVEMENTS = [
   { id: 'first_quiz', name: 'Перший крок', desc: 'Пройди свій перший квіз', icon: '🎯', check: (s) => s.totalPlayed >= 1 },
   { id: 'perfect', name: 'Бездоганно!', desc: 'Отримай 100% в будь-якому квізі', icon: '💎', check: (s) => s.results.some(r => r.percentage === 100) },
-  { id: 'all_quizzes', name: 'Дослідник', desc: 'Пройди всі 6 квізів', icon: '🗺️', check: (s) => { const ids = new Set(s.results.map(r => r.quizId)); return quizzes.filter(q => q.id !== 'marathon').every(q => ids.has(q.id)); } },
-  { id: 'five_quizzes', name: 'Завзятий', desc: 'Пройди 5 квізів', icon: '🔥', check: (s) => s.totalPlayed >= 5 },
-  { id: 'ten_quizzes', name: 'Марафонець', desc: 'Пройди 10 квізів', icon: '🏃', check: (s) => s.totalPlayed >= 10 },
-  { id: 'streak_5', name: 'На хвилі', desc: 'Серія з 5 правильних відповідей', icon: '⚡', check: (s) => s.bestStreak >= 5 },
-  { id: 'streak_10', name: 'Нестримний', desc: 'Серія з 10 правильних відповідей', icon: '🌊', check: (s) => s.bestStreak >= 10 },
-  { id: 'speed_demon', name: 'Блискавка', desc: 'Пройди квіз за менше ніж 2 хвилини', icon: '⚡', check: (s) => s.results.some(r => r.timeSpent < 120 && r.percentage >= 70) },
-  { id: 'brain_master', name: 'Майстер розуму', desc: '90%+ у когнітивній психології', icon: '🧠', check: (s) => s.results.some(r => r.quizId === 'cognitive' && r.percentage >= 90) },
-  { id: 'heart_master', name: 'Знавець емоцій', desc: '90%+ в емоціях та почуттях', icon: '💜', check: (s) => s.results.some(r => r.quizId === 'emotions' && r.percentage >= 90) },
-  { id: 'social_master', name: 'Соціальний гуру', desc: '90%+ у соціальній психології', icon: '👥', check: (s) => s.results.some(r => r.quizId === 'social' && r.percentage >= 90) },
-  { id: 'neuro_master', name: 'Нейронауковець', desc: '90%+ у нейропсихології', icon: '🔬', check: (s) => s.results.some(r => r.quizId === 'neuro' && r.percentage >= 90) },
-  { id: 'night_owl', name: 'Нічна сова', desc: 'Пройди квіз після 23:00', icon: '🦉', check: (s) => s.results.some(r => { const h = new Date(r.date).getHours(); return h >= 23 || h < 5; }) },
-  { id: 'collector', name: 'Колекціонер', desc: 'Набери 500 XP', icon: '💰', check: (s) => (s.xp || 0) >= 500 },
-  { id: 'legend', name: 'Легенда', desc: 'Набери 2000 XP', icon: '👑', check: (s) => (s.xp || 0) >= 2000 },
-  { id: 'marathon_done', name: 'Витривалий', desc: 'Пройди марафон', icon: '🏅', check: (s) => s.results.some(r => r.quizId === 'marathon') }
+  { id: 'collector', name: 'Колекціонер', desc: 'Набери 500 XP', icon: '💰', check: (s) => (s.xp || 0) >= 500 }
 ];
 
-// =================== LEVELS ===================
 const LEVELS = [
   { name: 'Новачок', icon: '🌱', minXP: 0 },
   { name: 'Учень', icon: '📖', minXP: 100 },
   { name: 'Дослідник', icon: '🔍', minXP: 300 },
   { name: 'Знавець', icon: '🎓', minXP: 600 },
-  { name: 'Експерт', icon: '⭐', minXP: 1000 },
-  { name: 'Майстер', icon: '🏆', minXP: 1500 },
-  { name: 'Гуру', icon: '🧙', minXP: 2500 },
-  { name: 'Легенда', icon: '👑', minXP: 4000 }
+  { name: 'Експерт', icon: '⭐', minXP: 1000 }
 ];
 
-function getLevel(xp) {
-  let lvl = LEVELS[0];
-  for (const l of LEVELS) {
-    if (xp >= l.minXP) lvl = l;
-  }
-  const idx = LEVELS.indexOf(lvl);
-  const next = LEVELS[idx + 1];
-  const isMax = !next;
-  const progress = !isMax ? ((xp - lvl.minXP) / (next.minXP - lvl.minXP)) * 100 : 100;
-  return { ...lvl, index: idx + 1, total: LEVELS.length, progress: Math.min(100, progress), xp, nextXP: next ? next.minXP : lvl.minXP, isMax };
-}
+const icebreakerAnimals = [
+  { id: 'cat', name: 'Котик', mood: 'спокійний та розслаблений', img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300' },
+  { id: 'dog', name: 'Песик', mood: 'радісний та енергійний', img: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=300' },
+  { id: 'lion', name: 'Лев', mood: 'впевнений та сильний', img: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=300' },
+  { id: 'owl', name: 'Сова', mood: 'зосереджений та вдумливий', img: 'https://images.unsplash.com/photo-1543549732-31c116592d48?auto=format&fit=crop&q=80&w=300' },
+  { id: 'panda', name: 'Панда', mood: 'мирний та неквапливий', img: 'https://images.unsplash.com/photo-1564349683136-77e08bef1ef1?auto=format&fit=crop&q=80&w=300' },
+  { id: 'eagle', name: 'Орел', mood: 'готовий до нових висот', img: 'https://images.unsplash.com/photo-1552728089-57bdde30fc3e?auto=format&fit=crop&q=80&w=300' },
+  { id: 'sloth', name: 'Лінивець', mood: 'повільний, але щасливий', img: 'https://images.unsplash.com/photo-1519146759285-69bb41146a21?auto=format&fit=crop&q=80&w=300' },
+  { id: 'dolphin', name: 'Дельфін', mood: 'товариський та творчий', img: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?auto=format&fit=crop&q=80&w=300' }
+];
 
-// =================== STATE ===================
-let state = {
-  currentQuiz: null, currentQ: 0, score: 0, answered: false,
-  timerInterval: null, timeLeft: 30, totalTime: 0,
-  streak: 0, maxStreak: 0
+const lessonMaterials = {
+  cognitive: {
+    hero: "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=1000",
+    intro: "Когнітивна психологія — це наука про те, як ми отримуємо, обробляємо та зберігаємо інформацію.",
+    content: `<h3>1. Як ми бачимо світ?</h3><p>Сприйняття — це не просто картинка, це інтерпретація мозком сигналів.</p><div class="illustration-box"><img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000"><div class="illustration-caption">Мозок обробляє інформацію миттєво.</div></div>`
+  },
+  emotions: {
+    hero: "https://images.unsplash.com/photo-1493106819501-66d381c466f1?auto=format&fit=crop&q=80&w=1000",
+    intro: "Емоції — це сигнали нашої системи виживання. Вони кажуть нам, що важливо.",
+    content: `<h3>1. Бий або тікай</h3><p>Амігдала вмикає страх раніше, ніж ти встигнеш подумати.</p>`
+  },
+  personality: { hero: "https://images.unsplash.com/photo-1499209974431-9dac3adaf471?auto=format&fit=crop&q=80&w=1000", intro: "Особистість — це твій унікальний набір рис.", content: "..." },
+  social: { hero: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1000", intro: "Ми — соціальні істоти.", content: "..." },
+  development: { hero: "https://images.unsplash.com/photo-1502035618526-6b2f1fbb7a37?auto=format&fit=crop&q=80&w=1000", intro: "Ми змінюємося все життя.", content: "..." },
+  neuro: { hero: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000", intro: "Мозок — це найскладніша машина у Всесвіті.", content: "..." }
 };
 
-// =================== STORAGE ===================
-function getStorage() {
-  try { return JSON.parse(localStorage.getItem('psyquiz') || '{}'); } catch { return {}; }
+// =================== LOGIC ===================
+let state = { currentQuiz: null, currentQ: 0, score: 0, answered: false, timerInterval: null, timeLeft: 30, totalTime: 0, streak: 0, maxStreak: 0 };
+
+function getStorage() { try { return JSON.parse(localStorage.getItem('psyquiz') || '{}'); } catch { return {}; } }
+function saveStorage(data) { localStorage.setItem('psyquiz', JSON.stringify(data)); }
+
+function getLevel(xp) {
+  let lvl = LEVELS[0]; for (const l of LEVELS) { if (xp >= l.minXP) lvl = l; }
+  const idx = LEVELS.indexOf(lvl); const next = LEVELS[idx + 1]; const progress = next ? ((xp - lvl.minXP) / (next.minXP - lvl.minXP)) * 100 : 100;
+  return { ...lvl, index: idx + 1, progress, xp, nextXP: next ? next.minXP : lvl.minXP, isMax: !next };
 }
 
-function saveStorage(data) {
-  localStorage.setItem('psyquiz', JSON.stringify(data));
-}
-
-function calcXP(score, total, timeSpent) {
-  let xp = score * 10; // 10 XP per correct
-  const pct = (score / total) * 100;
-  if (pct === 100) xp += 50; // perfect bonus
-  else if (pct >= 90) xp += 25;
-  if (timeSpent < 120 && pct >= 70) xp += 20; // speed bonus
-  return xp;
-}
-
-function saveResult(quizId, score, total, timeSpent) {
-  const data = getStorage();
-  if (!data.results) data.results = [];
-  if (!data.bestScores) data.bestScores = {};
-
-  const pct = Math.round((score / total) * 100);
-  const earnedXP = calcXP(score, total, timeSpent);
-
-  data.results.unshift({ quizId, score, total, percentage: pct, date: new Date().toISOString(), timeSpent });
-  if (data.results.length > 50) data.results = data.results.slice(0, 50);
-
-  if (!data.bestScores[quizId] || pct > data.bestScores[quizId]) data.bestScores[quizId] = pct;
-  if (!data.bestStreak || state.maxStreak > data.bestStreak) data.bestStreak = state.maxStreak;
-
-  data.xp = (data.xp || 0) + earnedXP;
-
-  // Check achievements
-  const stats = getStatsFromData(data);
-  if (!data.achievements) data.achievements = {};
-  const newAch = [];
-
-  ACHIEVEMENTS.forEach(a => {
-    if (!data.achievements[a.id] && a.check(stats)) {
-      data.achievements[a.id] = new Date().toISOString();
-      newAch.push(a);
-    }
-  });
-
-  saveStorage(data);
-  return { earnedXP, newAchievements: newAch };
-}
-
-function getStatsFromData(data) {
-  const results = data.results || [];
+function getStats() {
+  const data = getStorage(); const results = data.results || [];
   return {
-    totalPlayed: results.length,
-    totalQuestions: results.reduce((s, r) => s + r.total, 0),
+    totalPlayed: results.length, totalQuestions: results.reduce((s, r) => s + r.total, 0),
     avgScore: results.length ? Math.round(results.reduce((s, r) => s + r.percentage, 0) / results.length) : 0,
     bestScore: results.length ? Math.max(...results.map(r => r.percentage)) : 0,
-    bestStreak: data.bestStreak || 0,
-    xp: data.xp || 0,
-    results, bestScores: data.bestScores || {},
-    achievements: data.achievements || {}
+    bestStreak: data.bestStreak || 0, xp: data.xp || 0, results, achievements: data.achievements || {}, bestScores: data.bestScores || {}
   };
 }
 
-function getStats() { return getStatsFromData(getStorage()); }
-
-// =================== THEME ===================
-function initTheme() {
-  const data = getStorage();
-  if (data.theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
-}
-
-function toggleTheme() {
-  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-  document.documentElement.setAttribute('data-theme', isLight ? '' : 'light');
-  const data = getStorage();
-  data.theme = isLight ? 'dark' : 'light';
-  saveStorage(data);
-}
-
-// =================== PARTICLES ===================
-function initParticles() {
-  const c = document.getElementById('particles');
-  for (let i = 0; i < 25; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.top = Math.random() * 100 + '%';
-    p.style.animationDelay = Math.random() * 4 + 's';
-    p.style.animationDuration = (3 + Math.random() * 3) + 's';
-    c.appendChild(p);
-  }
-}
-
-// =================== CONFETTI ===================
-function launchConfetti() {
-  const canvas = document.getElementById('confetti');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const pieces = [];
-  const colors = ['#7f5af0', '#2cb67d', '#f9bc60', '#e16162', '#a78bfa', '#34d399'];
-  for (let i = 0; i < 100; i++) {
-    pieces.push({
-      x: canvas.width / 2, y: canvas.height / 2,
-      vx: (Math.random() - 0.5) * 16, vy: (Math.random() - 0.8) * 16,
-      w: 5 + Math.random() * 6, h: 3 + Math.random() * 4,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      rotation: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 12,
-      gravity: 0.15 + Math.random() * 0.1, opacity: 1
-    });
-  }
-
-  let frame = 0;
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let alive = false;
-    pieces.forEach(p => {
-      p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
-      p.rotation += p.rotSpeed; p.opacity -= 0.008;
-      if (p.opacity > 0) {
-        alive = true;
-        ctx.save(); ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation * Math.PI / 180);
-        ctx.globalAlpha = Math.max(0, p.opacity);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
-      }
-    });
-    frame++;
-    if (alive && frame < 180) requestAnimationFrame(animate);
-    else ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-  animate();
-}
-
-// =================== XP POPUP ===================
-function showXPPopup(xp) {
-  const el = document.createElement('div');
-  el.className = 'xp-popup';
-  el.textContent = `+${xp} XP`;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 1600);
-}
-
-// =================== SCREENS ===================
 function showScreen(name) {
-  if (name !== 'quiz') clearInterval(state.timerInterval);
+  clearInterval(state.timerInterval);
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   if (name === 'home') renderHome();
   if (name === 'stats') renderStats();
   if (name === 'lessons') renderLessons();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo(0,0);
 }
 
-// =================== TABS ===================
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', (tab === 'stats' && i === 0) || (tab === 'achievements' && i === 1));
-  });
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  if (tab === 'achievements') renderAchievements();
-}
-
-// =================== LESSONS ===================
-const lessonMaterials = {
-  cognitive: {
-    hero: "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=1000",
-    intro: "Когнітивна психологія — це наука про те, як ми отримуємо, обробляємо та зберігаємо інформацію. Це про твій «внутрішній комп'ютер».",
-    content: `
-      <h3>1. Як ми бачимо світ?</h3>
-      <p>Сприйняття — це не просто картинка в очах. Це складна робота мозку. Наприклад, коли ти бачиш дерево, твій мозок не просто реєструє «зелене і коричневе», він порівнює це з твоїм досвідом і каже: «О, це яблуня!».</p>
-      
-      <div class="illustration-box">
-        <img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000" alt="Science">
-        <div class="illustration-caption">Мозок обробляє візуальну інформацію за мілісекунди.</div>
-      </div>
-
-      <h3>2. Магія пам'яті</h3>
-      <p>Ми маємо три типи пам'яті:</p>
-      <ul>
-        <li><b>Сенсорна</b> (триває секунди — наприклад, спалах світла).</li>
-        <li><b>Короткострокова/Робоча</b> (утримує 7±2 об'єкти — як номер телефону, поки ти його не записав).</li>
-        <li><b>Довгострокова</b> (твоя база даних на все життя).</li>
-      </ul>
-
-      <div class="lesson-quote">«Магічне число Міллера» каже, що ми можемо тримати в голові в середньому лише 7 речей одночасно. Саме тому групування інформації допомагає вчитись краще!</div>
-
-      <h3>3. Когнітивні спотворення</h3>
-      <p>Наш розум часто «зрізає кути». Наприклад, <b>Ефект Даннінга-Крюгера</b>: коли хтось мало знає, він впевнений, що знає все. А справжні експерти часто сумніваються у собі.</p>
-    `
-  },
-  emotions: {
-    hero: "https://images.unsplash.com/photo-1493106819501-66d381c466f1?auto=format&fit=crop&q=80&w=1000",
-    intro: "Емоції — це сигнали нашої системи виживання. Вони кажуть нам, що важливо, а що ні.",
-    content: `
-      <h3>1. Чому ми відчуваємо страх?</h3>
-      <p>Реакція <b>«Бий або тікай»</b> виникла мільйони років тому. Коли ти бачиш небезпеку, амігдала (маленька частина мозку) вимикає логіку і вмикає інстинкти. Адреналін зашкалює, серце б'ється швидше — ти готовий до дій.</p>
-      
-      <div class="illustration-box">
-        <img src="https://images.unsplash.com/photo-1516534775068-ba3e84589b9c?auto=format&fit=crop&q=80&w=1000" alt="Emotions">
-        <div class="illustration-caption">Емоції впливають на наше тіло миттєво.</div>
-      </div>
-
-      <h3>2. Емоційний інтелект (EQ)</h3>
-      <p>EQ часто важливіший за IQ. Це здатність розуміти свої почуття та почуття інших. Люди з високим EQ краще справляються зі стресом і легше знаходять друзів.</p>
-
-      <h3>3. Захисні механізми</h3>
-      <p>Коли стає занадто боляче, психіка вмикає захист. Наприклад, <b>сублімація</b> — коли ти перетворюєш свій гнів на творчість або спорт. Це найздоровіший спосіб виходу емоцій.</p>
-    `
-  },
-  personality: {
-    hero: "https://images.unsplash.com/photo-1499209974431-9dac3adaf471?auto=format&fit=crop&q=80&w=1000",
-    intro: "Що робить тебе собою? Психологія особистості вивчає характер, темперамент та поведінку.",
-    content: `
-      <h3>1. Темперамент — це база</h3>
-      <p>Темперамент вроджений. Це як «операційна система» твого мозку. Ти можеш бути активним (сангвінік) або спокійним (флегматик). Це не можна змінити, але з цим можна навчитися жити ефективно.</p>
-      
-      <h3>2. Велика П'ятірка (Big Five)</h3>
-      <p>Вчені виділяють 5 головних рис особистості: <b>Відкритість, Сумлінність, Екстраверсія, Доброзичливість та Невротизм</b>. Спробуй подумати, яка риса у тебе найсильніша?</p>
-
-      <div class="illustration-box">
-        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=1000" alt="Personality">
-        <div class="illustration-caption">Кожна людина — це унікальна комбінація рис.</div>
-      </div>
-
-      <h3>3. Локус контролю</h3>
-      <p>Це те, у що ти віриш: чи ти керуєш своїм життям (внутрішній локус), чи все залежить від удачі та обставин (зовнішній). Ті, хто вірять у себе, зазвичай досягають більшого.</p>
-    `
-  },
-  social: {
-    hero: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1000",
-    intro: "Ми — соціальні істоти. Соціальна психологія вивчає, як інші люди впливають на нашу поведінку.",
-    content: `
-      <h3>1. Сила натовпу</h3>
-      <p><b>Конформізм</b> — це коли ми робимо як усі, навіть якщо знаємо, що це неправильно. Експеримент Аша показав, що 75% людей готові погодитись з очевидною брехнею групи.</p>
-      
-      <div class="lesson-quote">«Ефект свідка»: чим більше людей бачать, що комусь погано, тим менша ймовірність, що хтось допоможе. Кожен думає: «хтось інший це зробить».</div>
-
-      <h3>2. Ролі та маски</h3>
-      <p>Знаменитий Стенфордський тюремний експеримент показав: коли людині дають роль і владу, вона може почати поводитись зовсім інакше. Ситуація часто сильніша за характер.</p>
-
-      <div class="illustration-box">
-        <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=1000" alt="Social">
-        <div class="illustration-caption">Спілкування — це постійний обмін впливами.</div>
-      </div>
-
-      <h3>3. Ефект ореолу</h3>
-      <p>Ми схильні думати, що красиві люди автоматично добрі та розумні. Це помилка мозку, про яку варто знати!</p>
-    `
-  },
-  development: {
-    hero: "https://images.unsplash.com/photo-1502035618526-6b2f1fbb7a37?auto=format&fit=crop&q=80&w=1000",
-    intro: "Ми змінюємося все життя. Від першої усмішки до мудрості у старості — кожен вік має свої виклики.",
-    content: `
-      <h3>1. Стадії Піаже</h3>
-      <p>Діти не просто «маленькі дорослі». Вони мислять інакше. До 7 років дитина може не розуміти, що кількість води не змінюється, якщо перелити її у високу склянку.</p>
-      
-      <div class="illustration-box">
-        <img src="https://images.unsplash.com/photo-1476703345914-188600189851?auto=format&fit=crop&q=80&w=1000" alt="Development">
-        <div class="illustration-caption">Гра — це головний інструмент розвитку мозку.</div>
-      </div>
-
-      <h3>2. Криза ідентичності</h3>
-      <p>Підлітковий вік — це час пошуку відповіді на питання «Хто я?». Це нормально — сумніватися, експериментувати та шукати свої цінності. Еріксон називав це головним завданням молоді.</p>
-
-      <h3>3. Прив'язаність</h3>
-      <p>Те, як батьки дбали про тебе в перші роки, створює твій стиль стосунків у майбутньому. Безпечна прив'язаність — це фундамент впевненості у собі.</p>
-    `
-  },
-  neuro: {
-    hero: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000",
-    intro: "Все, що ти відчуваєш — це електрика та хімія у твоєму мозку. Давай зазирнемо під черепну коробку!",
-    content: `
-      <h3>1. Нейрони — мережа знань</h3>
-      <p>У твоєму мозку 86 мільярдів нейронів. Коли ти вчиш нове, між ними прокладаються «мости» — синапси. Чим частіше ти повторюєш щось, тим міцнішим стає цей зв'язок.</p>
-      
-      <div class="lesson-quote">Нейропластичність — це здатність твого мозку змінюватися. Навіть у дорослому віці ти можеш «перепрошити» свій мозок новими звичками.</div>
-
-      <div class="illustration-box">
-        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80&w=1000" alt="Neuroscience">
-        <div class="illustration-caption">Синапси — це точки контакту між нейронами.</div>
-      </div>
-
-      <h3>2. Нейромедіатори — хімія щастя</h3>
-      <p><b>Допамін</b> — це очікування нагороди (тому так важко відірватися від соцмереж). <b>Серотонін</b> — це спокій та задоволення. <b>Адреналін</b> — це готовність до бою.</p>
-
-      <h3>3. Дзеркальні нейрони</h3>
-      <p>Чому ми плачемо під час фільму? Дзеркальні нейрони активуються, коли ми бачимо чужі емоції, дозволяючи нам «відчути» те саме. Це основа емпатії.</p>
-    `
-  }
-};
-
-function renderLessons() {
-  const grid = document.getElementById('lessonsModulesGrid');
-  grid.innerHTML = '';
-
-  quizzes.forEach(quiz => {
-    const card = document.createElement('div');
-    card.className = 'lesson-module-card';
-    card.onclick = () => viewLesson(quiz.id);
-    card.innerHTML = `
-      <span class="icon">${quiz.icon}</span>
-      <h4>${quiz.title}</h4>
-      <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:8px;">8-10 хвилин читання</p>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function viewLesson(quizId) {
-  const lesson = lessonMaterials[quizId];
-  const quiz = quizzes.find(q => q.id === quizId);
-  if (!lesson || !quiz) return;
-
-  const container = document.getElementById('lessonDetailContent');
-  container.innerHTML = `
-    <div class="lesson-hero">
-      <img src="${lesson.hero}" alt="${quiz.title}">
-      <div class="lesson-hero-overlay">
-        <div class="lesson-hero-title">${quiz.title}</div>
-        <p style="color:rgba(255,255,255,0.8);font-size:0.95rem;">Модуль підготовки до квізу</p>
-      </div>
-    </div>
-
-    <div class="lesson-rich-content">
-      <p style="font-size: 1.2rem; color: var(--accent-light); font-weight: 600; line-height: 1.6;">${lesson.intro}</p>
-      ${lesson.content}
-    </div>
-
-    <div class="section-title" style="margin-top:50px;">Перевірка знань</div>
-    <p style="color:var(--text-secondary);margin-bottom:20px;">Розкрий питання, щоб закріпити матеріал:</p>
-    
-    <div id="lessonQuestionsAccordion"></div>
-    
-    <button class="btn-primary" style="width:100%;margin-top:30px;" onclick="startQuiz('${quizId}')">Пройти квіз за цією темою ✍️</button>
-  `;
-
-  // Render questions accordion
-  const accContainer = document.getElementById('lessonQuestionsAccordion');
-  quiz.questions.forEach((q, i) => {
-    const item = document.createElement('div');
-    item.className = 'lesson-item';
-    item.innerHTML = `
-      <div class="lesson-header" onclick="toggleLesson(this)">
-        <div>
-          <span class="lesson-category-tag">Питання ${i + 1}</span>
-          <h4>${q.q}</h4>
-        </div>
-        <div class="lesson-icon-status">▾</div>
-      </div>
-      <div class="lesson-content">
-        <div class="lesson-body">
-          <p>${q.info}</p>
-        </div>
-      </div>
-    `;
-    accContainer.appendChild(item);
-  });
-
-  showScreen('lesson-detail');
-}
-
-function toggleLesson(header) {
-  header.parentElement.classList.toggle('active');
-}
-
-// =================== HOME ===================
 function renderHome() {
-  const stats = getStats();
-  const level = getLevel(stats.xp);
-
+  const stats = getStats(); const level = getLevel(stats.xp);
   document.getElementById('totalPlayed').textContent = stats.totalPlayed;
   document.getElementById('avgScore').textContent = stats.avgScore + '%';
   document.getElementById('bestStreak').textContent = stats.bestStreak;
   document.getElementById('totalXP').textContent = stats.xp;
-
-  // Level badge mini
   document.getElementById('levelBadgeMini').innerHTML = `${level.icon} ${level.name}`;
-
-  // Level card
-  document.getElementById('levelCard').innerHTML = `
-    <div class="level-icon">${level.icon}</div>
-    <div class="level-info">
-      <div class="level-title">Рівень ${level.index}: ${level.name}</div>
-      <div class="level-subtitle">${!level.isMax ? `До наступного рівня: ${level.nextXP - level.xp} XP` : 'Максимальний рівень!'}</div>
-      <div class="xp-bar"><div class="xp-fill" style="width:${level.progress}%"></div></div>
-      <div class="xp-text">${level.xp} ${!level.isMax ? `/ ${level.nextXP}` : ''} XP</div>
-    </div>
-  `;
-
-  // Fact of the day
-  const today = new Date();
-  const factIndex = (today.getFullYear() * 366 + today.getMonth() * 31 + today.getDate()) % facts.length;
-  document.getElementById('factCard').innerHTML = `
-    <div class="fact-card">
-      <div class="fact-label">💡 Факт дня</div>
-      <div class="fact-text">${facts[factIndex]}</div>
-    </div>
-  `;
-
-  // Quiz grid
-  const grid = document.getElementById('quizGrid');
-  grid.innerHTML = '';
-
-  // Regular quizzes
-  quizzes.forEach(quiz => {
-    const best = stats.bestScores[quiz.id];
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    card.onclick = () => startQuiz(quiz.id);
-    card.innerHTML = `<div class="quiz-card-inner">
-      <div class="quiz-card-top">
-        <div class="quiz-card-icon">${quiz.icon}</div>
-        <span class="quiz-badge badge-${quiz.badge}">${quiz.badgeText}</span>
-      </div>
-      <h3>${quiz.title}</h3>
-      <div class="quiz-card-desc">${quiz.desc}</div>
-      <div class="quiz-card-footer">
-        <span class="quiz-card-meta">${quiz.questions.length} питань</span>
-        ${best !== undefined ? `<span class="quiz-best-score">Рекорд: ${best}%</span>` : '<span class="quiz-card-meta">Не пройдено</span>'}
-      </div>
-    </div>`;
+  document.getElementById('levelCard').innerHTML = `<div class="level-icon">${level.icon}</div><div class="level-info"><div class="level-title">Рівень ${level.index}: ${level.name}</div><div class="xp-bar"><div class="xp-fill" style="width:${level.progress}%"></div></div><div class="xp-text">${level.xp} / ${level.nextXP} XP</div></div>`;
+  const grid = document.getElementById('quizGrid'); grid.innerHTML = '';
+  quizzes.forEach(q => {
+    const card = document.createElement('div'); card.className = 'quiz-card'; card.onclick = () => startQuiz(q.id);
+    card.innerHTML = `<h3>${q.icon} ${q.title}</h3><p style="font-size:0.8rem;color:var(--text-secondary);">${q.desc}</p>`;
     grid.appendChild(card);
   });
-
-  // Marathon card
-  const totalQ = quizzes.reduce((s, q) => s + q.questions.length, 0);
-  const marathonCard = document.createElement('div');
-  marathonCard.className = 'quiz-card marathon';
-  marathonCard.onclick = () => startMarathon();
-  const mBest = stats.bestScores['marathon'];
-  marathonCard.innerHTML = `<div class="quiz-card-inner">
-    <div class="quiz-card-top">
-      <div class="quiz-card-icon">🏅</div>
-      <span class="quiz-badge badge-marathon">Марафон</span>
-    </div>
-    <h3>Марафон — усі питання</h3>
-    <div class="quiz-card-desc">Всі питання з усіх квізів підряд. Перевір повні знання з психології!</div>
-    <div class="quiz-card-footer">
-      <span class="quiz-card-meta">${totalQ} питань</span>
-      ${mBest !== undefined ? `<span class="quiz-best-score">Рекорд: ${mBest}%</span>` : '<span class="quiz-card-meta">Не пройдено</span>'}
-    </div>
-  </div>`;
-  grid.appendChild(marathonCard);
 }
 
-// =================== QUIZ ===================
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function prepareQuestions(questions) {
-  return shuffleArray(questions).map(q => {
-    const indices = shuffleArray([0, 1, 2, 3]);
-    return { ...q, opts: indices.map(i => q.opts[i]), ans: indices.indexOf(q.ans) };
+function renderLessons() {
+  const grid = document.getElementById('lessonsModulesGrid'); grid.innerHTML = '';
+  quizzes.forEach(q => {
+    const card = document.createElement('div'); card.className = 'lesson-module-card'; card.onclick = () => viewLesson(q.id);
+    card.innerHTML = `<span class="icon">${q.icon}</span><h4>${q.title}</h4>`;
+    grid.appendChild(card);
   });
 }
 
-function startQuiz(quizId) {
-  const quiz = quizzes.find(q => q.id === quizId);
-  if (!quiz) return;
-
-  state = {
-    currentQuiz: { ...quiz, questions: prepareQuestions(quiz.questions) },
-    currentQ: 0, score: 0, answered: false,
-    timerInterval: null, timeLeft: 30, totalTime: 0, streak: 0, maxStreak: 0
-  };
-
-  document.getElementById('playTitle').textContent = quiz.icon + ' ' + quiz.title;
-  showScreen('quiz');
-  showQuestion();
+function viewLesson(id) {
+  const lesson = lessonMaterials[id]; const quiz = quizzes.find(q => q.id === id);
+  const container = document.getElementById('lessonDetailContent');
+  const iceHTML = `<div class="icebreaker-section"><div class="icebreaker-title">Який я сьогодні? 🐾</div><div class="icebreaker-grid">${icebreakerAnimals.map(a => `<div class="animal-card" onclick="selectIce(this, '${a.mood}')"><div class="animal-img-wrapper"><img src="${a.img}"></div><span class="animal-name">${a.name}</span></div>`).join('')}</div><div id="iceFB" class="icebreaker-feedback"></div></div>`;
+  container.innerHTML = `<div class="lesson-hero"><img src="${lesson.hero}"><div class="lesson-hero-overlay"><div class="lesson-hero-title">${quiz.title}</div></div></div>${iceHTML}<div class="lesson-rich-content"><p style="font-size:1.2rem;color:var(--accent-light);">${lesson.intro}</p>${lesson.content}</div><div class="section-title">Самоперевірка</div><div id="lAcc"></div><button class="btn-primary" style="width:100%;margin-top:20px;" onclick="startQuiz('${id}')">Почати квіз ✍️</button>`;
+  const acc = document.getElementById('lAcc');
+  quiz.questions.forEach((q, i) => {
+    const item = document.createElement('div'); item.className = 'lesson-item';
+    item.innerHTML = `<div class="lesson-header" onclick="this.parentElement.classList.toggle('active')"><h4>${q.q}</h4><span class="lesson-icon-status">▾</span></div><div class="lesson-content"><div class="lesson-body">${q.info}</div></div>`;
+    acc.appendChild(item);
+  });
+  showScreen('lesson-detail');
 }
 
-function startMarathon() {
-  const allQ = quizzes.flatMap(q => q.questions);
-  state = {
-    currentQuiz: { id: 'marathon', title: 'Марафон', icon: '🏅', questions: prepareQuestions(allQ) },
-    currentQ: 0, score: 0, answered: false,
-    timerInterval: null, timeLeft: 30, totalTime: 0, streak: 0, maxStreak: 0
-  };
-  document.getElementById('playTitle').textContent = '🏅 Марафон';
-  showScreen('quiz');
-  showQuestion();
+function selectIce(el, mood) {
+  document.querySelectorAll('.animal-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected'); const fb = document.getElementById('iceFB');
+  fb.style.display = 'block'; fb.innerHTML = `<b>Чудовий вибір!</b> Сьогодні ти ${mood}. Твій настрій — це ключ до навчання. Поїхали!`;
 }
 
-function showQuestion() {
-  state.answered = false;
-  state.timeLeft = 30;
-  clearInterval(state.timerInterval);
+function startQuiz(id) {
+  const q = quizzes.find(x => x.id === id);
+  state = { currentQuiz: q, currentQ: 0, score: 0, answered: false, timerInterval: null, timeLeft: 30, totalTime: 0, streak: 0, maxStreak: 0 };
+  document.getElementById('playTitle').textContent = q.title; showScreen('quiz'); showQ();
+}
 
-  const quiz = state.currentQuiz;
-  const q = quiz.questions[state.currentQ];
-  const total = quiz.questions.length;
-
+function showQ() {
+  state.answered = false; state.timeLeft = 30; const q = state.currentQuiz.questions[state.currentQ];
   document.getElementById('qNum').textContent = `Питання ${state.currentQ + 1}`;
   document.getElementById('qText').textContent = q.q;
-  document.getElementById('qProgress').textContent = `${state.currentQ + 1} / ${total}`;
-  document.getElementById('qScore').textContent = `${state.score} правильних`;
-  document.getElementById('qProgressBar').style.width = `${((state.currentQ + 1) / total) * 100}%`;
-
-  const timer = document.getElementById('timer');
-  timer.className = 'timer';
-  document.getElementById('timerValue').textContent = '30';
-
-  // Streak badge
-  const streakBadge = document.getElementById('streakBadge');
-  if (state.streak >= 3) {
-    streakBadge.classList.add('show');
-    document.getElementById('streakCount').textContent = state.streak;
-  } else {
-    streakBadge.classList.remove('show');
-  }
-
-  // Animate card
-  const card = document.getElementById('questionCard');
-  card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
-
-  const opts = document.getElementById('qOptions');
-  opts.innerHTML = '';
-  const letters = ['A', 'B', 'C', 'D'];
-
-  q.opts.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'opt-btn';
-    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
-    btn.onclick = () => selectAnswer(i);
-    opts.appendChild(btn);
+  document.getElementById('qProgress').textContent = `${state.currentQ + 1} / ${state.currentQuiz.questions.length}`;
+  const opts = document.getElementById('qOptions'); opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const b = document.createElement('button'); b.className = 'opt-btn'; b.textContent = o; b.onclick = () => selAns(i); opts.appendChild(b);
   });
-
-  document.getElementById('qFeedback').classList.remove('show', 'correct-fb', 'wrong-fb');
-  document.getElementById('qNext').classList.remove('show');
-
+  document.getElementById('qFeedback').classList.remove('show'); document.getElementById('qNext').classList.remove('show');
   state.timerInterval = setInterval(() => {
-    state.timeLeft--; state.totalTime++;
-    document.getElementById('timerValue').textContent = state.timeLeft;
-    if (state.timeLeft <= 10) timer.className = 'timer warning';
-    if (state.timeLeft <= 5) timer.className = 'timer danger';
-    if (state.timeLeft <= 0) { clearInterval(state.timerInterval); selectAnswer(-1); }
+    state.timeLeft--; document.getElementById('timerValue').textContent = state.timeLeft;
+    if (state.timeLeft <= 0) selAns(-1);
   }, 1000);
 }
 
-function selectAnswer(index) {
-  if (state.answered) return;
-  state.answered = true;
-  clearInterval(state.timerInterval);
-
-  const q = state.currentQuiz.questions[state.currentQ];
-  const buttons = document.querySelectorAll('.opt-btn');
-  const isCorrect = index === q.ans;
-
-  buttons.forEach((btn, i) => {
-    btn.disabled = true;
-    if (i === q.ans) btn.classList.add('correct');
-    else if (i === index && !isCorrect) btn.classList.add('wrong');
-  });
-
-  if (isCorrect) {
-    state.score++; state.streak++;
-    if (state.streak > state.maxStreak) state.maxStreak = state.streak;
-    document.getElementById('qScore').textContent = `${state.score} правильних`;
-
-    // Update streak badge
-    if (state.streak >= 3) {
-      const sb = document.getElementById('streakBadge');
-      sb.classList.add('show');
-      document.getElementById('streakCount').textContent = state.streak;
-      sb.style.animation = 'none'; sb.offsetHeight; sb.style.animation = '';
-    }
-  } else {
-    state.streak = 0;
-    document.getElementById('streakBadge').classList.remove('show');
-  }
-
-  const fb = document.getElementById('qFeedback');
-  fb.classList.remove('correct-fb', 'wrong-fb');
-
-  if (index === -1) {
-    fb.classList.add('wrong-fb');
-    document.getElementById('fbHeader').textContent = "⏰ Час вийшов!";
-  } else if (isCorrect) {
-    fb.classList.add('correct-fb');
-    const praise = ['Чудово!', 'Правильно!', 'Так тримати!', 'Бездоганно!', 'Точно в ціль!'][Math.floor(Math.random() * 5)];
-    document.getElementById('fbHeader').textContent = '✅ ' + praise;
-  } else {
-    fb.classList.add('wrong-fb');
-    document.getElementById('fbHeader').textContent = "❌ Не зовсім так...";
-  }
-
+function selAns(idx) {
+  if (state.answered) return; state.answered = true; clearInterval(state.timerInterval);
+  const q = state.currentQuiz.questions[state.currentQ]; const correct = idx === q.ans;
+  if (correct) state.score++;
+  document.getElementById('fbHeader').textContent = correct ? '✅ Правильно!' : '❌ Не зовсім...';
   document.getElementById('fbText').textContent = q.info;
-  fb.classList.add('show');
-
-  const nextBtn = document.getElementById('qNext');
-  nextBtn.textContent = state.currentQ < state.currentQuiz.questions.length - 1 ? 'Наступне питання →' : 'Результати →';
-  nextBtn.classList.add('show');
+  document.getElementById('qFeedback').classList.add('show'); document.getElementById('qNext').classList.add('show');
 }
 
 function nextQ() {
-  state.currentQ++;
-  if (state.currentQ < state.currentQuiz.questions.length) {
-    showQuestion();
-    document.getElementById('questionCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else {
-    finishQuiz();
-  }
+  state.currentQ++; if (state.currentQ < state.currentQuiz.questions.length) showQ(); else finish();
 }
 
-function finishQuiz() {
-  clearInterval(state.timerInterval);
-
-  const quiz = state.currentQuiz;
-  const total = quiz.questions.length;
-  const pct = Math.round((state.score / total) * 100);
-
-  const { earnedXP, newAchievements } = saveResult(quiz.id, state.score, total, state.totalTime);
-
-  showScreen('results');
-  showXPPopup(earnedXP);
-
-  // Score circle animation
-  const circumference = 2 * Math.PI * 65;
-  setTimeout(() => {
-    document.getElementById('scoreCircle').style.strokeDashoffset = circumference - (circumference * pct / 100);
-  }, 100);
-
-  document.getElementById('scoreText').textContent = pct + '%';
-  document.getElementById('resCorrect').textContent = state.score;
-  document.getElementById('resWrong').textContent = total - state.score;
-
-  const mins = Math.floor(state.totalTime / 60);
-  const secs = state.totalTime % 60;
-  document.getElementById('resTime').textContent = mins > 0 ? `${mins}:${secs.toString().padStart(2, '0')}` : `${secs}s`;
-
-  let icon, title, sub, message;
-  if (pct >= 90) {
-    icon = '🏆'; title = 'Вражаюче!'; sub = quiz.title;
-    message = 'Ти чудово розбираєшся в цій темі! Твої знання на високому рівні — продовжуй вивчати психологію!';
-    launchConfetti();
-  } else if (pct >= 70) {
-    icon = '🌟'; title = 'Чудовий результат!'; sub = quiz.title;
-    message = 'Гарна база знань! Перечитай пояснення до помилок — там багато цікавого.';
-  } else if (pct >= 50) {
-    icon = '📚'; title = 'Добрий старт!'; sub = quiz.title;
-    message = 'Ти вже знаєш основи. Кожне пояснення у квізі — це міні-урок. Спробуй ще раз!';
-  } else {
-    icon = '🌱'; title = 'Початок шляху!'; sub = quiz.title;
-    message = 'Не хвилюйся — кожна відповідь навчила тебе чомусь новому. Психологія захоплива, спробуй ще!';
-  }
-
-  document.getElementById('resIcon').textContent = icon;
-  document.getElementById('resTitle').textContent = title;
-  document.getElementById('resSub').textContent = sub;
-  document.getElementById('resMessage').textContent = message;
-
-  // New achievements
-  const achContainer = document.getElementById('newAchievements');
-  if (newAchievements.length > 0) {
-    achContainer.innerHTML = `
-      <div class="achievement-banner">
-        <div class="achievement-banner-title">🎉 Нові досягнення!</div>
-        ${newAchievements.map(a => `
-          <div class="achievement-item">
-            <div class="achievement-item-icon">${a.icon}</div>
-            <div>
-              <div class="achievement-item-name">${a.name}</div>
-              <div class="achievement-item-desc">${a.desc}</div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  } else {
-    achContainer.innerHTML = '';
-  }
-
-  // Retry button
-  if (quiz.id === 'marathon') {
-    document.getElementById('retryBtn').onclick = () => startMarathon();
-  } else {
-    document.getElementById('retryBtn').onclick = () => startQuiz(quiz.id);
-  }
+function finish() {
+  const pct = Math.round((state.score / state.currentQuiz.questions.length) * 100);
+  const data = getStorage(); if (!data.results) data.results = [];
+  data.results.unshift({ quizId: state.currentQuiz.id, score: state.score, total: state.currentQuiz.questions.length, percentage: pct, date: new Date().toISOString() });
+  data.xp = (data.xp || 0) + (state.score * 10); saveStorage(data);
+  document.getElementById('scoreText').textContent = pct + '%'; showScreen('results');
 }
 
-// =================== STATS ===================
-function renderStats() {
-  const stats = getStats();
-
-  document.getElementById('sTotalPlayed').textContent = stats.totalPlayed;
-  document.getElementById('sTotalQuestions').textContent = stats.totalQuestions;
-  document.getElementById('sAvgScore').textContent = stats.avgScore + '%';
-  document.getElementById('sBestScore').textContent = stats.bestScore + '%';
-
-  // History
-  const list = document.getElementById('historyList');
-  list.innerHTML = '';
-
-  if (stats.results.length === 0) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📊</div><p>Ще немає результатів.<br>Пройди перший квіз!</p></div>`;
-    return;
-  }
-
-  stats.results.slice(0, 20).forEach(r => {
-    const quiz = quizzes.find(q => q.id === r.quizId) || { icon: '🏅', title: 'Марафон' };
-    const date = new Date(r.date);
-    const dateStr = date.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-
-    const item = document.createElement('div');
-    item.className = 'history-item';
-    item.innerHTML = `
-      <div class="history-info">
-        <h4>${quiz.icon} ${quiz.title}</h4>
-        <div class="history-date">${dateStr} · ${r.score}/${r.total}</div>
-      </div>
-      <div class="history-score">${r.percentage}%</div>
-    `;
-    list.appendChild(item);
-  });
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'light' ? '' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  const d = getStorage(); d.theme = t; saveStorage(d);
 }
 
-function renderAchievements() {
-  const stats = getStats();
-  const level = getLevel(stats.xp);
-
-  document.getElementById('levelCardStats').innerHTML = `
-    <div class="level-icon">${level.icon}</div>
-    <div class="level-info">
-      <div class="level-title">Рівень ${level.index}: ${level.name}</div>
-      <div class="level-subtitle">${!level.isMax ? `До наступного: ${level.nextXP - level.xp} XP` : 'Максимальний рівень!'}</div>
-      <div class="xp-bar"><div class="xp-fill" style="width:${level.progress}%"></div></div>
-      <div class="xp-text">${level.xp} ${!level.isMax ? `/ ${level.nextXP}` : ''} XP</div>
-    </div>
-  `;
-
-  const grid = document.getElementById('achievementsGrid');
-  grid.innerHTML = '';
-
-  ACHIEVEMENTS.forEach(a => {
-    const unlocked = stats.achievements[a.id];
-    const card = document.createElement('div');
-    card.className = 'ach-card ' + (unlocked ? 'unlocked' : 'locked');
-
-    let dateStr = '';
-    if (unlocked) {
-      const d = new Date(unlocked);
-      dateStr = d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
-    }
-
-    card.innerHTML = `
-      <div class="ach-icon">${unlocked ? a.icon : '🔒'}</div>
-      <div class="ach-name">${a.name}</div>
-      <div class="ach-desc">${a.desc}</div>
-      ${unlocked ? `<div class="ach-date">${dateStr}</div>` : ''}
-    `;
-    grid.appendChild(card);
-  });
+function switchTab(t) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(t.toLowerCase())));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id.includes(t)));
 }
 
-// =================== INIT ===================
-initTheme();
-initParticles();
+// Init
 renderHome();
 </script>
-
 </body>
 </html>
