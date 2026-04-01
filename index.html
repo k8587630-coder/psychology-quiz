@@ -554,14 +554,121 @@
       display: block;
     }
 
+    /* Detailed Lesson View Styles */
+    .lesson-hero {
+      position: relative;
+      height: 250px;
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .lesson-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .lesson-hero-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(0deg, rgba(15, 14, 23, 0.9) 0%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 30px;
+    }
+
+    .lesson-hero-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .lesson-rich-content {
+      line-height: 1.8;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+
+    .lesson-rich-content h3 {
+      font-size: 1.4rem;
+      margin: 40px 0 15px;
+      color: var(--accent-light);
+    }
+
+    .lesson-rich-content p {
+      margin-bottom: 20px;
+      color: var(--text-secondary);
+    }
+
+    .lesson-rich-content b {
+      color: var(--text-primary);
+    }
+
+    .lesson-quote {
+      border-left: 4px solid var(--accent);
+      padding: 15px 25px;
+      margin: 30px 0;
+      background: var(--bg-card);
+      border-radius: 0 16px 16px 0;
+      font-style: italic;
+    }
+
+    .lesson-module-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .lesson-module-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px var(--accent-glow);
+    }
+
+    .lesson-module-card .icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .lesson-module-card h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .illustration-box {
+      margin: 30px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .illustration-box img {
+      width: 100%;
+      display: block;
+    }
+
+    .illustration-caption {
+      padding: 12px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      text-align: center;
+      background: var(--bg-card);
+    }
+
     @media (max-width: 600px) {
-      .hero h1 { font-size: 1.5rem; }
-      .stats-bar { grid-template-columns: repeat(2, 1fr); }
-      .question-card { padding: 22px 18px; }
-      .results-card { padding: 28px 18px; }
-      .results-actions { flex-direction: column; }
-      .achievements-grid { grid-template-columns: 1fr 1fr; }
-      .quiz-play-header { flex-wrap: wrap; gap: 8px; }
+      .lesson-hero { height: 180px; }
+      .lesson-hero-title { font-size: 1.4rem; }
+      .lessonsModulesGrid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -675,16 +782,22 @@
     </div>
   </div>
 
-  <!-- LESSONS -->
+  <!-- LESSONS LIST -->
   <div class="screen" id="screen-lessons">
     <div class="stats-header">
       <h2>Бібліотека знань</h2>
-      <p style="color:var(--text-secondary)">Теорія для підготовки до квізів</p>
+      <p style="color:var(--text-secondary)">Обери модуль для глибокого вивчення</p>
     </div>
     
-    <div id="lessonsList" style="display: grid; gap: 14px;"></div>
+    <div id="lessonsModulesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;"></div>
     
-    <button class="btn-secondary" style="width:100%;margin-top:20px;" onclick="showScreen('home')">Назад</button>
+    <button class="btn-secondary" style="width:100%;" onclick="showScreen('home')">Назад до меню</button>
+  </div>
+
+  <!-- LESSON DETAIL VIEW -->
+  <div class="screen" id="screen-lesson-detail">
+    <div id="lessonDetailContent"></div>
+    <button class="btn-secondary" style="width:100%;margin-top:20px;margin-bottom:40px;" onclick="showScreen('lessons')">Назад до списку модулів</button>
   </div>
 
   <!-- STATS -->
@@ -1066,50 +1179,206 @@ function switchTab(tab) {
 }
 
 // =================== LESSONS ===================
+const lessonMaterials = {
+  cognitive: {
+    hero: "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=1000",
+    intro: "Когнітивна психологія — це наука про те, як ми отримуємо, обробляємо та зберігаємо інформацію. Це про твій «внутрішній комп'ютер».",
+    content: `
+      <h3>1. Як ми бачимо світ?</h3>
+      <p>Сприйняття — це не просто картинка в очах. Це складна робота мозку. Наприклад, коли ти бачиш дерево, твій мозок не просто реєструє «зелене і коричневе», він порівнює це з твоїм досвідом і каже: «О, це яблуня!».</p>
+      
+      <div class="illustration-box">
+        <img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000" alt="Science">
+        <div class="illustration-caption">Мозок обробляє візуальну інформацію за мілісекунди.</div>
+      </div>
+
+      <h3>2. Магія пам'яті</h3>
+      <p>Ми маємо три типи пам'яті:</p>
+      <ul>
+        <li><b>Сенсорна</b> (триває секунди — наприклад, спалах світла).</li>
+        <li><b>Короткострокова/Робоча</b> (утримує 7±2 об'єкти — як номер телефону, поки ти його не записав).</li>
+        <li><b>Довгострокова</b> (твоя база даних на все життя).</li>
+      </ul>
+
+      <div class="lesson-quote">«Магічне число Міллера» каже, що ми можемо тримати в голові в середньому лише 7 речей одночасно. Саме тому групування інформації допомагає вчитись краще!</div>
+
+      <h3>3. Когнітивні спотворення</h3>
+      <p>Наш розум часто «зрізає кути». Наприклад, <b>Ефект Даннінга-Крюгера</b>: коли хтось мало знає, він впевнений, що знає все. А справжні експерти часто сумніваються у собі.</p>
+    `
+  },
+  emotions: {
+    hero: "https://images.unsplash.com/photo-1493106819501-66d381c466f1?auto=format&fit=crop&q=80&w=1000",
+    intro: "Емоції — це сигнали нашої системи виживання. Вони кажуть нам, що важливо, а що ні.",
+    content: `
+      <h3>1. Чому ми відчуваємо страх?</h3>
+      <p>Реакція <b>«Бий або тікай»</b> виникла мільйони років тому. Коли ти бачиш небезпеку, амігдала (маленька частина мозку) вимикає логіку і вмикає інстинкти. Адреналін зашкалює, серце б'ється швидше — ти готовий до дій.</p>
+      
+      <div class="illustration-box">
+        <img src="https://images.unsplash.com/photo-1516534775068-ba3e84589b9c?auto=format&fit=crop&q=80&w=1000" alt="Emotions">
+        <div class="illustration-caption">Емоції впливають на наше тіло миттєво.</div>
+      </div>
+
+      <h3>2. Емоційний інтелект (EQ)</h3>
+      <p>EQ часто важливіший за IQ. Це здатність розуміти свої почуття та почуття інших. Люди з високим EQ краще справляються зі стресом і легше знаходять друзів.</p>
+
+      <h3>3. Захисні механізми</h3>
+      <p>Коли стає занадто боляче, психіка вмикає захист. Наприклад, <b>сублімація</b> — коли ти перетворюєш свій гнів на творчість або спорт. Це найздоровіший спосіб виходу емоцій.</p>
+    `
+  },
+  personality: {
+    hero: "https://images.unsplash.com/photo-1499209974431-9dac3adaf471?auto=format&fit=crop&q=80&w=1000",
+    intro: "Що робить тебе собою? Психологія особистості вивчає характер, темперамент та поведінку.",
+    content: `
+      <h3>1. Темперамент — це база</h3>
+      <p>Темперамент вроджений. Це як «операційна система» твого мозку. Ти можеш бути активним (сангвінік) або спокійним (флегматик). Це не можна змінити, але з цим можна навчитися жити ефективно.</p>
+      
+      <h3>2. Велика П'ятірка (Big Five)</h3>
+      <p>Вчені виділяють 5 головних рис особистості: <b>Відкритість, Сумлінність, Екстраверсія, Доброзичливість та Невротизм</b>. Спробуй подумати, яка риса у тебе найсильніша?</p>
+
+      <div class="illustration-box">
+        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=1000" alt="Personality">
+        <div class="illustration-caption">Кожна людина — це унікальна комбінація рис.</div>
+      </div>
+
+      <h3>3. Локус контролю</h3>
+      <p>Це те, у що ти віриш: чи ти керуєш своїм життям (внутрішній локус), чи все залежить від удачі та обставин (зовнішній). Ті, хто вірять у себе, зазвичай досягають більшого.</p>
+    `
+  },
+  social: {
+    hero: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1000",
+    intro: "Ми — соціальні істоти. Соціальна психологія вивчає, як інші люди впливають на нашу поведінку.",
+    content: `
+      <h3>1. Сила натовпу</h3>
+      <p><b>Конформізм</b> — це коли ми робимо як усі, навіть якщо знаємо, що це неправильно. Експеримент Аша показав, що 75% людей готові погодитись з очевидною брехнею групи.</p>
+      
+      <div class="lesson-quote">«Ефект свідка»: чим більше людей бачать, що комусь погано, тим менша ймовірність, що хтось допоможе. Кожен думає: «хтось інший це зробить».</div>
+
+      <h3>2. Ролі та маски</h3>
+      <p>Знаменитий Стенфордський тюремний експеримент показав: коли людині дають роль і владу, вона може почати поводитись зовсім інакше. Ситуація часто сильніша за характер.</p>
+
+      <div class="illustration-box">
+        <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=1000" alt="Social">
+        <div class="illustration-caption">Спілкування — це постійний обмін впливами.</div>
+      </div>
+
+      <h3>3. Ефект ореолу</h3>
+      <p>Ми схильні думати, що красиві люди автоматично добрі та розумні. Це помилка мозку, про яку варто знати!</p>
+    `
+  },
+  development: {
+    hero: "https://images.unsplash.com/photo-1502035618526-6b2f1fbb7a37?auto=format&fit=crop&q=80&w=1000",
+    intro: "Ми змінюємося все життя. Від першої усмішки до мудрості у старості — кожен вік має свої виклики.",
+    content: `
+      <h3>1. Стадії Піаже</h3>
+      <p>Діти не просто «маленькі дорослі». Вони мислять інакше. До 7 років дитина може не розуміти, що кількість води не змінюється, якщо перелити її у високу склянку.</p>
+      
+      <div class="illustration-box">
+        <img src="https://images.unsplash.com/photo-1476703345914-188600189851?auto=format&fit=crop&q=80&w=1000" alt="Development">
+        <div class="illustration-caption">Гра — це головний інструмент розвитку мозку.</div>
+      </div>
+
+      <h3>2. Криза ідентичності</h3>
+      <p>Підлітковий вік — це час пошуку відповіді на питання «Хто я?». Це нормально — сумніватися, експериментувати та шукати свої цінності. Еріксон називав це головним завданням молоді.</p>
+
+      <h3>3. Прив'язаність</h3>
+      <p>Те, як батьки дбали про тебе в перші роки, створює твій стиль стосунків у майбутньому. Безпечна прив'язаність — це фундамент впевненості у собі.</p>
+    `
+  },
+  neuro: {
+    hero: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000",
+    intro: "Все, що ти відчуваєш — це електрика та хімія у твоєму мозку. Давай зазирнемо під черепну коробку!",
+    content: `
+      <h3>1. Нейрони — мережа знань</h3>
+      <p>У твоєму мозку 86 мільярдів нейронів. Коли ти вчиш нове, між ними прокладаються «мости» — синапси. Чим частіше ти повторюєш щось, тим міцнішим стає цей зв'язок.</p>
+      
+      <div class="lesson-quote">Нейропластичність — це здатність твого мозку змінюватися. Навіть у дорослому віці ти можеш «перепрошити» свій мозок новими звичками.</div>
+
+      <div class="illustration-box">
+        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80&w=1000" alt="Neuroscience">
+        <div class="illustration-caption">Синапси — це точки контакту між нейронами.</div>
+      </div>
+
+      <h3>2. Нейромедіатори — хімія щастя</h3>
+      <p><b>Допамін</b> — це очікування нагороди (тому так важко відірватися від соцмереж). <b>Серотонін</b> — це спокій та задоволення. <b>Адреналін</b> — це готовність до бою.</p>
+
+      <h3>3. Дзеркальні нейрони</h3>
+      <p>Чому ми плачемо під час фільму? Дзеркальні нейрони активуються, коли ми бачимо чужі емоції, дозволяючи нам «відчути» те саме. Це основа емпатії.</p>
+    `
+  }
+};
+
 function renderLessons() {
-  const list = document.getElementById('lessonsList');
-  list.innerHTML = '';
+  const grid = document.getElementById('lessonsModulesGrid');
+  grid.innerHTML = '';
 
   quizzes.forEach(quiz => {
-    const categoryTitle = document.createElement('div');
-    categoryTitle.className = 'section-title';
-    categoryTitle.innerHTML = `${quiz.icon} ${quiz.title}`;
-    list.appendChild(categoryTitle);
-
-    quiz.questions.forEach((q, i) => {
-      const item = document.createElement('div');
-      item.className = 'lesson-item';
-      item.innerHTML = `
-        <div class="lesson-header" onclick="toggleLesson(this)">
-          <div>
-            <span class="lesson-category-tag">${quiz.title.split(' ')[0]} — Питання ${i + 1}</span>
-            <h4>${q.q}</h4>
-          </div>
-          <div class="lesson-icon-status">▾</div>
-        </div>
-        <div class="lesson-content">
-          <div class="lesson-body">
-            <p>${q.info}</p>
-          </div>
-        </div>
-      `;
-      list.appendChild(item);
-    });
+    const card = document.createElement('div');
+    card.className = 'lesson-module-card';
+    card.onclick = () => viewLesson(quiz.id);
+    card.innerHTML = `
+      <span class="icon">${quiz.icon}</span>
+      <h4>${quiz.title}</h4>
+      <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:8px;">8-10 хвилин читання</p>
+    `;
+    grid.appendChild(card);
   });
 }
 
+function viewLesson(quizId) {
+  const lesson = lessonMaterials[quizId];
+  const quiz = quizzes.find(q => q.id === quizId);
+  if (!lesson || !quiz) return;
+
+  const container = document.getElementById('lessonDetailContent');
+  container.innerHTML = `
+    <div class="lesson-hero">
+      <img src="${lesson.hero}" alt="${quiz.title}">
+      <div class="lesson-hero-overlay">
+        <div class="lesson-hero-title">${quiz.title}</div>
+        <p style="color:rgba(255,255,255,0.8);font-size:0.95rem;">Модуль підготовки до квізу</p>
+      </div>
+    </div>
+
+    <div class="lesson-rich-content">
+      <p style="font-size: 1.2rem; color: var(--accent-light); font-weight: 600; line-height: 1.6;">${lesson.intro}</p>
+      ${lesson.content}
+    </div>
+
+    <div class="section-title" style="margin-top:50px;">Перевірка знань</div>
+    <p style="color:var(--text-secondary);margin-bottom:20px;">Розкрий питання, щоб закріпити матеріал:</p>
+    
+    <div id="lessonQuestionsAccordion"></div>
+    
+    <button class="btn-primary" style="width:100%;margin-top:30px;" onclick="startQuiz('${quizId}')">Пройти квіз за цією темою ✍️</button>
+  `;
+
+  // Render questions accordion
+  const accContainer = document.getElementById('lessonQuestionsAccordion');
+  quiz.questions.forEach((q, i) => {
+    const item = document.createElement('div');
+    item.className = 'lesson-item';
+    item.innerHTML = `
+      <div class="lesson-header" onclick="toggleLesson(this)">
+        <div>
+          <span class="lesson-category-tag">Питання ${i + 1}</span>
+          <h4>${q.q}</h4>
+        </div>
+        <div class="lesson-icon-status">▾</div>
+      </div>
+      <div class="lesson-content">
+        <div class="lesson-body">
+          <p>${q.info}</p>
+        </div>
+      </div>
+    `;
+    accContainer.appendChild(item);
+  });
+
+  showScreen('lesson-detail');
+}
+
 function toggleLesson(header) {
-  const item = header.parentElement;
-  const isActive = item.classList.contains('active');
-  
-  // Close other open lessons in the same list if wanted (optional)
-  // document.querySelectorAll('.lesson-item').forEach(li => li.classList.remove('active'));
-  
-  if (isActive) {
-    item.classList.remove('active');
-  } else {
-    item.classList.add('active');
-  }
+  header.parentElement.classList.toggle('active');
 }
 
 // =================== HOME ===================
