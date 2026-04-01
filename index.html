@@ -507,6 +507,9 @@
       <button class="icon-btn" onclick="showScreen('stats')" title="Статистика">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
       </button>
+      <button class="icon-btn" onclick="showScreen('lessons')" title="Уроки">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </button>
       <button class="icon-btn" onclick="toggleTheme()" title="Тема">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
@@ -597,6 +600,18 @@
         <button class="btn-primary" id="retryBtn">Ще раз</button>
       </div>
     </div>
+  </div>
+
+  <!-- LESSONS -->
+  <div class="screen" id="screen-lessons">
+    <div class="stats-header">
+      <h2>Бібліотека знань</h2>
+      <p style="color:var(--text-secondary)">Теорія для підготовки до квізів</p>
+    </div>
+    
+    <div id="lessonsList" style="display: grid; gap: 14px;"></div>
+    
+    <button class="btn-secondary" style="width:100%;margin-top:20px;" onclick="showScreen('home')">Назад</button>
   </div>
 
   <!-- STATS -->
@@ -963,6 +978,7 @@ function showScreen(name) {
   document.getElementById('screen-' + name).classList.add('active');
   if (name === 'home') renderHome();
   if (name === 'stats') renderStats();
+  if (name === 'lessons') renderLessons();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -974,6 +990,38 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   if (tab === 'achievements') renderAchievements();
+}
+
+// =================== LESSONS ===================
+function renderLessons() {
+  const list = document.getElementById('lessonsList');
+  list.innerHTML = '';
+
+  quizzes.forEach(quiz => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.style.cursor = 'default';
+    card.innerHTML = `
+      <div class="quiz-card-inner">
+        <div class="quiz-card-top">
+          <div class="quiz-card-icon">${quiz.icon}</div>
+          <span class="quiz-badge badge-${quiz.badge}">${quiz.badgeText}</span>
+        </div>
+        <h3>${quiz.title}</h3>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">Основні теми цього модуля:</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          ${quiz.questions.slice(0, 5).map((q, i) => `
+            <div style="font-size: 0.88rem; display: flex; align-items: flex-start; gap: 8px;">
+              <span style="color: var(--accent); font-weight: 700;">${i + 1}.</span>
+              <span>${q.q.split('?')[0]}?</span>
+            </div>
+          `).join('')}
+        </div>
+        <button class="btn-primary" style="margin-top: 16px; width: 100%; padding: 10px;" onclick="startQuiz('${quiz.id}')">Пройти квіз</button>
+      </div>
+    `;
+    list.appendChild(card);
+  });
 }
 
 // =================== HOME ===================
