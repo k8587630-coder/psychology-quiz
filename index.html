@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Психологічний квіз — Як працює наш розум?</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      max-width: 700px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .quiz-header {
+      background: linear-gradient(135deg, #6c5ce7, #a55eea);
+      color: #fff;
+      padding: 30px 36px;
+      text-align: center;
+    }
+
+    .quiz-header h1 {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+    }
+
+    .quiz-header p {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    /* Progress bar */
+    .progress-wrapper {
+      padding: 20px 36px 0;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6c5ce7, #a55eea);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    /* Question area */
+    .quiz-body {
+      padding: 28px 36px 36px;
+    }
+
+    .question-number {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #a55eea;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #2d3436;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    /* Options */
+    .options-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 16px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 14px;
+      background: #fafafa;
+      font-size: 1rem;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+      line-height: 1.4;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: #a55eea;
+      background: #f3eaff;
+      transform: translateY(-1px);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-btn.correct {
+      border-color: #00b894;
+      background: #e6faf3;
+      color: #00b894;
+      font-weight: 600;
+    }
+
+    .option-btn.wrong {
+      border-color: #e17055;
+      background: #fdf0ed;
+      color: #e17055;
+    }
+
+    .option-btn.correct::before {
+      content: "\2714\FE0F ";
+    }
+
+    .option-btn.wrong::before {
+      content: "\274C ";
+    }
+
+    /* Explanation */
+    .explanation {
+      margin-top: 24px;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #f8f6ff, #f0edff);
+      border-left: 4px solid #a55eea;
+      border-radius: 0 14px 14px 0;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .explanation.show {
+      display: block;
+    }
+
+    .explanation-title {
+      font-weight: 700;
+      color: #6c5ce7;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .explanation p {
+      font-size: 0.93rem;
+      color: #555;
+      line-height: 1.65;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Next button */
+    .next-btn {
+      display: none;
+      margin-top: 24px;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6c5ce7, #a55eea);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+    }
+
+    .next-btn.show {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .next-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(108,92,231,0.35);
+    }
+
+    /* Results screen */
+    .results {
+      text-align: center;
+      padding: 40px 36px;
+      display: none;
+    }
+
+    .results.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .results-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .results h2 {
+      font-size: 1.6rem;
+      color: #2d3436;
+      margin-bottom: 8px;
+    }
+
+    .results .score {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6c5ce7, #a55eea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 16px 0;
+    }
+
+    .results .message {
+      font-size: 1rem;
+      color: #666;
+      line-height: 1.6;
+      max-width: 500px;
+      margin: 0 auto 28px;
+    }
+
+    .restart-btn {
+      padding: 16px 40px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6c5ce7, #a55eea);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .restart-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(108,92,231,0.35);
+    }
+
+    /* Start screen */
+    .start-screen {
+      text-align: center;
+      padding: 50px 36px;
+    }
+
+    .start-screen .emoji {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .start-screen h2 {
+      font-size: 1.5rem;
+      color: #2d3436;
+      margin-bottom: 12px;
+    }
+
+    .start-screen p {
+      color: #777;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .start-btn {
+      padding: 16px 48px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6c5ce7, #a55eea);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(108,92,231,0.35);
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      .quiz-header { padding: 24px 20px; }
+      .quiz-body, .results, .start-screen { padding: 20px; }
+      .progress-wrapper { padding: 16px 20px 0; }
+      .quiz-header h1 { font-size: 1.3rem; }
+      .question-text { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div class="quiz-header">
+    <h1>Як працює наш розум?</h1>
+    <p>Квіз з основ психології — 10 питань</p>
+  </div>
+
+  <!-- Start screen -->
+  <div class="start-screen" id="startScreen">
+    <div class="emoji">🧠</div>
+    <h2>Готовий перевірити свої знання?</h2>
+    <p>
+      Цей квіз охоплює теми когнітивної психології, емоцій, пам'яті та поведінки людини.
+      Після кожної відповіді ти отримаєш детальне пояснення — навіть якщо відповідеш правильно!
+    </p>
+    <button class="start-btn" onclick="startQuiz()">Почати квіз</button>
+  </div>
+
+  <!-- Quiz content (hidden until start) -->
+  <div id="quizContent" style="display:none;">
+    <div class="progress-wrapper">
+      <div class="progress-text">
+        <span id="progressLabel">Питання 1 з 10</span>
+        <span id="scoreLabel">Правильних: 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:10%"></div>
+      </div>
+    </div>
+
+    <div class="quiz-body">
+      <div class="question-number" id="questionNumber">Питання 1</div>
+      <div class="question-text" id="questionText"></div>
+      <ul class="options-list" id="optionsList"></ul>
+      <div class="explanation" id="explanation">
+        <div class="explanation-title">Пояснення:</div>
+        <p id="explanationText"></p>
+      </div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Наступне питання</button>
+    </div>
+  </div>
+
+  <!-- Results screen -->
+  <div class="results" id="resultsScreen">
+    <div class="results-icon" id="resultsIcon"></div>
+    <h2>Квіз завершено!</h2>
+    <div class="score" id="finalScore"></div>
+    <div class="message" id="resultsMessage"></div>
+    <button class="restart-btn" onclick="restartQuiz()">Пройти ще раз</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    question: "Що таке «ефект Даннінга-Крюгера»?",
+    options: [
+      "Люди з низьким рівнем компетенції переоцінюють свої здібності",
+      "Люди краще запам'ятовують незавершені справи",
+      "Люди схильні підкорятись авторитету",
+      "Люди поводяться інакше, коли знають, що за ними спостерігають"
+    ],
+    correct: 0,
+    explanation: "Ефект Даннінга-Крюгера — це когнітивне спотворення, при якому люди з низьким рівнем кваліфікації у певній сфері схильні переоцінювати свої здібності. Водночас високо кваліфіковані люди, навпаки, часто недооцінюють себе. Це відбувається тому, що для усвідомлення своєї некомпетентності потрібна саме та компетенція, якої бракує. Цей ефект був описаний психологами Девідом Даннінгом та Джастіном Крюгером у 1999 році."
+  },
+  {
+    question: "Яка частина мозку найбільше відповідає за переживання страху?",
+    options: [
+      "Гіпокамп",
+      "Мигдалеподібне тіло (амігдала)",
+      "Префронтальна кора",
+      "Мозочок"
+    ],
+    correct: 1,
+    explanation: "Мигдалеподібне тіло (амігдала) — це невелика структура в скроневій частці мозку, яка відіграє ключову роль у обробці емоцій, особливо страху. Вона миттєво оцінює потенційну загрозу ще до того, як ми свідомо зрозуміємо ситуацію. Саме тому ми можемо відсмикнути руку від гарячого предмета раніше, ніж усвідомимо біль. Гіпокамп же відповідає за пам'ять, а префронтальна кора — за прийняття рішень."
+  },
+  {
+    question: "Що описує «піраміда потреб» Абрахама Маслоу?",
+    options: [
+      "Стадії розвитку дитини від народження до дорослості",
+      "Ієрархію людських потреб від базових до вищих",
+      "Етапи переживання горя та втрати",
+      "Типи темпераменту людини"
+    ],
+    correct: 1,
+    explanation: "Піраміда Маслоу — це модель мотивації, яка описує ієрархію потреб людини. Знизу вгору: фізіологічні потреби (їжа, сон), потреба в безпеці, соціальні потреби (любов, дружба), потреба у визнанні, і на вершині — самоактуалізація (розкриття свого потенціалу). Ідея в тому, що вищі потреби стають важливими лише тоді, коли задоволені базові. Хоча сучасна наука частково переглянула цю модель, вона залишається корисною для розуміння мотивації."
+  },
+  {
+    question: "Що таке «когнітивний дисонанс»?",
+    options: [
+      "Нездатність зосередитись на одній задачі",
+      "Психічний дискомфорт від суперечливих переконань або дій",
+      "Погіршення пам'яті з віком",
+      "Страх перед прийняттям рішень"
+    ],
+    correct: 1,
+    explanation: "Когнітивний дисонанс — це стан внутрішнього дискомфорту, який виникає, коли наші дії суперечать нашим переконанням. Наприклад, людина знає, що куріння шкідливе, але продовжує курити — це створює напругу. Щоб зменшити дисонанс, ми або змінюємо поведінку, або змінюємо своє ставлення (\"мій дідусь курив і прожив 90 років\"). Цю теорію запропонував Леон Фестінгер у 1957 році, і вона пояснює безліч парадоксів людської поведінки."
+  },
+  {
+    question: "Скільки об'єктів у середньому може утримувати короткочасна (робоча) пам'ять?",
+    options: [
+      "3 ± 1",
+      "5 ± 2",
+      "7 ± 2",
+      "12 ± 3"
+    ],
+    correct: 2,
+    explanation: "Класичне дослідження Джорджа Міллера (1956) показало, що робоча пам'ять утримує приблизно 7 ± 2 елементи — це так зване «магічне число Міллера». Ось чому телефонні номери зазвичай мають 7 цифр! Однак сучасні дослідження (зокрема роботи Нельсона Коуена) уточнюють, що без спеціальних стратегій групування реальна ємність ближча до 4 елементів. Ми можемо обійти це обмеження, групуючи інформацію в «чанки» — наприклад, запам'ятовуючи «1945» як одну дату, а не чотири окремі цифри."
+  },
+  {
+    question: "Що таке «ефект свідка» (bystander effect)?",
+    options: [
+      "Люди краще працюють, коли за ними спостерігають",
+      "Чим більше свідків, тим менша ймовірність, що хтось допоможе",
+      "Свідки злочину завжди точно описують те, що бачили",
+      "Люди схильні наслідувати поведінку інших у групі"
+    ],
+    correct: 1,
+    explanation: "Ефект свідка — це соціально-психологічний феномен, при якому ймовірність допомоги потерпілому зменшується, якщо поруч є інші люди. Кожен думає: «хтось інший допоможе». Це явище було вперше досліджено після випадку Кітті Дженовезе у 1964 році, коли, за початковими повідомленнями, десятки людей чули крики про допомогу, але ніхто не втрутився. Психологи Дарлі та Латане довели цей ефект експериментально. Тому, якщо вам потрібна допомога — звертайтесь до конкретної людини, а не до натовпу!"
+  },
+  {
+    question: "Хто є автором теорії про «колективне несвідоме» та архетипи?",
+    options: [
+      "Зигмунд Фрейд",
+      "Карл Густав Юнг",
+      "Альфред Адлер",
+      "Ерік Еріксон"
+    ],
+    correct: 1,
+    explanation: "Карл Густав Юнг — швейцарський психіатр, учень Фрейда, який пішов власним шляхом. Він запропонував концепцію колективного несвідомого — глибинного шару психіки, спільного для всіх людей, який містить архетипи (універсальні образи та символи). Серед найвідоміших архетипів: Тінь (темна сторона особистості), Аніма/Анімус (внутрішній образ протилежної статі), Самість (цілісність). Фрейд же зосереджувався на особистому несвідомому та сексуальних потягах, а Адлер — на комплексі неповноцінності."
+  },
+  {
+    question: "Що таке «ефект ореолу» (halo effect)?",
+    options: [
+      "Тенденція бачити себе кращим за інших",
+      "Схильність запам'ятовувати яскраві події краще за буденні",
+      "Одна позитивна якість людини впливає на сприйняття всіх інших її якостей",
+      "Прагнення відповідати очікуванням оточуючих"
+    ],
+    correct: 2,
+    explanation: "Ефект ореолу — це когнітивне спотворення, при якому позитивне враження від однієї якості людини поширюється на сприйняття інших, навіть не пов'язаних якостей. Наприклад, привабливих людей ми автоматично вважаємо розумнішими, добрішими та успішнішими. Цей ефект працює і в зворотному напрямку (\"ефект рогів\"): одна негативна риса може зіпсувати загальне враження. Ефект ореолу описав Едвард Торндайк у 1920 році, і він активно використовується в маркетингу та рекламі."
+  },
+  {
+    question: "Які 5 етапів переживання горя описала Елізабет Кюблер-Росс?",
+    options: [
+      "Шок, плач, гнів, сум, забуття",
+      "Заперечення, гнів, торг, депресія, прийняття",
+      "Тривога, страх, відчай, адаптація, зцілення",
+      "Ізоляція, агресія, апатія, пошук сенсу, відновлення"
+    ],
+    correct: 1,
+    explanation: "Модель Кюблер-Росс (1969) описує п'ять стадій: заперечення («цього не може бути»), гнів («чому це сталось зі мною?»), торг («якби я тоді зробив інакше...»), депресія (глибокий сум від усвідомлення реальності) і прийняття (не означає «все добре», а означає визнання нової реальності). Важливо розуміти, що ці стадії не обов'язково йдуть послідовно — людина може переживати їх у будь-якому порядку, повертатись до попередніх стадій, або пропускати деякі."
+  },
+  {
+    question: "Що таке «зона найближчого розвитку» за Виготським?",
+    options: [
+      "Вік, у якому дитина починає абстрактно мислити",
+      "Область між тим, що дитина може сама, і тим, що може з допомогою дорослого",
+      "Частина мозку, що розвивається останньою",
+      "Період підліткової кризи ідентичності"
+    ],
+    correct: 1,
+    explanation: "Зона найближчого розвитку (ЗНР) — геніальна ідея Льва Виготського, одного з найвпливовіших психологів XX століття. ЗНР — це відстань між тим, що дитина може зробити самостійно, і тим, що вона може зробити з допомогою дорослого або більш досвідченого однолітка. Саме в цій зоні відбувається найефективніше навчання! Занадто легкі завдання — нудно, занадто складні — фрустрація, а завдання в ЗНР — ідеальний виклик. Цей принцип використовується в сучасній педагогіці та навіть у дизайні відеоігор."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+function startQuiz() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizContent').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  const q = questions[currentQuestion];
+
+  document.getElementById('questionNumber').textContent = `Питання ${currentQuestion + 1}`;
+  document.getElementById('questionText').textContent = q.question;
+  document.getElementById('progressLabel').textContent = `Питання ${currentQuestion + 1} з ${questions.length}`;
+  document.getElementById('scoreLabel').textContent = `Правильних: ${score}`;
+  document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+  const list = document.getElementById('optionsList');
+  list.innerHTML = '';
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i);
+    list.appendChild(btn);
+  });
+
+  document.getElementById('explanation').classList.remove('show');
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function selectAnswer(index) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentQuestion];
+  const buttons = document.querySelectorAll('.option-btn');
+
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) {
+      btn.classList.add('correct');
+    } else if (i === index && index !== q.correct) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  if (index === q.correct) {
+    score++;
+    document.getElementById('scoreLabel').textContent = `Правильних: ${score}`;
+  }
+
+  document.getElementById('explanationText').textContent = q.explanation;
+  document.getElementById('explanation').classList.add('show');
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Наступне питання' : 'Дивитись результати';
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion() {
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    showQuestion();
+    // Scroll to top of quiz
+    document.querySelector('.quiz-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('quizContent').style.display = 'none';
+  const results = document.getElementById('resultsScreen');
+  results.classList.add('show');
+
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+
+  let icon, message;
+  if (pct >= 90) {
+    icon = '🏆';
+    message = 'Вражаюче! Ти чудово розбираєшся в психології. Твої знання про людський розум на високому рівні — продовжуй вивчати цю захопливу науку!';
+  } else if (pct >= 70) {
+    icon = '🌟';
+    message = 'Чудовий результат! Ти маєш гарну базу знань з психології. Деякі теми варто поглибити — перечитай пояснення до питань, де помилився, щоб дізнатись більше.';
+  } else if (pct >= 50) {
+    icon = '📚';
+    message = 'Непоганий старт! Ти вже знаєш основи, але є простір для зростання. Психологія — це неймовірно цікава наука, і кожне нове знання допоможе тобі краще розуміти себе та інших.';
+  } else {
+    icon = '🌱';
+    message = 'Ти тільки на початку шляху — і це прекрасно! Кожна відповідь у цьому квізі — це нова цікава інформація про те, як працює наш розум. Спробуй ще раз і побачиш, наскільки більше ти вже знаєш!';
+  }
+
+  document.getElementById('resultsIcon').textContent = icon;
+  document.getElementById('resultsMessage').textContent = message;
+}
+
+function restartQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('resultsScreen').classList.remove('show');
+  document.getElementById('quizContent').style.display = 'block';
+  showQuestion();
+}
+</script>
+
+</body>
+</html>
