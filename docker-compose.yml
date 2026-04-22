@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports:
+      - "4056:4056"
+    environment:
+      DATABASE_URL: "postgresql://student_admin:vibecode2026pg@172.17.0.1:5433/db_katerynap"
+      JWT_SECRET: "psyquiz_super_secret_2026"
+      PORT: "4056"
+    restart: unless-stopped

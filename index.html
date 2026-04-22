@@ -362,6 +362,8 @@
       <span class="topbar-lv-badge" id="levelBadge" onclick="showScreen('level')">🐣 1-4 клас</span>
       <button class="icon-btn" onclick="showScreen('home')">🏠</button>
       <button class="icon-btn" onclick="showScreen('lessons')">📚</button>
+      <button class="icon-btn" id="btnMyStats" onclick="showMyStats()" style="display:none" title="Мої результати">📊</button>
+      <button class="icon-btn" id="btnAuth" onclick="openAuthModal()">👤</button>
       <button class="icon-btn" onclick="toggleTheme()">🌓</button>
     </div>
   </div>
@@ -474,6 +476,45 @@
     autoplay>
   </lottie-player>
   <div class="cel-text" id="celText"></div>
+</div>
+
+<!-- AUTH MODAL -->
+<div id="authModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:20000; display:none; align-items:center; justify-content:center;">
+  <div style="background:#0e0e2a; border:1px solid rgba(168,85,247,0.3); border-radius:24px; padding:36px; width:min(420px,92vw); position:relative;">
+    <button onclick="closeAuthModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#888; font-size:1.4rem; cursor:pointer;">✕</button>
+
+    <!-- tabs -->
+    <div style="display:flex; gap:8px; margin-bottom:28px;">
+      <button id="tabLogin" onclick="switchTab('login')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:var(--purple); color:#fff; font-size:0.95rem;">Увійти</button>
+      <button id="tabReg" onclick="switchTab('reg')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:rgba(255,255,255,0.08); color:#aaa; font-size:0.95rem;">Зареєструватись</button>
+    </div>
+
+    <!-- login form -->
+    <div id="formLogin">
+      <input id="loginEmail" type="email" placeholder="Email" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
+      <input id="loginPass" type="password" placeholder="Пароль" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:20px; outline:none;">
+      <button onclick="doLogin()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#a855f7,#06b6d4); color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer;">Увійти</button>
+    </div>
+
+    <!-- register form -->
+    <div id="formReg" style="display:none;">
+      <input id="regName" type="text" placeholder="Твоє ім'я" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
+      <input id="regEmail" type="email" placeholder="Email" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
+      <input id="regPass" type="password" placeholder="Пароль (мін. 4 символи)" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:20px; outline:none;">
+      <button onclick="doRegister()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#a855f7,#06b6d4); color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer;">Зареєструватись</button>
+    </div>
+
+    <p id="authError" style="color:#f87171; text-align:center; margin-top:14px; min-height:20px; font-size:0.9rem;"></p>
+  </div>
+</div>
+
+<!-- MY STATS MODAL -->
+<div id="myStatsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:20000; align-items:flex-start; justify-content:center; padding-top:20px; overflow-y:auto;">
+  <div style="background:#0e0e2a; border:1px solid rgba(168,85,247,0.3); border-radius:24px; padding:32px; width:min(600px,94vw); margin:auto; position:relative;">
+    <button onclick="closeMyStats()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#888; font-size:1.4rem; cursor:pointer;">✕</button>
+    <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:24px;">📊 Мої результати</h2>
+    <div id="myStatsContent"></div>
+  </div>
 </div>
 
 <script>
@@ -1344,6 +1385,9 @@ function finish() {
   document.getElementById('resBadge').textContent = badge;
   document.getElementById('resMessage').textContent = msg;
 
+  // save to server if logged in
+  saveResultToServer(state.quiz.id, state.quiz.title, state.score, total, pct, currentLevel || 'senior');
+
   // animate score number
   const scoreEl = document.getElementById('scoreText');
   scoreEl.classList.remove('animate-score');
@@ -1494,6 +1538,207 @@ function startConfettiCanvas(duration, fireworks) {
   requestAnimationFrame(draw);
 }
 
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+const API = '';
+let currentUser = null;
+
+function loadAuthState() {
+  const token = localStorage.getItem('psy_token');
+  const user = localStorage.getItem('psy_user');
+  if (token && user) {
+    currentUser = JSON.parse(user);
+    updateAuthUI();
+  }
+}
+
+function updateAuthUI() {
+  const btn = document.getElementById('btnAuth');
+  const statsBtn = document.getElementById('btnMyStats');
+  if (currentUser) {
+    btn.textContent = currentUser.name.split(' ')[0] + ' 👋';
+    btn.onclick = showUserMenu;
+    statsBtn.style.display = 'inline-flex';
+  } else {
+    btn.textContent = '👤';
+    btn.onclick = openAuthModal;
+    statsBtn.style.display = 'none';
+  }
+}
+
+function showUserMenu() {
+  const isAdmin = currentUser?.role === 'admin';
+  if (isAdmin) {
+    showAdminDashboard();
+  } else {
+    showMyStats();
+  }
+}
+
+function openAuthModal() {
+  const m = document.getElementById('authModal');
+  m.style.display = 'flex';
+  document.getElementById('authError').textContent = '';
+}
+function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+
+function switchTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('formLogin').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('formReg').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('tabLogin').style.background = isLogin ? 'var(--purple)' : 'rgba(255,255,255,0.08)';
+  document.getElementById('tabLogin').style.color = isLogin ? '#fff' : '#aaa';
+  document.getElementById('tabReg').style.background = !isLogin ? 'var(--purple)' : 'rgba(255,255,255,0.08)';
+  document.getElementById('tabReg').style.color = !isLogin ? '#fff' : '#aaa';
+  document.getElementById('authError').textContent = '';
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPass').value;
+  const err = document.getElementById('authError');
+  try {
+    const r = await fetch('/api/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
+    const data = await r.json();
+    if (!r.ok) { err.textContent = data.error; return; }
+    localStorage.setItem('psy_token', data.token);
+    localStorage.setItem('psy_user', JSON.stringify(data.user));
+    currentUser = data.user;
+    updateAuthUI();
+    closeAuthModal();
+    if (data.user.role === 'admin') showAdminDashboard();
+  } catch { err.textContent = 'Помилка з\'єднання'; }
+}
+
+async function doRegister() {
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPass').value;
+  const err = document.getElementById('authError');
+  try {
+    const r = await fetch('/api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, email, password}) });
+    const data = await r.json();
+    if (!r.ok) { err.textContent = data.error; return; }
+    localStorage.setItem('psy_token', data.token);
+    localStorage.setItem('psy_user', JSON.stringify(data.user));
+    currentUser = data.user;
+    updateAuthUI();
+    closeAuthModal();
+  } catch { err.textContent = 'Помилка з\'єднання'; }
+}
+
+function logout() {
+  localStorage.removeItem('psy_token');
+  localStorage.removeItem('psy_user');
+  currentUser = null;
+  updateAuthUI();
+  closeMyStats();
+}
+
+// ── MY STATS ─────────────────────────────────────────────────────────────────
+async function showMyStats() {
+  const modal = document.getElementById('myStatsModal');
+  const content = document.getElementById('myStatsContent');
+  modal.style.display = 'flex';
+  content.innerHTML = '<p style="color:#aaa;text-align:center">Завантаження...</p>';
+  try {
+    const token = localStorage.getItem('psy_token');
+    const r = await fetch('/api/results/my', { headers: {'Authorization': 'Bearer ' + token} });
+    const results = await r.json();
+    if (!results.length) {
+      content.innerHTML = '<p style="color:#aaa;text-align:center">Ти ще не проходив жодного квізу 🌱</p>';
+      return;
+    }
+    const avgPct = Math.round(results.reduce((a,r) => a + r.pct, 0) / results.length);
+    const best = Math.max(...results.map(r => r.pct));
+    content.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;">
+        <div style="background:rgba(168,85,247,0.15);border-radius:16px;padding:16px;text-align:center;">
+          <div style="font-size:2rem;font-weight:900;">${results.length}</div>
+          <div style="color:#aaa;font-size:0.85rem;">квізів</div>
+        </div>
+        <div style="background:rgba(6,182,212,0.15);border-radius:16px;padding:16px;text-align:center;">
+          <div style="font-size:2rem;font-weight:900;">${avgPct}%</div>
+          <div style="color:#aaa;font-size:0.85rem;">середній</div>
+        </div>
+        <div style="background:rgba(251,191,36,0.15);border-radius:16px;padding:16px;text-align:center;">
+          <div style="font-size:2rem;font-weight:900;">${best}%</div>
+          <div style="color:#aaa;font-size:0.85rem;">рекорд</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${results.map(r => `
+          <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);border-radius:12px;padding:14px 16px;">
+            <div>
+              <div style="font-weight:700;">${r.quizName}</div>
+              <div style="color:#aaa;font-size:0.8rem;">${new Date(r.createdAt).toLocaleDateString('uk-UA')}</div>
+            </div>
+            <div style="font-size:1.4rem;font-weight:900;color:${r.pct>=90?'#fbbf24':r.pct>=70?'#a855f7':'#06b6d4'}">${r.pct}%</div>
+          </div>
+        `).join('')}
+      </div>
+      <button onclick="logout()" style="margin-top:24px;width:100%;padding:12px;border-radius:12px;border:1px solid #f87171;background:transparent;color:#f87171;font-weight:700;cursor:pointer;">Вийти з акаунту</button>
+    `;
+  } catch { content.innerHTML = '<p style="color:#f87171;text-align:center">Помилка завантаження</p>'; }
+}
+function closeMyStats() { document.getElementById('myStatsModal').style.display = 'none'; }
+
+// ── ADMIN DASHBOARD ──────────────────────────────────────────────────────────
+async function showAdminDashboard() {
+  const modal = document.getElementById('myStatsModal');
+  const content = document.getElementById('myStatsContent');
+  document.querySelector('#myStatsModal h2').textContent = '🎓 Панель вчителя';
+  modal.style.display = 'flex';
+  content.innerHTML = '<p style="color:#aaa;text-align:center">Завантаження...</p>';
+  try {
+    const token = localStorage.getItem('psy_token');
+    const r = await fetch('/api/admin/students', { headers: {'Authorization': 'Bearer ' + token} });
+    const students = await r.json();
+    if (!students.length) {
+      content.innerHTML = '<p style="color:#aaa;text-align:center">Ще немає учнів 🌱</p>';
+      return;
+    }
+    content.innerHTML = `
+      <p style="color:#aaa;margin-bottom:16px;">Всього учнів: <strong style="color:#fff">${students.length}</strong></p>
+      ${students.map(s => `
+        <details style="background:rgba(255,255,255,0.04);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;">
+          <summary style="display:flex;justify-content:space-between;align-items:center;list-style:none;">
+            <div>
+              <span style="font-weight:800;font-size:1.05rem;">${s.name}</span>
+              <span style="color:#aaa;font-size:0.8rem;margin-left:10px;">${s.email}</span>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-weight:900;font-size:1.3rem;color:#a855f7">${s.avgPct}%</span>
+              <span style="color:#aaa;font-size:0.8rem;display:block">${s.totalQuizzes} квізів</span>
+            </div>
+          </summary>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+            ${s.results.map(r => `
+              <div style="display:flex;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:10px;">
+                <div style="font-size:0.9rem;">${r.quizName} <span style="color:#aaa">(${r.level})</span></div>
+                <div style="font-weight:700;color:${r.pct>=90?'#fbbf24':r.pct>=70?'#a855f7':'#06b6d4'}">${r.pct}%</div>
+              </div>
+            `).join('') || '<p style="color:#aaa;font-size:0.85rem;">Немає результатів</p>'}
+          </div>
+        </details>
+      `).join('')}
+      <button onclick="logout()" style="margin-top:24px;width:100%;padding:12px;border-radius:12px;border:1px solid #f87171;background:transparent;color:#f87171;font-weight:700;cursor:pointer;">Вийти</button>
+    `;
+  } catch { content.innerHTML = '<p style="color:#f87171;text-align:center">Помилка завантаження</p>'; }
+}
+
+// ── Save result to server ────────────────────────────────────────────────────
+async function saveResultToServer(quizId, quizName, score, total, pct, level) {
+  const token = localStorage.getItem('psy_token');
+  if (!token) return;
+  try {
+    await fetch('/api/results', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'Authorization': 'Bearer ' + token},
+      body: JSON.stringify({quizId, quizName, score, total, pct, level})
+    });
+  } catch {}
+}
+
 function toggleTheme() {
   const curr = document.documentElement.getAttribute('data-theme');
   const next = curr === 'light' ? 'dark' : 'light';
@@ -1504,6 +1749,7 @@ function toggleTheme() {
 // Init
 const _d = getStorage();
 if (_d.theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+loadAuthState();
 </script>
 </body>
 </html>
