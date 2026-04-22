@@ -1,10 +1,25 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: psyquiz
+      POSTGRES_PASSWORD: psyquiz2026
+      POSTGRES_DB: psyquiz
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
   app:
     build: .
     ports:
       - "4056:4056"
     environment:
-      DATABASE_URL: "postgresql://student_admin:vibecode2026pg@172.17.0.1:5433/db_katerynap"
+      DATABASE_URL: "postgresql://psyquiz:psyquiz2026@db:5432/psyquiz"
       JWT_SECRET: "psyquiz_super_secret_2026"
       PORT: "4056"
+    depends_on:
+      - db
     restart: unless-stopped
+
+volumes:
+  pgdata:
