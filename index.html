@@ -6,7 +6,6 @@
   <title>PsyQuiz — Психологічні квізи</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -293,6 +292,8 @@
     @keyframes celFadeUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .score-big.animate-score { animation: scorePop 0.7s cubic-bezier(.36,1.56,.64,1) both; }
     @keyframes scorePop { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .cel-text { background: linear-gradient(90deg,#ffd700,#f472b6,#a855f7,#06b6d4,#34d399,#ffd700); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: celFadeUp 0.5s 0.2s both, rainbowShift 1.5s linear infinite; }
+    @keyframes rainbowShift { to { background-position: 200% center; } }
 
     /* ── Lessons grid ── */
     .lesson-module-card {
@@ -1346,35 +1347,134 @@ function finish() {
 }
 
 function triggerCelebration(pct) {
-  if (pct < 50) return; // no celebration for low scores
+  if (pct < 50) return;
 
   const overlay = document.getElementById('celebrationOverlay');
   const celEmoji = document.getElementById('celEmoji');
   const celText = document.getElementById('celText');
 
-  if (pct >= 90) {
-    celEmoji.textContent = '🏆';
-    celText.textContent = 'Ти — чемпіон!';
-    // fireworks confetti
-    const duration = 3000;
-    const end = Date.now() + duration;
-    (function frame() {
-      confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#a855f7','#06b6d4','#fbbf24'] });
-      confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#a855f7','#06b6d4','#fbbf24'] });
-      if (Date.now() < end) requestAnimationFrame(frame);
-    })();
+  // reset animation by re-inserting clone
+  const oldEmoji = celEmoji.cloneNode(true);
+  celEmoji.parentNode.replaceChild(oldEmoji, celEmoji);
+
+  if (pct === 100) {
+    document.getElementById('celEmoji').textContent = '🥇';
+    document.getElementById('celText').textContent = '🔥 ІДЕАЛЬНИЙ РЕЗУЛЬТАТ! 🔥';
+    launchFireworks(5000);
+  } else if (pct >= 90) {
+    document.getElementById('celEmoji').textContent = '🏆';
+    document.getElementById('celText').textContent = 'Ти — чемпіон!';
+    launchConfetti(200, 4000);
   } else if (pct >= 70) {
-    celEmoji.textContent = '⭐';
-    celText.textContent = 'Чудово!';
-    confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ['#a855f7','#06b6d4','#fbbf24','#f472b6'] });
+    document.getElementById('celEmoji').textContent = '⭐';
+    document.getElementById('celText').textContent = 'Чудово!';
+    launchConfetti(100, 2500);
   } else {
-    celEmoji.textContent = '💪';
-    celText.textContent = 'Так тримати!';
-    confetti({ particleCount: 60, spread: 60, origin: { y: 0.5 }, colors: ['#a855f7','#06b6d4'] });
+    document.getElementById('celEmoji').textContent = '💪';
+    document.getElementById('celText').textContent = 'Так тримати!';
+    launchConfetti(50, 2000);
   }
 
   overlay.style.display = 'flex';
-  setTimeout(() => { overlay.style.display = 'none'; }, 2800);
+  const hideDuration = pct === 100 ? 5500 : 3200;
+  setTimeout(() => { overlay.style.display = 'none'; }, hideDuration);
+}
+
+function launchFireworks(duration) {
+  const colors = ['#ffd700','#ff4500','#a855f7','#06b6d4','#f472b6','#34d399','#fbbf24','#fff'];
+  const endTime = Date.now() + duration;
+
+  function burst(x, y) {
+    const particles = 18 + Math.floor(Math.random() * 14);
+    for (let i = 0; i < particles; i++) {
+      const el = document.createElement('div');
+      el.textContent = ['★','●','♦','▲','✦'][Math.floor(Math.random() * 5)];
+      const angle = (360 / particles) * i;
+      const dist = 80 + Math.random() * 180;
+      const rad = angle * Math.PI / 180;
+      const tx = Math.cos(rad) * dist;
+      const ty = Math.sin(rad) * dist;
+      const size = 12 + Math.random() * 14;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const dur = 700 + Math.random() * 600;
+      Object.assign(el.style, {
+        position: 'fixed', left: x + 'px', top: y + 'px',
+        fontSize: size + 'px', color, zIndex: 10001,
+        pointerEvents: 'none', userSelect: 'none',
+        transform: 'translate(-50%,-50%) scale(1)',
+        transition: `transform ${dur}ms cubic-bezier(.2,.8,.3,1), opacity ${dur * 0.4}ms ${dur * 0.6}ms ease`,
+        opacity: 1,
+      });
+      document.body.appendChild(el);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0.2)`;
+        el.style.opacity = '0';
+      }));
+      setTimeout(() => el.remove(), dur + 300);
+    }
+  }
+
+  function scheduleBurst() {
+    if (Date.now() >= endTime) return;
+    const x = 80 + Math.random() * (window.innerWidth - 160);
+    const y = 60 + Math.random() * (window.innerHeight * 0.6);
+    burst(x, y);
+    setTimeout(scheduleBurst, 250 + Math.random() * 300);
+  }
+
+  // initial triple burst
+  burst(window.innerWidth * 0.5, window.innerHeight * 0.4);
+  setTimeout(() => burst(window.innerWidth * 0.25, window.innerHeight * 0.35), 150);
+  setTimeout(() => burst(window.innerWidth * 0.75, window.innerHeight * 0.35), 300);
+  setTimeout(scheduleBurst, 500);
+
+  // rain confetti too
+  launchConfetti(300, duration);
+}
+
+function launchConfetti(count, duration) {
+  const colors = ['#a855f7','#06b6d4','#fbbf24','#f472b6','#34d399','#fb923c'];
+  const shapes = ['●','■','▲','★','♦'];
+  const container = document.body;
+  const endTime = Date.now() + duration;
+
+  function spawnBatch() {
+    const now = Date.now();
+    if (now >= endTime) return;
+    const batch = Math.min(8, Math.ceil(count * (endTime - now) / duration / 10));
+    for (let i = 0; i < batch; i++) {
+      const el = document.createElement('div');
+      el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+      const size = 10 + Math.random() * 16;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const startX = Math.random() * 100;
+      const driftX = (Math.random() - 0.5) * 300;
+      const fallDuration = 1200 + Math.random() * 1500;
+      const spin = (Math.random() - 0.5) * 720;
+      Object.assign(el.style, {
+        position: 'fixed',
+        top: '-30px',
+        left: startX + 'vw',
+        fontSize: size + 'px',
+        color,
+        zIndex: 10000,
+        pointerEvents: 'none',
+        userSelect: 'none',
+        lineHeight: 1,
+        transition: `transform ${fallDuration}ms ease-in, opacity 300ms ${fallDuration - 400}ms ease`,
+        transform: 'translateY(0) translateX(0) rotate(0deg)',
+        opacity: 1,
+      });
+      container.appendChild(el);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.style.transform = `translateY(110vh) translateX(${driftX}px) rotate(${spin}deg)`;
+        el.style.opacity = '0';
+      }));
+      setTimeout(() => el.remove(), fallDuration + 400);
+    }
+    setTimeout(spawnBatch, 80);
+  }
+  spawnBatch();
 }
 
 function toggleTheme() {
