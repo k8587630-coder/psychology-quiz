@@ -304,6 +304,40 @@
       .quiz-bento { grid-template-columns: 1fr; }
       #lessonsModulesGrid { grid-template-columns: 1fr 1fr !important; }
     }
+
+    /* ── Level Selector ── */
+    .level-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .level-card {
+      background: var(--card); backdrop-filter: blur(16px);
+      border: 1px solid var(--card-b); border-radius: 28px;
+      padding: 24px 22px; cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex; align-items: center; gap: 20px;
+      position: relative; overflow: hidden;
+    }
+    .level-card:not(.lv-disabled):hover { transform: translateY(-4px); }
+    .level-card.lv-disabled { opacity: 0.45; cursor: not-allowed; }
+    .level-card-icon { font-size: 2.8rem; flex-shrink: 0; }
+    .level-card-info h2 { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .level-card-info p { font-size: 0.85rem; color: var(--text2); line-height: 1.5; margin-bottom: 8px; }
+    .level-coming {
+      position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+      font-size: 0.68rem; font-weight: 700; padding: 4px 12px; border-radius: 100px;
+      background: rgba(249,115,22,0.15); color: var(--orange); border: 1px solid rgba(249,115,22,0.3);
+    }
+    .level-card.lv-junior:not(.lv-disabled):hover { box-shadow: 0 16px 40px -8px rgba(236,72,153,0.4); border-color: rgba(236,72,153,0.4); }
+    .level-card.lv-senior:not(.lv-disabled):hover { box-shadow: 0 16px 40px -8px rgba(127,90,240,0.4); border-color: rgba(127,90,240,0.4); }
+    .lv-tag { display: inline-flex; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 8px; }
+    .lv-tag.pink { background: rgba(236,72,153,0.12); color: #ec4899; }
+    .lv-tag.green { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .lv-tag.purple { background: rgba(127,90,240,0.12); color: var(--purple-l); }
+    .topbar-lv-badge {
+      font-size: 0.72rem; font-weight: 700; padding: 6px 12px; border-radius: 10px;
+      background: rgba(127,90,240,0.1); color: var(--purple-l);
+      border: 1px solid rgba(127,90,240,0.2); cursor: pointer; display: none;
+      transition: all 0.2s;
+    }
+    .topbar-lv-badge:hover { background: rgba(127,90,240,0.2); }
   </style>
 </head>
 <body>
@@ -311,16 +345,53 @@
 
 <div class="app">
   <div class="topbar">
-    <div class="logo" onclick="showScreen('home')">PsyQuiz ✦</div>
+    <div class="logo" onclick="showScreen('level')">PsyQuiz ✦</div>
     <div class="topbar-right">
+      <span class="topbar-lv-badge" id="levelBadge" onclick="showScreen('level')">🐣 1-4 клас</span>
       <button class="icon-btn" onclick="showScreen('home')">🏠</button>
       <button class="icon-btn" onclick="showScreen('lessons')">📚</button>
       <button class="icon-btn" onclick="toggleTheme()">🌓</button>
     </div>
   </div>
 
+  <!-- LEVEL SELECTOR -->
+  <div class="screen active" id="screen-level">
+    <div class="hero">
+      <div class="hero-pill">✦ Психологія · 2026</div>
+      <h1>Привіт! <span class="grad">Хто ти?</span></h1>
+      <p>Обери свій рівень — і ми підберемо уроки та квізи саме для тебе.</p>
+    </div>
+    <div class="level-cards">
+      <div class="level-card lv-junior" onclick="selectLevel('junior')">
+        <div class="level-card-icon">🐣</div>
+        <div class="level-card-info">
+          <h2>Молодша школа</h2>
+          <p>Емоції, дружба, настрій і твій мозок — просто і весело!</p>
+          <span class="lv-tag pink">1 — 4 клас</span>
+        </div>
+      </div>
+      <div class="level-card lv-mid lv-disabled">
+        <div class="level-card-icon">🌱</div>
+        <div class="level-card-info">
+          <h2>Середня школа</h2>
+          <p>Характер, стосунки, підліткова психологія</p>
+          <span class="lv-tag green">5 — 7 клас</span>
+        </div>
+        <div class="level-coming">Скоро!</div>
+      </div>
+      <div class="level-card lv-senior" onclick="selectLevel('senior')">
+        <div class="level-card-icon">🚀</div>
+        <div class="level-card-info">
+          <h2>Старша школа</h2>
+          <p>Наука про мозок, соціальна психологія, нейронауки</p>
+          <span class="lv-tag purple">8 — 11 клас</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- HOME -->
-  <div class="screen active" id="screen-home">
+  <div class="screen" id="screen-home">
     <div class="hero">
       <div class="hero-pill">✦ Психологія · 2026</div>
       <h1>Відкрий таємниці<br><span class="grad">власного розуму</span></h1>
@@ -472,6 +543,178 @@ const quizzes = [
     ]
   }
 ];
+
+// ─── JUNIOR QUIZZES (1-4 клас) ───────────────────────────────────────────────
+
+const quizzesJunior = [
+  {
+    id: 'j_emotions', title: 'Мої емоції', icon: '😊',
+    color: '#ec4899', desc: 'Радість, сум, злість і страх',
+    questions: [
+      { q: "Коли ти отримуєш подарунок — що відчуваєш?", opts: ["Злість", "Радість", "Страх", "Сум"], ans: 1, info: "Радість — це приємне відчуття, коли трапляється щось добре. Посмішка і бажання стрибати — це вона!" },
+      { q: "Твоя улюблена іграшка зламалась. Як тобі зараз?", opts: ["Радісно", "Здивовано", "Сумно", "Весело"], ans: 2, info: "Сум — це коли ми втрачаємо щось важливе. Плакати — нормально, це допомагає висловити сум." },
+      { q: "Хтось взяв твій олівець без дозволу. Що ти відчуваєш?", opts: ["Злість", "Радість", "Нічого", "Спокій"], ans: 0, info: "Злість — нормальна емоція, коли порушують наші межі. Але важливо говорити про неї словами!" },
+      { q: "Вночі ти почув дивний незнайомий звук. Що відчуваєш?", opts: ["Радість", "Злість", "Страх", "Гордість"], ans: 2, info: "Страх — це коли ми відчуваємо небезпеку. Він захищає нас! Розкажи дорослому — і стане легше." },
+      { q: "Твій друг впав і забився коліно. Як ти себе почуваєш?", opts: ["Байдуже", "Сумно разом з ним", "Весело", "Нічого"], ans: 1, info: "Ця здатність відчувати те, що відчуває інший, — називається ЕМПАТІЯ. Ти молодець!" },
+      { q: "Тебе похвалила вчителька перед усім класом. Що ти відчуваєш?", opts: ["Сором", "Страх", "Гордість і радість", "Злість"], ans: 2, info: "Гордість — це коли ми робимо щось добре і це помічають. Це чудове відчуття!" },
+      { q: "Ти випадково штовхнув друга і він впав. Що ти відчуваєш?", opts: ["Гордість", "Вину і бажання вибачитись", "Радість", "Нічого"], ans: 1, info: "Відчуття вини допомагає виправляти помилки. Сказати 'вибач' — це дуже сміливо!" },
+      { q: "Вперше в житті ти побачив живого слона! Що ти відчуваєш?", opts: ["Сум", "Злість", "Здивування і захват", "Нудьгу"], ans: 2, info: "Здивування — це коли трапляється щось несподіване і нове. Широко відкриті очі — ознака здивування!" }
+    ]
+  },
+  {
+    id: 'j_friendship', title: 'Дружба та добро', icon: '🤝',
+    color: '#22c55e', desc: 'Що таке справжня дружба',
+    questions: [
+      { q: "Що робить справжній друг, коли тобі сумно?", opts: ["Сміється з тебе", "Йде геть", "Залишається поруч і слухає", "Розповідає всім"], ans: 2, info: "Справжній друг — той, хто поряд у важкий час. Просто бути поруч і слухати — велика допомога!" },
+      { q: "Твій друг зробив помилку і йому соромно. Що ти скажеш?", opts: ["'Ха-ха, ти невдаха!'", "'Нічого, всі помиляються!'", "Промовчу", "'Розкажу всім!'"], ans: 1, info: "Підтримка друга — це нагадати, що помилки нормальні. Всі ми вчимося на помилках!" },
+      { q: "Ти маєш одне яблуко, а твій друг голодний. Що зробиш?", opts: ["З'їм сам", "Поділюся з другом", "Сховаю", "Викину"], ans: 1, info: "Ділитись — важлива частина дружби. Коли ти ділишся — показуєш, що друг для тебе важливий!" },
+      { q: "Новенький у класі сидить сам і не знає нікого. Що ти зробиш?", opts: ["Ігнорую його", "Підійду і познайомлюсь", "Буду сміятись", "Пройду мимо"], ans: 1, info: "Підійти до самотньої людини — це дуже сміливо! Можливо, ти станеш його першим другом." },
+      { q: "Друг взяв твою річ без дозволу. Що правильно зробити?", opts: ["Вдарити його", "Поговорити і пояснити, що так не можна", "Мовчати і образитись", "Поскаржитись всім"], ans: 1, info: "Говорити про те, що тебе образило — найкращий спосіб вирішити конфлікт. Слова сильніші за кулаки!" },
+      { q: "Твій друг розповів тобі секрет. Що ти зробиш?", opts: ["Розповім всьому класу", "Збережу секрет", "Розкажу тільки одному", "Забуду про нього"], ans: 1, info: "Зберігати секрети друга — важлива частина довіри. Довіра — основа справжньої дружби!" },
+      { q: "Хто такий справжній друг?", opts: ["Той, хто дає цукерки", "Той, хто приймає тебе таким, яким ти є", "Найкрасивіший у класі", "Той, хто завжди погоджується"], ans: 1, info: "Справжній друг любить тебе з усіма твоїми особливостями — не тільки коли тобі добре!" },
+      { q: "Якщо тобі сумно, що допоможе найбільше?", opts: ["Сидіти самому в кутку", "Поговорити з другом або дорослим", "Кричати на всіх", "Нічого не допоможе"], ans: 1, info: "Розмова з близькою людиною — найкращі ліки від суму. Ніколи не тримай важкі почуття в собі!" }
+    ]
+  },
+  {
+    id: 'j_calm', title: 'Керую собою', icon: '🌈',
+    color: '#06b6d4', desc: 'Як заспокоїтись і впоратись',
+    questions: [
+      { q: "Ти дуже розізлився. Що допоможе заспокоїтись?", opts: ["Вдарити стіну", "Глибоко подихати і порахувати до 10", "Кричати голосніше", "Нічого не допоможе"], ans: 1, info: "Повільне глибоке дихання — справжня магія! Воно допомагає серцю сповільнитись і мозку заспокоїтись." },
+      { q: "Тобі дуже страшно. Кому найкраще розповісти?", opts: ["Нікому", "Дорослому, якому довіряєш", "Усьому інтернету", "Незнайомцю"], ans: 1, info: "Розповідати дорослим про страх — це не слабкість! Це мудро. Вони допоможуть і підтримають." },
+      { q: "Ти хвилюєшся перед виступом у класі. Що зробиш?", opts: ["Відмовлюсь виступати", "Зроблю глибокий вдих і скажу собі 'я можу!'", "Заплачу", "Втечу з класу"], ans: 1, info: "Говорити собі добрі слова — це справжня суперсила! Хвилювання є навіть у дорослих — це нормально." },
+      { q: "Що ти відчуваєш в тілі, коли злишся?", opts: ["Нічого", "Серце б'ється швидше, кулаки стискаються", "Хочеться спати", "Стає холодно"], ans: 1, info: "Злість — це сигнал від тіла! Коли помічаєш ці ознаки — зупинись і подихай. Ти можеш керувати собою!" },
+      { q: "Після важкого дня — що допоможе відновитись?", opts: ["Дивитись телефон всю ніч", "Поспати, поговорити з рідними, погратись", "Нічого не робити", "Їсти багато цукерок"], ans: 1, info: "Сон, ігри і спілкування з близькими — найкращі ліки після важкого дня. Тіло і мозок потребують відпочинку!" },
+      { q: "Тебе дражнять у класі. Що найкраще зробити?", opts: ["Дражнити у відповідь", "Розповісти дорослому і не мовчати", "Плакати самому", "Починати бійку"], ans: 1, info: "Дражнити — неправильно. Ніколи не мовчи про це! Розповідай вчителю або батькам — вони допоможуть." },
+      { q: "Ти зробив помилку на уроці. Що думаєш про себе?", opts: ["'Я найгірший учень!'", "'Всі помиляються, я навчуся'", "'Більше не буду намагатись'", "'Школа — це погано'"], ans: 1, info: "Помилки — це частина навчання! Кожна помилка робить тебе розумнішим. Навіть Ейнштейн помилявся!" },
+      { q: "Що робити якщо ти не можеш заспокоїтись від злості?", opts: ["Бити предмети", "Вийти і побігати або намалювати злість на папері", "Кричати на всіх навколо", "Ламати речі"], ans: 1, info: "Рух і творчість дають злості вихід! Побіг, намалював — і вже легше. Тіло і розум дякують!" }
+    ]
+  },
+  {
+    id: 'j_memory', title: 'Мій мозок', icon: '🧩',
+    color: '#7f5af0', desc: "Увага, пам'ять і навчання",
+    questions: [
+      { q: "Що допомагає краще запам'ятати вірш?", opts: ["Прочитати один раз і забути", "Повторювати кілька разів", "Читати дуже швидко", "Ніколи не повторювати"], ans: 1, info: "Повторення — мати навчання! Коли повторюєш — мозок будує міцніші 'доріжки' для цієї інформації." },
+      { q: "Де в тілі знаходиться мозок?", opts: ["В животі", "В серці", "В голові", "В руках"], ans: 2, info: "Мозок — командний центр всього тіла! Він живе в голові і керує думками, рухами та відчуттями." },
+      { q: "Чому важливо добре спати?", opts: ["Щоб менше вчитись", "Бо мозок під час сну запам'ятовує і сортує інформацію", "Щоб більше дивитись мультики", "Сон не потрібен"], ans: 1, info: "Уві сні мозок 'складає речі по поличках' — зберігає те, що ти вивчив за день. Без сну — погана пам'ять!" },
+      { q: "Ти намагаєшся читати, але навколо гучна музика. Що відбувається?", opts: ["Увага стає кращою", "Важче зосередитись", "Нічого не змінюється", "Читається швидше"], ans: 1, info: "Мозок не може добре робити дві справи одночасно. Вимкни відволікання — і навчання буде кращим!" },
+      { q: "Що таке увага?", opts: ["Вміння бачити далеко", "Здатність зосереджуватись на одній справі", "Вміння швидко бігати", "Гарна пам'ять"], ans: 1, info: "Увага — це як ліхтарик! Куди його спрямуєш — те й бачиш найкраще. Увагу можна тренувати!" },
+      { q: "Мозок людини найбільше схожий на:", opts: ["Камінь — твердий і незмінний", "М'яз — чим більше тренуєш, тим сильніший", "Воду — без форми", "Комп'ютер без зарядки"], ans: 1, info: "Мозок росте і змінюється, коли ти вчишся! Кожне нове знання — нові зв'язки в мозку. Ти стаєш розумнішим!" },
+      { q: "Що найкраще допомагає запам'ятати нову інформацію?", opts: ["Прочитати один раз перед сном", "Намалювати, розказати другу і повторити", "Просто сидіти і дивитись у книгу", "Вчити лише нудні речі"], ans: 1, info: "Чим більше способів ти використовуєш (малюєш, розповідаєш, пишеш) — тим міцніша пам'ять!" },
+      { q: "Чому мозок любить цікаві завдання?", opts: ["Бо вони простіші", "Бо інтерес і радість допомагають вчитись краще", "Бо це відволікає від школи", "Мозок не любить завдань"], ans: 1, info: "Коли тобі цікаво — мозок виробляє дофамін, який покращує навчання! Тому цікаве запам'ятовується краще." }
+    ]
+  }
+];
+
+// ─── JUNIOR LESSON MATERIALS ─────────────────────────────────────────────────
+
+const lessonMaterialsJunior = {
+  j_emotions: {
+    hero: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=1000",
+    intro: "Емоції — це сигнали нашого серця. Вони всі важливі і потрібні!",
+    content: `
+      <h3><span class="num">1</span> Що таке емоції?</h3>
+      <p>Емоції — це те, що ти <b>відчуваєш всередині</b>. Радість, сум, злість, страх — це все нормально! Кожна емоція — як сигнал від твого тіла і серця. Вони є у всіх людей на Землі!</p>
+      <div class="lesson-quote">Немає «поганих» емоцій! Злість, страх і сум — такі ж важливі, як і радість. Вони всі нам потрібні і захищають нас.</div>
+      <h3><span class="num">2</span> 6 головних емоцій 😊😢😠😨😲🤢</h3>
+      <p>Вчений на ім'я <b>Пол Екман</b> досліджував обличчя людей по всьому світу і знайшов <b>6 емоцій, що є у всіх людей</b>:</p>
+      <p>😊 <b>Радість</b> — коли трапляється щось добре<br>😢 <b>Сум</b> — коли ми втрачаємо щось важливе<br>😠 <b>Злість</b> — коли порушують наші межі<br>😨 <b>Страх</b> — коли є небезпека<br>😲 <b>Здивування</b> — коли трапляється несподіване<br>🤢 <b>Огида</b> — коли щось дуже неприємне</p>
+      <div class="fact-box"><div class="fact-label">🌍 Цікавий факт</div><p>Ці 6 емоцій однакові у ВСІХ людей на планеті — і в Японії, і в Африці, і в Україні! Посмішка означає радість скрізь.</p></div>
+      <h3><span class="num">3</span> Як тіло показує емоції</h3>
+      <p>Кожна емоція "живе" в тілі! Коли тобі <b>страшно</b> — серце б'ється швидше. Коли <b>радісно</b> — хочеться стрибати. Коли <b>сумно</b> — важко підняти голову. Коли <b>злишся</b> — кулаки стискаються. Це нормально!</p>
+      <div class="lesson-quote">Стисни руку в кулак — відчуєш напругу? Ось так тіло відчуває злість. Тепер розкрий долоню — це розслаблення.</div>
+      <h3><span class="num">4</span> Що робити з емоціями?</h3>
+      <p>Емоції не можна "вимкнути", але можна <b>виразити їх правильно</b>:<br>• Скажи словами: "Я злюся" або "Мені сумно"<br>• Намалюй свою емоцію — будь-яким кольором!<br>• Розкажи другу або дорослому<br>• Поплач — це нормально і допомагає!</p>
+    `
+  },
+  j_friendship: {
+    hero: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1000",
+    intro: "Дружба — одна з найважливіших речей у житті. Як стати справжнім другом?",
+    content: `
+      <h3><span class="num">1</span> Що таке справжня дружба?</h3>
+      <p>Справжній друг — це той, хто <b>приймає тебе таким, яким ти є</b>. Не тільки коли тобі добре, але й коли погано. Він радіє твоїм успіхам і підтримує у невдачах.</p>
+      <div class="lesson-quote">Справжній друг — не той, хто ніколи не сварить. А той, хто завжди поруч і говорить правду.</div>
+      <h3><span class="num">2</span> Що робить хороший друг 🤝</h3>
+      <p>• 👂 <b>Слухає</b> тебе, коли потрібно виговоритись<br>• 🍎 <b>Ділиться</b> — іграшками, часом, увагою<br>• 🤫 <b>Зберігає секрети</b> — не розповідає всім<br>• 🙏 <b>Вибачається</b>, коли помиляється<br>• 🎉 <b>Радіє</b> твоїм успіхам, а не заздрить</p>
+      <div class="fact-box"><div class="fact-label">🧠 Психологія каже</div><p>Наявність хоча б одного справжнього друга робить людину щасливішою і здоровішою! Дружба важлива для мозку.</p></div>
+      <h3><span class="num">3</span> Як вирішувати сварки</h3>
+      <p>Друзі іноді сваряться — це нормально! Важливо <b>вміти миритись</b>:<br>1️⃣ Охолонь — зробіть паузу<br>2️⃣ Вислухай друга (не перебивай!)<br>3️⃣ Скажи як ти себе почував<br>4️⃣ Скажи "вибач" якщо образив<br>5️⃣ Разом придумайте як зробити краще</p>
+      <h3><span class="num">4</span> Емпатія — суперсила друга ❤️</h3>
+      <p><b>Емпатія</b> — це здатність відчувати те, що відчуває інша людина. Коли другу сумно — ти теж сумуєш. Коли він радіє — і тобі радісно. Це і є основа дружби!</p>
+      <div class="lesson-quote">Перш ніж щось сказати — запитай себе: "Як би я себе почував, якби мені це сказали?"</div>
+    `
+  },
+  j_calm: {
+    hero: "https://images.unsplash.com/photo-1488188840666-e2308741a62f?w=1000",
+    intro: "Ти можеш керувати своїми емоціями! Ось декілька справжніх суперсил.",
+    content: `
+      <h3><span class="num">1</span> Чому важливо вміти заспокоюватись</h3>
+      <p>Коли ти дуже злишся або боїшся — мозок не думає добре. Він хоче тільки "битись або тікати". Але якщо зупинишся і заспокоїшся — зможеш прийняти кращі рішення!</p>
+      <div class="lesson-quote">Твої емоції — це як хвилі на морі. Ти не можеш зупинити хвилю, але можеш навчитись на ній кататись!</div>
+      <h3><span class="num">2</span> Метод "Черепаха" 🐢</h3>
+      <p>Коли відчуваєш, що злишся або боїшся:<br>1️⃣ <b>Зупинись</b> — як черепаха ховається в панцир<br>2️⃣ <b>Видихни</b> повільно через рот (рахуй до 5)<br>3️⃣ <b>Порахуй</b> до 10 повільно<br>4️⃣ <b>Подумай</b> — що хочу зробити? Це правильно?<br>5️⃣ <b>Дій</b> спокійно — ти впорався!</p>
+      <div class="fact-box"><div class="fact-label">🔬 Як це працює</div><p>Повільне дихання надсилає сигнал мозку: "небезпеки нема". Серце сповільнюється і ти можеш думати ясніше — це справжня наука!</p></div>
+      <h3><span class="num">3</span> Мої "заспокійники" 🌈</h3>
+      <p>У кожного є свої способи заспокоїтись. Спробуй знайти свій:<br>🎨 Намалювати як ти себе почуваєш<br>🧸 Обійняти м'яку іграшку<br>🏃 Вийти і побігати або пострибати<br>🎵 Послухати улюблену музику<br>💬 Поговорити з мамою, татом або другом</p>
+      <h3><span class="num">4</span> Коли треба попросити про допомогу</h3>
+      <p>Іноді емоції занадто сильні — і це нормально! <b>Завжди кажи дорослому</b> якщо:<br>• Тебе хтось образив або вдарив<br>• Ти весь час сумуєш і не знаєш чому<br>• Тобі страшно і ти не можеш заспокоїтись<br>• Хтось тебе дражнить</p>
+      <div class="lesson-quote">Просити допомоги — це не слабкість! Це дуже розумно і сміливо. Дорослі для того і є!</div>
+    `
+  },
+  j_memory: {
+    hero: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1000",
+    intro: "Твій мозок — найдивовижніша річ у всесвіті! І ти можеш зробити його ще сильнішим.",
+    content: `
+      <h3><span class="num">1</span> Що таке мозок? 🧠</h3>
+      <p>Мозок — це <b>командний центр твого тіла</b>. Він знаходиться в голові і важить приблизно стільки, скільки 3 великих яблука. Мозок ніколи не зупиняється — навіть коли ти спиш!</p>
+      <div class="fact-box"><div class="fact-label">🤯 Дивовижний факт</div><p>У твоєму мозку є 86 МІЛЬЯРДІВ клітинок-нейронів! Це більше, ніж зірок, які ти бачиш у небі. Вони з'єднані між собою і постійно надсилають повідомлення.</p></div>
+      <h3><span class="num">2</span> Як працює пам'ять 📚</h3>
+      <p>Пам'ять — це як <b>бібліотека в мозку</b>. Коли вчишся чогось нового — мозок створює новий "запис". Коли повторюєш — "запис" стає міцнішим, як якщо б намалював лінію олівцем знову і знову!</p>
+      <div class="lesson-quote">Розкажи другу те, що вивчив — і запам'ятаєш в 4 рази краще! Мозок любить, коли ми пояснюємо іншим.</div>
+      <h3><span class="num">3</span> Як покращити увагу 🎯</h3>
+      <p>Увага — це як <b>ліхтарик</b>: куди спрямуєш, те й освітлюєш. Щоб увага була кращою:<br>• 📱 Прибери телефон під час навчання<br>• ⏰ Роби перерви кожні 20 хвилин<br>• 😴 Висипайся — без сну увага дуже слабка<br>• 💧 Пий воду — мозок любить воду!</p>
+      <h3><span class="num">4</span> Мозок росте коли ти вчишся! 🚀</h3>
+      <p>Вчені довели: <b>мозок змінюється від навчання</b>! Коли вчишся чогось нового — в мозку з'являються нові зв'язки. Ти буквально стаєш розумнішим з кожним днем!</p>
+      <div class="lesson-quote">Кожного разу коли кажеш "я не вмію" — додай слово "ЩЕ": "я ще не вмію, але навчуся!" Це змінює все!</div>
+    `
+  }
+};
+
+// ─── JUNIOR ICEBREAKER POOL ───────────────────────────────────────────────────
+
+const icebreakerPoolJunior = {
+  j_emotions: [
+    { mood: 'радісний 😊', img: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=300&h=300&fit=crop' },
+    { mood: 'сумний 😢', img: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=300&h=300&fit=crop' },
+    { mood: 'здивований 😲', img: 'https://images.unsplash.com/photo-1520315342629-6ea920342047?w=300&h=300&fit=crop' },
+    { mood: 'грайливий 🎉', img: 'https://images.unsplash.com/photo-1560743641-3914f2c45636?w=300&h=300&fit=crop' },
+    { mood: 'спокійний 😌', img: 'https://images.unsplash.com/photo-1585110396054-c8112c60b201?w=300&h=300&fit=crop' },
+    { mood: 'втомлений 😴', img: 'https://images.unsplash.com/photo-1543549732-31c116592d48?w=300&h=300&fit=crop' }
+  ],
+  j_friendship: [
+    { mood: 'добрий 💚', img: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=300&h=300&fit=crop' },
+    { mood: 'турботливий 🤗', img: 'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=300&h=300&fit=crop' },
+    { mood: 'грайливий 🎈', img: 'https://images.unsplash.com/photo-1560743641-3914f2c45636?w=300&h=300&fit=crop' },
+    { mood: 'сміливий 🦁', img: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300&h=300&fit=crop' },
+    { mood: 'допитливий 🦉', img: 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=300&h=300&fit=crop' },
+    { mood: 'ніжний 🐱', img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=300&fit=crop' }
+  ],
+  j_calm: [
+    { mood: 'спокійний 🌊', img: 'https://images.unsplash.com/photo-1585110396054-c8112c60b201?w=300&h=300&fit=crop' },
+    { mood: 'сильний 💪', img: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300&h=300&fit=crop' },
+    { mood: 'мудрий 🐢', img: 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=300&h=300&fit=crop' },
+    { mood: 'веселий 🌈', img: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=300&h=300&fit=crop' },
+    { mood: 'хоробрий 🦁', img: 'https://images.unsplash.com/photo-1513284721032-4762ed93c3e4?w=300&h=300&fit=crop' },
+    { mood: 'задумливий 🦉', img: 'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=300&h=300&fit=crop' }
+  ],
+  j_memory: [
+    { mood: 'розумний 🧠', img: 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=300&h=300&fit=crop' },
+    { mood: 'зосереджений 🎯', img: 'https://images.unsplash.com/photo-1543549732-31c116592d48?w=300&h=300&fit=crop' },
+    { mood: 'допитливий 🔍', img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=300&fit=crop' },
+    { mood: 'творчий 🎨', img: 'https://images.unsplash.com/photo-1561948955-570b270e7c36?w=300&h=300&fit=crop' },
+    { mood: 'швидкий ⚡', img: 'https://images.unsplash.com/photo-1513284721032-4762ed93c3e4?w=300&h=300&fit=crop' },
+    { mood: 'уважний 👀', img: 'https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?w=300&h=300&fit=crop' }
+  ]
+};
 
 // ─── ICEBREAKER POOL (6 тварин на тему) ─────────────────────────────────────
 
@@ -656,7 +899,27 @@ const lessonMaterials = {
 
 // ─── STATE & LOGIC ────────────────────────────────────────────────────────────
 
+let currentLevel = null;
 let state = { quiz: null, qIdx: 0, score: 0, timer: null, timeLeft: 30 };
+
+function getCurrentQuizzes() {
+  return currentLevel === 'junior' ? quizzesJunior : quizzes;
+}
+function getCurrentLessons() {
+  return currentLevel === 'junior' ? lessonMaterialsJunior : lessonMaterials;
+}
+function getCurrentIcebreakers() {
+  return currentLevel === 'junior' ? icebreakerPoolJunior : icebreakerPool;
+}
+
+function selectLevel(level) {
+  currentLevel = level;
+  const badge = document.getElementById('levelBadge');
+  const labels = { junior: '🐣 1-4 клас', senior: '🚀 8-11 клас' };
+  badge.textContent = labels[level] || '';
+  badge.style.display = 'inline-flex';
+  showScreen('home');
+}
 
 function getStorage() {
   try { return JSON.parse(localStorage.getItem('psyquiz') || '{}'); } catch(e) { return {}; }
@@ -681,9 +944,17 @@ function renderHome() {
   document.getElementById('avgScore').textContent = (results.length ? Math.round(total / results.length) : 0) + '%';
   document.getElementById('totalXP').textContent = data.xp || 0;
 
+  if (currentLevel === 'junior') {
+    document.querySelector('#screen-home .hero h1').innerHTML = 'Привіт, досліднику<br><span class="grad">психології!</span>';
+    document.querySelector('#screen-home .hero p').textContent = 'Квізи та уроки про емоції, дружбу і твій мозок — просто і весело!';
+  } else {
+    document.querySelector('#screen-home .hero h1').innerHTML = 'Відкрий таємниці<br><span class="grad">власного розуму</span>';
+    document.querySelector('#screen-home .hero p').textContent = 'Квізи, уроки і факти — все що треба знати про психологію.';
+  }
+
   const grid = document.getElementById('quizGrid');
   grid.innerHTML = '';
-  quizzes.forEach((q, i) => {
+  getCurrentQuizzes().forEach((q, i) => {
     const card = document.createElement('div');
     card.className = 'quiz-card' + (i === 0 ? ' qcard-full' : '');
     card.setAttribute('data-topic', q.id);
@@ -705,7 +976,7 @@ function renderHome() {
 function renderLessons() {
   const grid = document.getElementById('lessonsModulesGrid');
   grid.innerHTML = '';
-  quizzes.forEach(q => {
+  getCurrentQuizzes().forEach(q => {
     const card = document.createElement('div');
     card.className = 'lesson-module-card';
     card.onclick = () => viewLesson(q.id);
@@ -715,11 +986,12 @@ function renderLessons() {
 }
 
 function viewLesson(id) {
-  const lesson = lessonMaterials[id];
-  const quiz = quizzes.find(q => q.id === id);
+  const lesson = getCurrentLessons()[id];
+  const quiz = getCurrentQuizzes().find(q => q.id === id);
   if (!lesson || !quiz) return;
 
-  const pool = icebreakerPool[id] || icebreakerPool['emotions'];
+  const icePool = getCurrentIcebreakers();
+  const pool = icePool[id] || icePool[Object.keys(icePool)[0]];
   const iceHTML = `
     <div class="icebreaker-section">
       <div class="icebreaker-title">🐾 Криголам — Який ти сьогодні?</div>
@@ -780,7 +1052,7 @@ function selectIce(el, mood) {
 }
 
 function startQuiz(id) {
-  const q = quizzes.find(x => x.id === id);
+  const q = getCurrentQuizzes().find(x => x.id === id);
   if (!q || !q.questions.length) { alert('Квіз у розробці!'); return; }
   state = { quiz: q, qIdx: 0, score: 0, timer: null, timeLeft: 30 };
   document.getElementById('playTitle').textContent = q.icon + ' ' + q.title;
@@ -881,7 +1153,6 @@ function toggleTheme() {
 // Init
 const _d = getStorage();
 if (_d.theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
-renderHome();
 </script>
 </body>
 </html>
