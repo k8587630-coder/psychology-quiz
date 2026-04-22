@@ -284,16 +284,13 @@
     /* ── Results ── */
     .results-card { text-align: center; padding: 50px 24px; background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--card-b); border-radius: 28px; }
     .score-big { font-size: 5rem; font-weight: 900; letter-spacing: -0.05em; background: linear-gradient(135deg, var(--purple), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 16px; }
-    /* celebration overlay */
+    /* celebration */
+    #confettiCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; }
     #celebrationOverlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; z-index: 9999; }
-    .cel-emoji { font-size: 8rem; animation: celBounce 0.6s cubic-bezier(.36,1.56,.64,1) both; }
-    .cel-text { font-size: 1.6rem; font-weight: 800; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.6); margin-top: 16px; animation: celFadeUp 0.5s 0.2s both; }
-    @keyframes celBounce { from { transform: scale(0) rotate(-15deg); opacity: 0; } to { transform: scale(1) rotate(0deg); opacity: 1; } }
-    @keyframes celFadeUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .cel-emoji { font-size: 8rem; }
+    .cel-text { font-size: 1.8rem; font-weight: 900; margin-top: 12px; background: linear-gradient(90deg,#ffd700,#f472b6,#a855f7,#06b6d4,#34d399,#ffd700); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .score-big.animate-score { animation: scorePop 0.7s cubic-bezier(.36,1.56,.64,1) both; }
     @keyframes scorePop { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .cel-text { background: linear-gradient(90deg,#ffd700,#f472b6,#a855f7,#06b6d4,#34d399,#ffd700); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: celFadeUp 0.5s 0.2s both, rainbowShift 1.5s linear infinite; }
-    @keyframes rainbowShift { to { background-position: 200% center; } }
 
     /* ── Lessons grid ── */
     .lesson-module-card {
@@ -462,7 +459,8 @@
   </div>
 </div>
 
-<!-- Celebration overlay (shown temporarily on finish) -->
+<canvas id="confettiCanvas" style="display:none;"></canvas>
+<!-- Celebration overlay -->
 <div id="celebrationOverlay" style="display:none;">
   <div class="cel-emoji" id="celEmoji"></div>
   <div class="cel-text" id="celText"></div>
@@ -1349,132 +1347,122 @@ function finish() {
 function triggerCelebration(pct) {
   if (pct < 50) return;
 
-  const overlay = document.getElementById('celebrationOverlay');
-  const celEmoji = document.getElementById('celEmoji');
-  const celText = document.getElementById('celText');
-
-  // reset animation by re-inserting clone
-  const oldEmoji = celEmoji.cloneNode(true);
-  celEmoji.parentNode.replaceChild(oldEmoji, celEmoji);
-
   if (pct === 100) {
     document.getElementById('celEmoji').textContent = '🥇';
     document.getElementById('celText').textContent = '🔥 ІДЕАЛЬНИЙ РЕЗУЛЬТАТ! 🔥';
-    launchFireworks(5000);
+    startConfettiCanvas(5000, true);
   } else if (pct >= 90) {
     document.getElementById('celEmoji').textContent = '🏆';
     document.getElementById('celText').textContent = 'Ти — чемпіон!';
-    launchConfetti(200, 4000);
+    startConfettiCanvas(4000, false);
   } else if (pct >= 70) {
     document.getElementById('celEmoji').textContent = '⭐';
     document.getElementById('celText').textContent = 'Чудово!';
-    launchConfetti(100, 2500);
+    startConfettiCanvas(2500, false);
   } else {
     document.getElementById('celEmoji').textContent = '💪';
     document.getElementById('celText').textContent = 'Так тримати!';
-    launchConfetti(50, 2000);
+    startConfettiCanvas(2000, false);
   }
 
+  const overlay = document.getElementById('celebrationOverlay');
   overlay.style.display = 'flex';
   const hideDuration = pct === 100 ? 5500 : 3200;
   setTimeout(() => { overlay.style.display = 'none'; }, hideDuration);
 }
 
-function launchFireworks(duration) {
-  const colors = ['#ffd700','#ff4500','#a855f7','#06b6d4','#f472b6','#34d399','#fbbf24','#fff'];
-  const endTime = Date.now() + duration;
+function startConfettiCanvas(duration, fireworks) {
+  const canvas = document.getElementById('confettiCanvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
 
-  function burst(x, y) {
-    const particles = 18 + Math.floor(Math.random() * 14);
-    for (let i = 0; i < particles; i++) {
-      const el = document.createElement('div');
-      el.textContent = ['★','●','♦','▲','✦'][Math.floor(Math.random() * 5)];
-      const angle = (360 / particles) * i;
-      const dist = 80 + Math.random() * 180;
-      const rad = angle * Math.PI / 180;
-      const tx = Math.cos(rad) * dist;
-      const ty = Math.sin(rad) * dist;
-      const size = 12 + Math.random() * 14;
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const dur = 700 + Math.random() * 600;
-      Object.assign(el.style, {
-        position: 'fixed', left: x + 'px', top: y + 'px',
-        fontSize: size + 'px', color, zIndex: 10001,
-        pointerEvents: 'none', userSelect: 'none',
-        transform: 'translate(-50%,-50%) scale(1)',
-        transition: `transform ${dur}ms cubic-bezier(.2,.8,.3,1), opacity ${dur * 0.4}ms ${dur * 0.6}ms ease`,
-        opacity: 1,
-      });
-      document.body.appendChild(el);
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        el.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0.2)`;
-        el.style.opacity = '0';
-      }));
-      setTimeout(() => el.remove(), dur + 300);
+  const colors = ['#a855f7','#06b6d4','#fbbf24','#f472b6','#34d399','#fb923c','#ffd700','#ff6b6b'];
+  const particles = [];
+  const count = fireworks ? 250 : 120;
+
+  function makeParticle(x, y, burst) {
+    const angle = burst ? Math.random() * Math.PI * 2 : -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+    const speed = burst ? 3 + Math.random() * 8 : 2 + Math.random() * 5;
+    return {
+      x: x ?? Math.random() * canvas.width,
+      y: y ?? -10,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      size: 6 + Math.random() * 10,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * Math.PI * 2,
+      rotV: (Math.random() - 0.5) * 0.2,
+      shape: Math.floor(Math.random() * 3),
+      alpha: 1,
+      life: 0,
+      maxLife: 80 + Math.random() * 80,
+      gravity: burst ? 0.15 : 0.08,
+    };
+  }
+
+  // initial burst
+  if (fireworks) {
+    for (let i = 0; i < 60; i++) particles.push(makeParticle(canvas.width * 0.5, canvas.height * 0.4, true));
+    setTimeout(() => { for (let i=0;i<50;i++) particles.push(makeParticle(canvas.width*0.2, canvas.height*0.35, true)); }, 200);
+    setTimeout(() => { for (let i=0;i<50;i++) particles.push(makeParticle(canvas.width*0.8, canvas.height*0.35, true)); }, 400);
+  }
+
+  let spawned = 0;
+  const startTime = Date.now();
+
+  function spawnRain() {
+    if (Date.now() - startTime < duration && spawned < count) {
+      particles.push(makeParticle(null, null, false));
+      spawned++;
+      setTimeout(spawnRain, duration / count);
     }
   }
+  spawnRain();
 
-  function scheduleBurst() {
-    if (Date.now() >= endTime) return;
-    const x = 80 + Math.random() * (window.innerWidth - 160);
-    const y = 60 + Math.random() * (window.innerHeight * 0.6);
-    burst(x, y);
-    setTimeout(scheduleBurst, 250 + Math.random() * 300);
-  }
-
-  // initial triple burst
-  burst(window.innerWidth * 0.5, window.innerHeight * 0.4);
-  setTimeout(() => burst(window.innerWidth * 0.25, window.innerHeight * 0.35), 150);
-  setTimeout(() => burst(window.innerWidth * 0.75, window.innerHeight * 0.35), 300);
-  setTimeout(scheduleBurst, 500);
-
-  // rain confetti too
-  launchConfetti(300, duration);
-}
-
-function launchConfetti(count, duration) {
-  const colors = ['#a855f7','#06b6d4','#fbbf24','#f472b6','#34d399','#fb923c'];
-  const shapes = ['●','■','▲','★','♦'];
-  const container = document.body;
-  const endTime = Date.now() + duration;
-
-  function spawnBatch() {
-    const now = Date.now();
-    if (now >= endTime) return;
-    const batch = Math.min(8, Math.ceil(count * (endTime - now) / duration / 10));
-    for (let i = 0; i < batch; i++) {
-      const el = document.createElement('div');
-      el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
-      const size = 10 + Math.random() * 16;
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const startX = Math.random() * 100;
-      const driftX = (Math.random() - 0.5) * 300;
-      const fallDuration = 1200 + Math.random() * 1500;
-      const spin = (Math.random() - 0.5) * 720;
-      Object.assign(el.style, {
-        position: 'fixed',
-        top: '-30px',
-        left: startX + 'vw',
-        fontSize: size + 'px',
-        color,
-        zIndex: 10000,
-        pointerEvents: 'none',
-        userSelect: 'none',
-        lineHeight: 1,
-        transition: `transform ${fallDuration}ms ease-in, opacity 300ms ${fallDuration - 400}ms ease`,
-        transform: 'translateY(0) translateX(0) rotate(0deg)',
-        opacity: 1,
-      });
-      container.appendChild(el);
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        el.style.transform = `translateY(110vh) translateX(${driftX}px) rotate(${spin}deg)`;
-        el.style.opacity = '0';
-      }));
-      setTimeout(() => el.remove(), fallDuration + 400);
+  if (fireworks) {
+    function burstWave() {
+      if (Date.now() - startTime < duration - 500) {
+        const x = 80 + Math.random() * (canvas.width - 160);
+        const y = 50 + Math.random() * (canvas.height * 0.5);
+        for (let i = 0; i < 30; i++) particles.push(makeParticle(x, y, true));
+        setTimeout(burstWave, 400 + Math.random() * 300);
+      }
     }
-    setTimeout(spawnBatch, 80);
+    setTimeout(burstWave, 700);
   }
-  spawnBatch();
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.gravity;
+      p.vx *= 0.99;
+      p.rot += p.rotV;
+      p.life++;
+      p.alpha = p.life < 10 ? p.life / 10 : Math.max(0, 1 - (p.life - p.maxLife * 0.6) / (p.maxLife * 0.4));
+      if (p.life > p.maxLife || p.y > canvas.height + 20) { particles.splice(i, 1); continue; }
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      if (p.shape === 0) { ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size); }
+      else if (p.shape === 1) { ctx.beginPath(); ctx.arc(0, 0, p.size/2, 0, Math.PI*2); ctx.fill(); }
+      else { ctx.beginPath(); ctx.moveTo(0, -p.size/2); ctx.lineTo(p.size/2, p.size/2); ctx.lineTo(-p.size/2, p.size/2); ctx.closePath(); ctx.fill(); }
+      ctx.restore();
+    }
+    if (particles.length > 0 || Date.now() - startTime < duration) {
+      requestAnimationFrame(draw);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'none';
+    }
+  }
+  requestAnimationFrame(draw);
 }
 
 function toggleTheme() {
