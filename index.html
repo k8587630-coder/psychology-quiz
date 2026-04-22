@@ -6,6 +6,7 @@
   <title>PsyQuiz — Психологічні квізи</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -287,8 +288,11 @@
     /* celebration */
     #confettiCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; }
     #celebrationOverlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; z-index: 9999; }
-    .cel-emoji { font-size: 8rem; }
-    .cel-text { font-size: 1.8rem; font-weight: 900; margin-top: 12px; background: linear-gradient(90deg,#ffd700,#f472b6,#a855f7,#06b6d4,#34d399,#ffd700); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    #lottieCel { filter: drop-shadow(0 0 40px rgba(168,85,247,0.6)); animation: lottieIn 0.5s cubic-bezier(.36,1.56,.64,1) both; }
+    @keyframes lottieIn { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .cel-text { font-size: 2rem; font-weight: 900; margin-top: -20px; text-shadow: 0 0 30px rgba(0,0,0,0.8); background: linear-gradient(90deg,#ffd700,#f472b6,#a855f7,#06b6d4,#34d399,#ffd700); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: celIn 0.5s 0.3s both, rainbow 2s linear infinite; }
+    @keyframes celIn { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes rainbow { to { background-position: 200% center; } }
     .score-big.animate-score { animation: scorePop 0.7s cubic-bezier(.36,1.56,.64,1) both; }
     @keyframes scorePop { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -462,7 +466,13 @@
 <canvas id="confettiCanvas" style="display:none;"></canvas>
 <!-- Celebration overlay -->
 <div id="celebrationOverlay" style="display:none;">
-  <div class="cel-emoji" id="celEmoji"></div>
+  <lottie-player id="lottieCel"
+    src=""
+    background="transparent"
+    speed="1"
+    style="width:280px;height:280px;"
+    autoplay>
+  </lottie-player>
   <div class="cel-text" id="celText"></div>
 </div>
 
@@ -1344,30 +1354,49 @@ function finish() {
   triggerCelebration(pct);
 }
 
+const LOTTIE = {
+  fireworks: 'https://assets2.lottiefiles.com/packages/lf20_jR229r.json',
+  trophy:    'https://assets6.lottiefiles.com/packages/lf20_touohxv0.json',
+  stars:     'https://assets5.lottiefiles.com/packages/lf20_qp1q7mct.json',
+};
+
 function triggerCelebration(pct) {
   if (pct < 50) return;
 
+  const player = document.getElementById('lottieCel');
+  const textEl = document.getElementById('celText');
+
+  let src, text, canvasDuration, fireworksMode;
   if (pct === 100) {
-    document.getElementById('celEmoji').textContent = '🥇';
-    document.getElementById('celText').textContent = '🔥 ІДЕАЛЬНИЙ РЕЗУЛЬТАТ! 🔥';
-    startConfettiCanvas(5000, true);
+    src = LOTTIE.fireworks; text = '🔥 ІДЕАЛЬНИЙ РЕЗУЛЬТАТ! 🔥';
+    canvasDuration = 5000; fireworksMode = true;
   } else if (pct >= 90) {
-    document.getElementById('celEmoji').textContent = '🏆';
-    document.getElementById('celText').textContent = 'Ти — чемпіон!';
-    startConfettiCanvas(4000, false);
+    src = LOTTIE.trophy; text = '🏆 Ти — чемпіон!';
+    canvasDuration = 4000; fireworksMode = false;
   } else if (pct >= 70) {
-    document.getElementById('celEmoji').textContent = '⭐';
-    document.getElementById('celText').textContent = 'Чудово!';
-    startConfettiCanvas(2500, false);
+    src = LOTTIE.stars; text = '⭐ Чудово!';
+    canvasDuration = 2500; fireworksMode = false;
   } else {
-    document.getElementById('celEmoji').textContent = '💪';
-    document.getElementById('celText').textContent = 'Так тримати!';
-    startConfettiCanvas(2000, false);
+    src = LOTTIE.stars; text = '💪 Так тримати!';
+    canvasDuration = 2000; fireworksMode = false;
   }
+
+  textEl.textContent = text;
+
+  // restart lottie with new src
+  player.style.animation = 'none';
+  player.stop();
+  player.load(src);
+  requestAnimationFrame(() => {
+    player.style.animation = '';
+    player.play();
+  });
+
+  startConfettiCanvas(canvasDuration, fireworksMode);
 
   const overlay = document.getElementById('celebrationOverlay');
   overlay.style.display = 'flex';
-  const hideDuration = pct === 100 ? 5500 : 3200;
+  const hideDuration = pct === 100 ? 5500 : 3500;
   setTimeout(() => { overlay.style.display = 'none'; }, hideDuration);
 }
 
