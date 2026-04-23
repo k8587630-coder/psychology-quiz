@@ -376,10 +376,10 @@
     <div class="logo" onclick="showScreen('level')">PsyQuiz ✦</div>
     <div class="topbar-right">
       <span class="topbar-lv-badge" id="levelBadge" onclick="showScreen('level')">🐣 1-4 клас</span>
-      <button class="icon-btn" onclick="showScreen('home')">🏠</button>
       <button class="icon-btn" onclick="showScreen('lessons')">📚</button>
       <button class="icon-btn" id="btnMyStats" onclick="showMyStats()" style="display:none" title="Мої результати">📊</button>
       <button class="icon-btn" id="btnAuth" onclick="openAuthModal()">🔑</button>
+      <button class="icon-btn" onclick="toggleTheme()">🌓</button>
     </div>
   </div>
 
@@ -1310,18 +1310,40 @@ function renderHome() {
   grid.innerHTML = '';
   getCurrentQuizzes().forEach((q, i) => {
     const level = currentLevel || 'senior';
-    const unlocked = isTopicUnlocked(q.id, level);
+    const order = topicOrder[level] || topicOrder.senior;
+    const topicIdx = order.indexOf(q.id);
+    const isFirst = topicIdx === 0;
+    const loggedIn = !!currentUser;
+    const prevPassed = isTopicUnlocked(q.id, level);
     const passed = (userProgress[q.id] || 0) >= PASS_PCT;
+
+    // first topic: always open. others: need auth + prev passed
+    let cardState = 'open'; // 'open' | 'need-auth' | 'locked'
+    if (!isFirst) {
+      if (!loggedIn) cardState = 'need-auth';
+      else if (!prevPassed) cardState = 'locked';
+    }
+
     const card = document.createElement('div');
-    card.className = 'quiz-card' + (i === 0 ? ' qcard-full' : '') + (unlocked ? '' : ' locked');
+    card.className = 'quiz-card' + (i === 0 ? ' qcard-full' : '') + (cardState === 'open' ? '' : ' locked');
     card.setAttribute('data-topic', q.id);
-    card.onclick = unlocked ? () => startQuiz(q.id) : () => alert('🔒 Спочатку пройди попередню тему!');
+
+    if (cardState === 'open') {
+      card.onclick = () => startQuiz(q.id);
+    } else if (cardState === 'need-auth') {
+      card.onclick = () => { openAuthModal(); };
+    } else {
+      card.onclick = () => alert('🔒 Спочатку пройди попередню тему!');
+    }
+
     const qCount = q.questions.length;
-    const progressTag = passed
-      ? `<span class="topic-progress">✅ Пройдено ${userProgress[q.id]}%</span>`
-      : '';
+    const progressTag = passed ? `<span class="topic-progress">✅ ${userProgress[q.id]}%</span>` : '';
+    let lockOverlay = '';
+    if (cardState === 'need-auth') lockOverlay = '<div class="lock-overlay">🔑<div style="font-size:0.7rem;margin-top:4px">Увійди</div></div>';
+    else if (cardState === 'locked') lockOverlay = '<div class="lock-overlay">🔒</div>';
+
     card.innerHTML = `
-      <div class="lock-overlay">🔒</div>
+      ${lockOverlay}
       <span class="card-icon">${q.icon}</span>
       <h3>${q.title}</h3>
       <p style="font-size:0.84rem;color:var(--text2);line-height:1.5;">${q.desc}</p>
@@ -1340,19 +1362,34 @@ function renderLessons() {
   grid.innerHTML = '';
   const level = currentLevel || 'senior';
   getCurrentQuizzes().forEach(q => {
-    const unlocked = isTopicUnlocked(q.id, level);
+    const order = topicOrder[level] || topicOrder.senior;
+    const topicIdx = order.indexOf(q.id);
+    const isFirst = topicIdx === 0;
+    const loggedIn = !!currentUser;
+    const prevPassed = isTopicUnlocked(q.id, level);
     const passed = (userProgress[q.id] || 0) >= PASS_PCT;
-    const card = document.createElement('div');
-    card.className = 'lesson-module-card' + (unlocked ? '' : ' locked');
-    card.style.position = 'relative';
     const hasLesson = !!getCurrentLessons()[q.id];
-    card.onclick = unlocked && hasLesson ? () => viewLesson(q.id) : (unlocked ? null : () => alert('🔒 Спочатку пройди попередню тему!'));
+
+    let cardState = 'open';
+    if (!isFirst) {
+      if (!loggedIn) cardState = 'need-auth';
+      else if (!prevPassed) cardState = 'locked';
+    }
+
+    const card = document.createElement('div');
+    card.className = 'lesson-module-card' + (cardState === 'open' ? '' : ' locked');
+    card.style.position = 'relative';
+
+    if (cardState === 'open' && hasLesson) card.onclick = () => viewLesson(q.id);
+    else if (cardState === 'need-auth') card.onclick = () => openAuthModal();
+    else if (cardState === 'locked') card.onclick = () => alert('🔒 Спочатку пройди попередню тему!');
+
+    const badge = passed ? '✅' : cardState === 'need-auth' ? '🔑' : cardState === 'locked' ? '🔒' : '';
     card.innerHTML = `
       <span class="icon">${q.icon}</span>
       <h4>${q.title}</h4>
       <p style="font-size:0.78rem;color:var(--text2);">${q.desc}</p>
-      ${!unlocked ? '<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:1.3rem">🔒</span>' : ''}
-      ${passed ? '<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:1.1rem">✅</span>' : ''}
+      ${badge ? `<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:1.2rem">${badge}</span>` : ''}
     `;
     grid.appendChild(card);
   });
