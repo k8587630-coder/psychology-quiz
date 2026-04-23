@@ -375,7 +375,8 @@
   <div class="topbar">
     <div class="logo" onclick="showScreen('level')">PsyQuiz ✦</div>
     <div class="topbar-right">
-      <span class="topbar-lv-badge" id="levelBadge" onclick="showScreen('level')">🐣 1-4 клас</span>
+      <span class="topbar-lv-badge" id="levelBadge" onclick="showScreen('level')">🌈 1-4 клас</span>
+      <button class="icon-btn" onclick="showScreen('level')" title="Вибір рівня">🎓</button>
       <button class="icon-btn" onclick="showScreen('lessons')">📚</button>
       <button class="icon-btn" id="btnMyStats" onclick="showMyStats()" style="display:none" title="Мої результати">📊</button>
       <button class="icon-btn" id="btnAuth" onclick="openAuthModal()">🔑</button>
@@ -392,7 +393,7 @@
     </div>
     <div class="level-cards">
       <div class="level-card lv-junior" id="lvcard-junior" onclick="selectLevel('junior')">
-        <div class="level-card-icon">🐣</div>
+        <div class="level-card-icon">🌈</div>
         <div class="level-card-info">
           <h2>Молодша школа</h2>
           <p>Емоції, дружба, настрій і твій мозок — просто і весело!</p>
@@ -410,7 +411,7 @@
         <span class="lv-lock-badge" id="lvlock-mid">🔒</span>
       </div>
       <div class="level-card lv-senior" id="lvcard-senior" onclick="selectLevel('senior')">
-        <div class="level-card-icon">🚀</div>
+        <div class="level-card-icon">💡</div>
         <div class="level-card-info">
           <h2>Старша школа</h2>
           <p>Наука про мозок, соціальна психологія, нейронауки</p>
@@ -1268,7 +1269,7 @@ function getCurrentIcebreakers() {
 function selectLevel(level) {
   currentLevel = level;
   const badge = document.getElementById('levelBadge');
-  const labels = { junior: '🐣 1-4 клас', mid: '🌱 5-7 клас', senior: '🚀 8-11 клас' };
+  const labels = { junior: '🌈 1-4 клас', mid: '🌱 5-7 клас', senior: '💡 8-11 клас' };
   badge.textContent = labels[level] || '';
   badge.style.display = 'inline-flex';
   showScreen('home');
