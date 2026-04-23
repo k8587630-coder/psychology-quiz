@@ -331,6 +331,22 @@
     .level-card-icon { font-size: 2.8rem; flex-shrink: 0; }
     .level-card-info h2 { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 4px; }
     .level-card-info p { font-size: 0.85rem; color: var(--text2); line-height: 1.5; margin-bottom: 8px; }
+    .lv-lock-badge {
+      position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+      font-size: 1.5rem; opacity: 0.8;
+    }
+    .quiz-card.locked { opacity: 0.45; cursor: not-allowed; }
+    .quiz-card.locked .lock-overlay { display: flex; }
+    .lock-overlay {
+      display: none; position: absolute; inset: 0; border-radius: inherit;
+      background: rgba(0,0,0,0.35); align-items: center; justify-content: center;
+      font-size: 2rem; pointer-events: none; border-radius: 24px;
+    }
+    .quiz-card { position: relative; }
+    .topic-progress {
+      font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 8px;
+      background: rgba(44,182,125,0.15); color: var(--green); border: 1px solid rgba(44,182,125,0.3);
+    }
     .level-coming {
       position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
       font-size: 0.68rem; font-weight: 700; padding: 4px 12px; border-radius: 100px;
@@ -363,8 +379,7 @@
       <button class="icon-btn" onclick="showScreen('home')">🏠</button>
       <button class="icon-btn" onclick="showScreen('lessons')">📚</button>
       <button class="icon-btn" id="btnMyStats" onclick="showMyStats()" style="display:none" title="Мої результати">📊</button>
-      <button class="icon-btn" id="btnAuth" onclick="openAuthModal()">👤</button>
-      <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+      <button class="icon-btn" id="btnAuth" onclick="openAuthModal()">🔑</button>
     </div>
   </div>
 
@@ -376,29 +391,32 @@
       <p>Обери свій рівень — і ми підберемо уроки та квізи саме для тебе.</p>
     </div>
     <div class="level-cards">
-      <div class="level-card lv-junior" onclick="selectLevel('junior')">
+      <div class="level-card lv-junior" id="lvcard-junior" onclick="selectLevel('junior')">
         <div class="level-card-icon">🐣</div>
         <div class="level-card-info">
           <h2>Молодша школа</h2>
           <p>Емоції, дружба, настрій і твій мозок — просто і весело!</p>
           <span class="lv-tag pink">1 — 4 клас</span>
         </div>
+        <span class="lv-lock-badge" id="lvlock-junior" style="display:none">🔒</span>
       </div>
-      <div class="level-card lv-mid" onclick="selectLevel('mid')">
+      <div class="level-card lv-mid" id="lvcard-mid" onclick="selectLevel('mid')">
         <div class="level-card-icon">🌱</div>
         <div class="level-card-info">
           <h2>Середня школа</h2>
           <p>Самооцінка, стрес, спілкування та однолітки</p>
           <span class="lv-tag green">5 — 7 клас</span>
         </div>
+        <span class="lv-lock-badge" id="lvlock-mid">🔒</span>
       </div>
-      <div class="level-card lv-senior" onclick="selectLevel('senior')">
+      <div class="level-card lv-senior" id="lvcard-senior" onclick="selectLevel('senior')">
         <div class="level-card-icon">🚀</div>
         <div class="level-card-info">
           <h2>Старша школа</h2>
           <p>Наука про мозок, соціальна психологія, нейронауки</p>
           <span class="lv-tag purple">8 — 11 клас</span>
         </div>
+        <span class="lv-lock-badge" id="lvlock-senior">🔒</span>
       </div>
     </div>
   </div>
@@ -1142,15 +1160,99 @@ const lessonMaterials = {
   }
 };
 
+// ─── GENERAL QUIZZES ─────────────────────────────────────────────────────────
+
+function buildGeneralQuestions(quizArray) {
+  const all = [];
+  quizArray.forEach(q => {
+    const picked = [...q.questions].sort(() => Math.random() - 0.5).slice(0, 2);
+    all.push(...picked);
+  });
+  return all.sort(() => Math.random() - 0.5);
+}
+
+const generalQuizJunior = {
+  id: 'j_general', title: '🎯 Загальний квіз', icon: '🎯', desc: 'Всі теми рівня',
+  get questions() { return buildGeneralQuestions(quizzesJunior); }
+};
+const generalQuizMid = {
+  id: 'm_general', title: '🎯 Загальний квіз', icon: '🎯', desc: 'Всі теми рівня',
+  get questions() { return buildGeneralQuestions(quizzesMid); }
+};
+const generalQuizSenior = {
+  id: 's_general', title: '🎯 Загальний квіз', icon: '🎯', desc: 'Всі теми рівня',
+  get questions() { return buildGeneralQuestions(quizzes); }
+};
+
+// ─── PROGRESS SYSTEM ─────────────────────────────────────────────────────────
+
+let userProgress = {};
+const PASS_PCT = 70;
+
+const topicOrder = {
+  junior: ['j_emotions', 'j_friendship', 'j_calm', 'j_memory', 'j_general'],
+  mid:    ['m_selfesteem', 'm_communication', 'm_stress', 'm_peers', 'm_general'],
+  senior: ['cognitive', 'emotions', 'personality', 'social', 'development', 'neuro', 's_general']
+};
+
+async function loadUserProgress() {
+  const token = localStorage.getItem('psy_token');
+  if (!token) return;
+  try {
+    const r = await fetch('/api/results/my', { headers: {'Authorization': 'Bearer ' + token} });
+    if (!r.ok) return;
+    const results = await r.json();
+    userProgress = {};
+    results.forEach(res => {
+      if (!userProgress[res.quizId] || res.pct > userProgress[res.quizId]) {
+        userProgress[res.quizId] = res.pct;
+      }
+    });
+    updateLevelCards();
+  } catch {}
+}
+
+function isTopicUnlocked(topicId, level) {
+  const order = topicOrder[level] || topicOrder.senior;
+  const idx = order.indexOf(topicId);
+  if (idx <= 0) return true;
+  const prevId = order[idx - 1];
+  return (userProgress[prevId] || 0) >= PASS_PCT;
+}
+
+function isLevelUnlocked(level) {
+  if (level === 'junior') return true;
+  if (level === 'mid') return topicOrder.junior.every(id => (userProgress[id] || 0) >= PASS_PCT);
+  if (level === 'senior') return topicOrder.mid.every(id => (userProgress[id] || 0) >= PASS_PCT);
+  return false;
+}
+
+function updateLevelCards() {
+  ['junior', 'mid', 'senior'].forEach(lv => {
+    const card = document.getElementById('lvcard-' + lv);
+    const lock = document.getElementById('lvlock-' + lv);
+    if (!card || !lock) return;
+    const unlocked = isLevelUnlocked(lv);
+    lock.style.display = unlocked ? 'none' : 'inline';
+    if (unlocked) {
+      card.classList.remove('lv-disabled');
+      card.onclick = () => selectLevel(lv);
+    } else {
+      card.classList.add('lv-disabled');
+      card.onclick = () => alert('🔒 Спочатку пройди всі теми попереднього рівня!');
+    }
+  });
+}
+
 // ─── STATE & LOGIC ────────────────────────────────────────────────────────────
 
 let currentLevel = null;
 let state = { quiz: null, qIdx: 0, score: 0, timer: null, timeLeft: 30 };
 
 function getCurrentQuizzes() {
-  if (currentLevel === 'junior') return quizzesJunior;
-  if (currentLevel === 'mid') return quizzesMid;
-  return quizzes;
+  if (currentLevel === 'junior') return [...quizzesJunior, generalQuizJunior];
+  if (currentLevel === 'mid') return [...quizzesMid, generalQuizMid];
+  return [...quizzes, generalQuizSenior];
 }
 function getCurrentLessons() {
   if (currentLevel === 'junior') return lessonMaterialsJunior;
@@ -1207,18 +1309,26 @@ function renderHome() {
   const grid = document.getElementById('quizGrid');
   grid.innerHTML = '';
   getCurrentQuizzes().forEach((q, i) => {
+    const level = currentLevel || 'senior';
+    const unlocked = isTopicUnlocked(q.id, level);
+    const passed = (userProgress[q.id] || 0) >= PASS_PCT;
     const card = document.createElement('div');
-    card.className = 'quiz-card' + (i === 0 ? ' qcard-full' : '');
+    card.className = 'quiz-card' + (i === 0 ? ' qcard-full' : '') + (unlocked ? '' : ' locked');
     card.setAttribute('data-topic', q.id);
-    card.onclick = () => startQuiz(q.id);
+    card.onclick = unlocked ? () => startQuiz(q.id) : () => alert('🔒 Спочатку пройди попередню тему!');
     const qCount = q.questions.length;
+    const progressTag = passed
+      ? `<span class="topic-progress">✅ Пройдено ${userProgress[q.id]}%</span>`
+      : '';
     card.innerHTML = `
+      <div class="lock-overlay">🔒</div>
       <span class="card-icon">${q.icon}</span>
       <h3>${q.title}</h3>
       <p style="font-size:0.84rem;color:var(--text2);line-height:1.5;">${q.desc}</p>
       <div class="card-meta">
         <span class="card-tag">${qCount} питань</span>
         <span class="card-tag c">Квіз</span>
+        ${progressTag}
       </div>
     `;
     grid.appendChild(card);
@@ -1228,11 +1338,22 @@ function renderHome() {
 function renderLessons() {
   const grid = document.getElementById('lessonsModulesGrid');
   grid.innerHTML = '';
+  const level = currentLevel || 'senior';
   getCurrentQuizzes().forEach(q => {
+    const unlocked = isTopicUnlocked(q.id, level);
+    const passed = (userProgress[q.id] || 0) >= PASS_PCT;
     const card = document.createElement('div');
-    card.className = 'lesson-module-card';
-    card.onclick = () => viewLesson(q.id);
-    card.innerHTML = `<span class="icon">${q.icon}</span><h4>${q.title}</h4><p style="font-size:0.78rem;color:var(--text2);">${q.desc}</p>`;
+    card.className = 'lesson-module-card' + (unlocked ? '' : ' locked');
+    card.style.position = 'relative';
+    const hasLesson = !!getCurrentLessons()[q.id];
+    card.onclick = unlocked && hasLesson ? () => viewLesson(q.id) : (unlocked ? null : () => alert('🔒 Спочатку пройди попередню тему!'));
+    card.innerHTML = `
+      <span class="icon">${q.icon}</span>
+      <h4>${q.title}</h4>
+      <p style="font-size:0.78rem;color:var(--text2);">${q.desc}</p>
+      ${!unlocked ? '<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:1.3rem">🔒</span>' : ''}
+      ${passed ? '<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:1.1rem">✅</span>' : ''}
+    `;
     grid.appendChild(card);
   });
 }
@@ -1395,6 +1516,11 @@ function finish() {
 
   // save to server if logged in
   saveResultToServer(state.quiz.id, state.quiz.title, state.score, total, pct, currentLevel || 'senior');
+  // update local progress cache
+  if (!userProgress[state.quiz.id] || pct > userProgress[state.quiz.id]) {
+    userProgress[state.quiz.id] = pct;
+    updateLevelCards();
+  }
 
   // animate score number
   const scoreEl = document.getElementById('scoreText');
@@ -1556,6 +1682,7 @@ function loadAuthState() {
   if (token && user) {
     currentUser = JSON.parse(user);
     updateAuthUI();
+    loadUserProgress();
   }
 }
 
@@ -1567,7 +1694,7 @@ function updateAuthUI() {
     btn.onclick = showUserMenu;
     statsBtn.style.display = 'inline-flex';
   } else {
-    btn.textContent = '👤';
+    btn.textContent = '🔑';
     btn.onclick = openAuthModal;
     statsBtn.style.display = 'none';
   }
@@ -1613,6 +1740,8 @@ async function doLogin() {
     currentUser = data.user;
     updateAuthUI();
     closeAuthModal();
+    await loadUserProgress();
+    renderHome();
     if (data.user.role === 'admin') showAdminDashboard();
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
@@ -1631,6 +1760,8 @@ async function doRegister() {
     currentUser = data.user;
     updateAuthUI();
     closeAuthModal();
+    await loadUserProgress();
+    renderHome();
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
 
