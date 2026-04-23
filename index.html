@@ -402,7 +402,7 @@
         <span class="lv-lock-badge" id="lvlock-junior" style="display:none">🔒</span>
       </div>
       <div class="level-card lv-mid" id="lvcard-mid" onclick="selectLevel('mid')">
-        <div class="level-card-icon">🌱</div>
+        <div class="level-card-icon">⚡</div>
         <div class="level-card-info">
           <h2>Середня школа</h2>
           <p>Самооцінка, стрес, спілкування та однолітки</p>
@@ -411,7 +411,7 @@
         <span class="lv-lock-badge" id="lvlock-mid">🔒</span>
       </div>
       <div class="level-card lv-senior" id="lvcard-senior" onclick="selectLevel('senior')">
-        <div class="level-card-icon">💡</div>
+        <div class="level-card-icon">🎯</div>
         <div class="level-card-info">
           <h2>Старша школа</h2>
           <p>Наука про мозок, соціальна психологія, нейронауки</p>
@@ -1269,7 +1269,7 @@ function getCurrentIcebreakers() {
 function selectLevel(level) {
   currentLevel = level;
   const badge = document.getElementById('levelBadge');
-  const labels = { junior: '🌈 1-4 клас', mid: '🌱 5-7 клас', senior: '💡 8-11 клас' };
+  const labels = { junior: '🌈 1-4 клас', mid: '⚡ 5-7 клас', senior: '🎯 8-11 клас' };
   badge.textContent = labels[level] || '';
   badge.style.display = 'inline-flex';
   showScreen('home');
