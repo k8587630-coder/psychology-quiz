@@ -1335,7 +1335,7 @@ function renderHome() {
     const qCount = q.questions.length;
     const progressTag = passed ? `<span class="topic-progress">✅ ${userProgress[q.id]}%</span>` : '';
     let lockOverlay = '';
-    if (cardState === 'need-auth') lockOverlay = '<div class="lock-overlay">🔑<div style="font-size:0.7rem;margin-top:4px">Увійди</div></div>';
+    if (cardState === 'need-auth') lockOverlay = '<div class="lock-overlay">🔒</div>';
     else if (cardState === 'locked') lockOverlay = '<div class="lock-overlay">🔒</div>';
 
     card.innerHTML = `
@@ -1380,7 +1380,7 @@ function renderLessons() {
     else if (cardState === 'need-auth') card.onclick = () => openAuthModal();
     else if (cardState === 'locked') card.onclick = () => alert('🔒 Спочатку пройди попередню тему!');
 
-    const badge = passed ? '✅' : cardState === 'need-auth' ? '🔑' : cardState === 'locked' ? '🔒' : '';
+    const badge = passed ? '✅' : (cardState === 'need-auth' || cardState === 'locked') ? '🔒' : '';
     card.innerHTML = `
       <span class="icon">${q.icon}</span>
       <h4>${q.title}</h4>
