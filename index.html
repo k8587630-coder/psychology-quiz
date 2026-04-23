@@ -399,7 +399,6 @@
           <p>Емоції, дружба, настрій і твій мозок — просто і весело!</p>
           <span class="lv-tag pink">1 — 4 клас</span>
         </div>
-        <span class="lv-lock-badge" id="lvlock-junior" style="display:none">🔒</span>
       </div>
       <div class="level-card lv-mid" id="lvcard-mid" onclick="selectLevel('mid')">
         <div class="level-card-icon">⚡</div>
@@ -408,7 +407,6 @@
           <p>Самооцінка, стрес, спілкування та однолітки</p>
           <span class="lv-tag green">5 — 7 клас</span>
         </div>
-        <span class="lv-lock-badge" id="lvlock-mid">🔒</span>
       </div>
       <div class="level-card lv-senior" id="lvcard-senior" onclick="selectLevel('senior')">
         <div class="level-card-icon">🎯</div>
@@ -417,7 +415,6 @@
           <p>Наука про мозок, соціальна психологія, нейронауки</p>
           <span class="lv-tag purple">8 — 11 клас</span>
         </div>
-        <span class="lv-lock-badge" id="lvlock-senior">🔒</span>
       </div>
     </div>
   </div>
@@ -1231,16 +1228,14 @@ function isLevelUnlocked(level) {
 function updateLevelCards() {
   ['junior', 'mid', 'senior'].forEach(lv => {
     const card = document.getElementById('lvcard-' + lv);
-    const lock = document.getElementById('lvlock-' + lv);
-    if (!card || !lock) return;
+    if (!card) return;
     const unlocked = isLevelUnlocked(lv);
-    lock.style.display = unlocked ? 'none' : 'inline';
     if (unlocked) {
       card.classList.remove('lv-disabled');
       card.onclick = () => selectLevel(lv);
     } else {
       card.classList.add('lv-disabled');
-      card.onclick = () => alert('🔒 Спочатку пройди всі теми попереднього рівня!');
+      card.onclick = () => alert('Спочатку пройди всі теми попереднього рівня!');
     }
   });
 }
