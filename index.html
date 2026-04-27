@@ -1306,12 +1306,7 @@ function renderHome() {
     const prevPassed = isTopicUnlocked(q.id, level);
     const passed = (userProgress[q.id] || 0) >= PASS_PCT;
 
-    // first topic: always open. others: need auth + prev passed
     let cardState = 'open'; // 'open' | 'need-auth' | 'locked'
-    if (!isFirst) {
-      if (!loggedIn) cardState = 'need-auth';
-      else if (!prevPassed) cardState = 'locked';
-    }
 
     const card = document.createElement('div');
     card.className = 'quiz-card' + (i === 0 ? ' qcard-full' : '') + (cardState === 'open' ? '' : ' locked');
@@ -1360,10 +1355,6 @@ function renderLessons() {
     const hasLesson = !!getCurrentLessons()[q.id];
 
     let cardState = 'open';
-    if (!isFirst) {
-      if (!loggedIn) cardState = 'need-auth';
-      else if (!prevPassed) cardState = 'locked';
-    }
 
     const card = document.createElement('div');
     card.className = 'lesson-module-card' + (cardState === 'open' ? '' : ' locked');
