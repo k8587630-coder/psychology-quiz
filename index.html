@@ -1211,18 +1211,11 @@ async function loadUserProgress() {
 }
 
 function isTopicUnlocked(topicId, level) {
-  const order = topicOrder[level] || topicOrder.senior;
-  const idx = order.indexOf(topicId);
-  if (idx <= 0) return true;
-  const prevId = order[idx - 1];
-  return (userProgress[prevId] || 0) >= PASS_PCT;
+  return true;
 }
 
 function isLevelUnlocked(level) {
-  if (level === 'junior') return true;
-  if (level === 'mid') return topicOrder.junior.every(id => (userProgress[id] || 0) >= PASS_PCT);
-  if (level === 'senior') return topicOrder.mid.every(id => (userProgress[id] || 0) >= PASS_PCT);
-  return false;
+  return true;
 }
 
 function updateLevelCards() {
