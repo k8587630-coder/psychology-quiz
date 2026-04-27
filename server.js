@@ -62,6 +62,21 @@ app.post('/api/login', async (req, res) => {
   res.json({ token, user: { id: user.id, name: user.name, role: user.role } });
 });
 
+// ── Quick login (nickname only) ───────────────────────────────────────────────
+app.post('/api/quick-login', async (req, res) => {
+  const { name } = req.body;
+  if (!name || name.trim().length < 2)
+    return res.status(400).json({ error: 'Імʼя мінімум 2 символи' });
+  try {
+    let user = await prisma.user.findFirst({ where: { name: name.trim(), email: null } });
+    if (!user) user = await prisma.user.create({ data: { name: name.trim() } });
+    const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, SECRET);
+    res.json({ token, user: { id: user.id, name: user.name, role: user.role } });
+  } catch {
+    res.status(500).json({ error: 'Помилка сервера' });
+  }
+});
+
 // ── Save result ──────────────────────────────────────────────────────────────
 app.post('/api/results', auth, async (req, res) => {
   const { quizId, quizName, score, total, pct, level } = req.body;

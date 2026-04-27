@@ -501,12 +501,20 @@
 
     <!-- tabs -->
     <div style="display:flex; gap:8px; margin-bottom:28px;">
-      <button id="tabLogin" onclick="switchTab('login')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:var(--purple); color:#fff; font-size:0.95rem;">Увійти</button>
-      <button id="tabReg" onclick="switchTab('reg')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:rgba(255,255,255,0.08); color:#aaa; font-size:0.95rem;">Зареєструватись</button>
+      <button id="tabQuick" onclick="switchTab('quick')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:var(--purple); color:#fff; font-size:0.95rem;">⚡ Швидкий вхід</button>
+      <button id="tabLogin" onclick="switchTab('login')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:rgba(255,255,255,0.08); color:#aaa; font-size:0.95rem;">Увійти</button>
+      <button id="tabReg" onclick="switchTab('reg')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:rgba(255,255,255,0.08); color:#aaa; font-size:0.95rem;">Реєстрація</button>
+    </div>
+
+    <!-- quick login form -->
+    <div id="formQuick">
+      <p style="color:#aaa; font-size:0.9rem; margin-bottom:16px; text-align:center;">Просто введи своє ім'я — і грай!</p>
+      <input id="quickName" type="text" placeholder="Твоє ім'я або нікнейм" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:20px; outline:none;">
+      <button onclick="doQuickLogin()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#a855f7,#06b6d4); color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer;">⚡ Увійти без реєстрації</button>
     </div>
 
     <!-- login form -->
-    <div id="formLogin">
+    <div id="formLogin" style="display:none;">
       <input id="loginEmail" type="email" placeholder="Email" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
       <input id="loginPass" type="password" placeholder="Пароль" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:20px; outline:none;">
       <button onclick="doLogin()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#a855f7,#06b6d4); color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer;">Увійти</button>
@@ -1734,14 +1742,31 @@ function openAuthModal() {
 function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
 
 function switchTab(tab) {
-  const isLogin = tab === 'login';
-  document.getElementById('formLogin').style.display = isLogin ? 'block' : 'none';
-  document.getElementById('formReg').style.display = isLogin ? 'none' : 'block';
-  document.getElementById('tabLogin').style.background = isLogin ? 'var(--purple)' : 'rgba(255,255,255,0.08)';
-  document.getElementById('tabLogin').style.color = isLogin ? '#fff' : '#aaa';
-  document.getElementById('tabReg').style.background = !isLogin ? 'var(--purple)' : 'rgba(255,255,255,0.08)';
-  document.getElementById('tabReg').style.color = !isLogin ? '#fff' : '#aaa';
+  ['quick', 'login', 'reg'].forEach(t => {
+    document.getElementById('form' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    btn.style.background = t === tab ? 'var(--purple)' : 'rgba(255,255,255,0.08)';
+    btn.style.color = t === tab ? '#fff' : '#aaa';
+  });
   document.getElementById('authError').textContent = '';
+}
+
+async function doQuickLogin() {
+  const name = document.getElementById('quickName').value.trim();
+  const err = document.getElementById('authError');
+  if (!name) { err.textContent = 'Введи своє ім\'я'; return; }
+  try {
+    const r = await fetch('/api/quick-login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+    const data = await r.json();
+    if (!r.ok) { err.textContent = data.error; return; }
+    localStorage.setItem('psy_token', data.token);
+    localStorage.setItem('psy_user', JSON.stringify(data.user));
+    currentUser = data.user;
+    updateAuthUI();
+    closeAuthModal();
+    await loadUserProgress();
+    renderHome();
+  } catch { err.textContent = 'Помилка з\'єднання'; }
 }
 
 async function doLogin() {
