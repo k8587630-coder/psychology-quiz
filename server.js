@@ -413,7 +413,132 @@ app.post('/api/admin/premium', auth, adminOnly, async (req, res) => {
 // ── Serve pages ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/share', (req, res) => res.sendFile(path.join(__dirname, 'share.html')));
+app.get('/share', (req, res) => {
+  const { n: name, q: quizName, p, d } = req.query;
+  if (!name || !quizName || !p) {
+    return res.send(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PsyQuiz</title></head>
+      <body style="background:#07071a;color:#f0f0ff;font-family:sans-serif;text-align:center;padding:80px">
+      <h2>❌ Посилання недійсне</h2></body></html>`);
+  }
+
+  const pct = parseInt(p);
+  const scoreColor = pct >= 90 ? '#fbbf24' : pct >= 70 ? '#a78bfa' : '#06b6d4';
+  const resultLabel = pct >= 90 ? 'ВІДМІННО' : pct >= 70 ? 'ЧУДОВО' : 'ЗАРАХОВАНО';
+  const starsHtml = pct >= 90 ? '★★★' : pct >= 70 ? '★★☆' : '★☆☆';
+  const certDate = d
+    ? new Date(d).toLocaleDateString('uk-UA', { year: 'numeric', month: 'long', day: 'numeric' })
+    : new Date().toLocaleDateString('uk-UA', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const shareUrl = `${APP_URL}/share?n=${encodeURIComponent(name)}&q=${encodeURIComponent(quizName)}&p=${pct}&d=${d || ''}`;
+  const shareText = encodeURIComponent(`Я набрав(ла) ${pct}% у квізі «${quizName}» на PsyQuiz! 🧠`);
+  const shareUrlEnc = encodeURIComponent(shareUrl);
+
+  const nameEsc = name.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const quizEsc = quizName.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${nameEsc} — Сертифікат PsyQuiz</title>
+  <meta property="og:title" content="${nameEsc} — ${pct}% з «${quizEsc}» | PsyQuiz">
+  <meta property="og:description" content="Перевір свої знання з психології на PsyQuiz!">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#07071a;color:#f0f0ff;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+    .aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .orb{position:absolute;border-radius:50%;filter:blur(110px);animation:drift 28s ease-in-out infinite}
+    .orb:nth-child(1){width:600px;height:600px;background:radial-gradient(circle,#7f5af0,transparent 70%);top:-200px;left:-200px;opacity:.3}
+    .orb:nth-child(2){width:500px;height:500px;background:radial-gradient(circle,#06b6d4,transparent 70%);bottom:-100px;right:-100px;opacity:.2;animation-delay:-9s}
+    @keyframes drift{0%,100%{transform:translate(0,0)}33%{transform:translate(70px,-90px)}66%{transform:translate(-50px,70px)}}
+    .wrap{position:relative;z-index:1;width:100%;max-width:660px;padding:28px 20px 60px}
+    .topnav{display:flex;justify-content:center;padding:16px 0 28px}
+    .logo{font-size:1.4rem;font-weight:900;letter-spacing:-.04em;background:linear-gradient(135deg,#7f5af0,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+    .card{background:linear-gradient(135deg,rgba(127,90,240,.12),rgba(6,182,212,.06));border:1px solid rgba(127,90,240,.35);border-radius:28px;padding:44px 36px 36px;text-align:center;box-shadow:0 0 80px rgba(127,90,240,.15),0 24px 64px rgba(0,0,0,.4);position:relative}
+    .card::before{content:'✦';position:absolute;top:18px;left:22px;font-size:1.1rem;color:rgba(127,90,240,.4)}
+    .card::after{content:'✦';position:absolute;bottom:18px;right:22px;font-size:1.1rem;color:rgba(127,90,240,.4)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 18px;border-radius:100px;margin-bottom:24px;background:linear-gradient(135deg,#7f5af0,#5b21b6);font-size:.8rem;font-weight:800;color:#fff;letter-spacing:.05em}
+    .lbl{font-size:.85rem;color:#8888b0;margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase}
+    .uname{font-size:clamp(1.8rem,6vw,2.8rem);font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:8px}
+    .divider{display:flex;align-items:center;gap:12px;margin:18px 0}
+    .divider hr{flex:1;border:none;border-top:1px solid rgba(127,90,240,.25)}
+    .divider span{color:#a78bfa}
+    .passed{font-size:1rem;color:#8888b0;margin-bottom:10px}
+    .qname{display:inline-block;padding:10px 24px;border-radius:14px;background:rgba(127,90,240,.12);border:1px solid rgba(127,90,240,.3);font-size:1.1rem;font-weight:800;color:#a78bfa;margin-bottom:28px;max-width:100%}
+    .seal-wrap{display:flex;justify-content:center;margin-bottom:24px}
+    .seal{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#4c1d95,#1e1b4b);border:2px solid rgba(127,90,240,.7);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(127,90,240,.4);position:relative}
+    .seal::before{content:'';position:absolute;inset:-10px;border-radius:50%;border:1.5px dashed rgba(127,90,240,.35)}
+    .seal-stars{font-size:.75rem;margin-bottom:2px}
+    .seal-pct{font-size:2.4rem;font-weight:900;letter-spacing:-.05em;line-height:1}
+    .seal-lbl{font-size:.6rem;font-weight:700;letter-spacing:.12em;color:rgba(255,255,255,.5);margin-top:2px}
+    .cdate{font-size:.82rem;color:#8888b0}
+    .share-section{margin-top:32px}
+    .share-title{font-size:.82rem;color:#8888b0;text-align:center;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}
+    .share-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    .sbtn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:14px;font-weight:800;font-size:.88rem;text-decoration:none;transition:opacity .2s}
+    .sbtn:hover{opacity:.8}
+    .tg{background:rgba(0,136,204,.18);border:1px solid rgba(0,136,204,.35);color:#38bdf8}
+    .tw{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#f0f0ff}
+    .fb{background:rgba(24,119,242,.18);border:1px solid rgba(24,119,242,.35);color:#60a5fa}
+    .vb{background:rgba(127,90,240,.18);border:1px solid rgba(127,90,240,.35);color:#a78bfa}
+    .copy-row{display:flex;gap:8px}
+    .copy-inp{flex:1;padding:10px 14px;border-radius:12px;font-size:.8rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#f0f0ff;outline:none}
+    .copy-btn{padding:10px 18px;border-radius:12px;border:none;cursor:pointer;background:rgba(127,90,240,.3);color:#a78bfa;font-weight:700;font-size:.8rem;white-space:nowrap}
+    .cta{margin-top:28px;padding:24px;border-radius:20px;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+    .cta p{color:#8888b0;font-size:.9rem;margin-bottom:14px}
+    .cta-btn{display:inline-block;padding:13px 32px;border-radius:14px;background:linear-gradient(135deg,#7f5af0,#5b21b6);color:#fff;font-weight:800;font-size:.95rem;text-decoration:none;box-shadow:0 4px 20px rgba(127,90,240,.4)}
+    @media(max-width:480px){.card{padding:32px 20px 28px}}
+  </style>
+</head>
+<body>
+<div class="aurora"><div class="orb"></div><div class="orb"></div></div>
+<div class="wrap">
+  <div class="topnav"><a href="/" class="logo">PsyQuiz</a></div>
+
+  <div class="card">
+    <div class="badge">🎓 СЕРТИФІКАТ</div>
+    <div class="lbl">Цей сертифікат підтверджує, що</div>
+    <div class="uname">${nameEsc}</div>
+    <div class="divider"><hr><span>✦</span><hr></div>
+    <div class="passed">успішно пройшов(ла) квіз</div>
+    <div class="qname">«${quizEsc}»</div>
+    <div class="seal-wrap">
+      <div class="seal">
+        <div class="seal-stars" style="color:${scoreColor}">${starsHtml}</div>
+        <div class="seal-pct" style="color:${scoreColor}">${pct}%</div>
+        <div class="seal-lbl">${resultLabel}</div>
+      </div>
+    </div>
+    <div class="cdate">📅 ${certDate}</div>
+  </div>
+
+  <div class="share-section">
+    <div class="share-title">Поділитись результатом</div>
+    <div class="share-btns">
+      <a class="sbtn tg" href="https://t.me/share/url?url=${shareUrlEnc}&text=${shareText}" target="_blank">✈️ Telegram</a>
+      <a class="sbtn tw" href="https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrlEnc}" target="_blank">𝕏 Twitter</a>
+      <a class="sbtn fb" href="https://www.facebook.com/sharer/sharer.php?u=${shareUrlEnc}" target="_blank">👤 Facebook</a>
+      <a class="sbtn vb" href="viber://forward?text=${shareText}%20${shareUrlEnc}" target="_blank">💬 Viber</a>
+    </div>
+    <div class="copy-row">
+      <input class="copy-inp" id="ci" readonly value="${shareUrl.replace(/"/g,'&quot;')}">
+      <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('ci').value).then(()=>{this.textContent='✅ OK';setTimeout(()=>this.textContent='Копіювати',2000)})">Копіювати</button>
+    </div>
+  </div>
+
+  <div class="cta">
+    <p>Хочеш перевірити свої знання з психології? 🧠</p>
+    <a href="/app" class="cta-btn">Спробувати квіз безкоштовно →</a>
+  </div>
+</div>
+</body>
+</html>`);
+});
 app.get('/{*path}', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 
 const PORT = process.env.PORT || 4056;
