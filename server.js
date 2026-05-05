@@ -413,6 +413,7 @@ app.post('/api/admin/premium', auth, adminOnly, async (req, res) => {
 // ── Serve pages ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/share', (req, res) => res.sendFile(path.join(__dirname, 'share.html')));
 app.get('/{*path}', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 
 const PORT = process.env.PORT || 4056;

@@ -522,7 +522,26 @@
                  font-weight:800; box-shadow:0 4px 24px rgba(127,90,240,0.45); transition:opacity 0.2s;">
           🎓 Завантажити сертифікат PDF
         </button>
-        <p style="font-size:0.8rem; color:#8888b0; margin-top:8px;">Результат 80%+ — сертифікат доступний!</p>
+        <button id="shareBtn" onclick="shareCertificate()"
+          style="width:100%; margin-top:10px; padding:13px 24px; border-radius:14px; border:1px solid rgba(6,182,212,0.4);
+                 cursor:pointer; background:rgba(6,182,212,0.08); color:#06b6d4; font-size:0.95rem;
+                 font-weight:800; transition:opacity 0.2s;">
+          🔗 Поділитись сертифікатом
+        </button>
+        <div id="shareLinks" style="display:none; margin-top:12px; background:rgba(255,255,255,0.04);
+             border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px;">
+          <p style="font-size:0.8rem; color:#8888b0; margin-bottom:10px; text-align:center;">Обери як поділитись:</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;" id="shareBtnsGrid"></div>
+          <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
+            <input id="shareUrlInput" readonly style="flex:1; padding:8px 12px; border-radius:10px;
+              background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+              color:#f0f0ff; font-size:0.8rem; outline:none;">
+            <button onclick="copyShareUrl()" style="padding:8px 14px; border-radius:10px; border:none;
+              background:rgba(127,90,240,0.3); color:#a78bfa; font-weight:700; cursor:pointer; white-space:nowrap;
+              font-size:0.82rem;">Копіювати</button>
+          </div>
+        </div>
+        <p style="font-size:0.8rem; color:#8888b0; margin-top:8px; text-align:center;">🏆 Результат 80%+ — сертифікат доступний!</p>
       </div>
       <button class="btn-primary" onclick="showScreen('home')">🏠 На головну</button>
     </div>
@@ -1669,6 +1688,66 @@ async function downloadCertificate() {
     btn.style.opacity = '1';
     btn.disabled = false;
   }
+}
+
+function shareCertificate() {
+  const name = currentUser ? currentUser.name : 'Анонімний учасник';
+  const pct  = parseInt(document.getElementById('scoreText').textContent);
+  const data = btoa(encodeURIComponent(JSON.stringify({
+    name, quizName: state.quiz.title, pct, date: new Date().toISOString()
+  })));
+  const url = `${location.origin}/share?d=${data}`;
+
+  document.getElementById('shareUrlInput').value = url;
+
+  const grid = document.getElementById('shareBtnsGrid');
+  const text = `Я набрав(ла) ${pct}% у квізі «${state.quiz.title}» на PsyQuiz! 🧠`;
+  const encodedText = encodeURIComponent(text);
+  const encodedUrl  = encodeURIComponent(url);
+
+  grid.innerHTML = `
+    <a href="https://t.me/share/url?url=${encodedUrl}&text=${encodedText}" target="_blank"
+       style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;
+              background:rgba(0,136,204,0.15);border:1px solid rgba(0,136,204,0.3);
+              color:#38bdf8;font-weight:700;font-size:0.85rem;text-decoration:none;">
+      ✈️ Telegram
+    </a>
+    <a href="https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}" target="_blank"
+       style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;
+              background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+              color:#f0f0ff;font-weight:700;font-size:0.85rem;text-decoration:none;">
+      𝕏 Twitter
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank"
+       style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;
+              background:rgba(24,119,242,0.15);border:1px solid rgba(24,119,242,0.3);
+              color:#60a5fa;font-weight:700;font-size:0.85rem;text-decoration:none;">
+      👤 Facebook
+    </a>
+    <a href="viber://forward?text=${encodedText}%20${encodedUrl}" target="_blank"
+       style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;
+              background:rgba(127,90,240,0.15);border:1px solid rgba(127,90,240,0.3);
+              color:#a78bfa;font-weight:700;font-size:0.85rem;text-decoration:none;">
+      💬 Viber
+    </a>
+  `;
+
+  document.getElementById('shareLinks').style.display = 'block';
+}
+
+function copyShareUrl() {
+  const input = document.getElementById('shareUrlInput');
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = input.nextElementSibling;
+    btn.textContent = '✅ Скопійовано!';
+    btn.style.background = 'rgba(44,182,125,0.3)';
+    btn.style.color = '#2cb67d';
+    setTimeout(() => {
+      btn.textContent = 'Копіювати';
+      btn.style.background = 'rgba(127,90,240,0.3)';
+      btn.style.color = '#a78bfa';
+    }, 2500);
+  });
 }
 
 const LOTTIE = {
