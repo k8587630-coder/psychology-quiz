@@ -150,9 +150,7 @@ app.post('/api/admin/create', async (req, res) => {
 });
 
 // ── Certificate PDF ──────────────────────────────────────────────────────────
-app.post('/api/certificate', (req, res) => {
-  const { name, quizName, pct, date } = req.body;
-  if (!name || !quizName || pct == null) return res.status(400).json({ error: 'Відсутні дані' });
+function generateCertificate(res, { name, quizName, pct, date }) {
 
   const FONT     = path.join(__dirname, 'fonts', 'Regular.ttf');
   const FONT_B   = path.join(__dirname, 'fonts', 'Bold.ttf');
@@ -352,6 +350,20 @@ app.post('/api/certificate', (req, res) => {
   });
 
   doc.end();
+}
+
+// GET — відкривається прямо в браузері або завантажується як файл
+app.get('/api/certificate', (req, res) => {
+  const { name, quizName: q, pct, date } = req.query;
+  if (!name || !q || !pct) return res.status(400).send('Відсутні дані');
+  generateCertificate(res, { name, quizName: q, pct: parseInt(pct), date });
+});
+
+// POST — залишаємо для сумісності
+app.post('/api/certificate', (req, res) => {
+  const { name, quizName, pct, date } = req.body;
+  if (!name || !quizName || pct == null) return res.status(400).json({ error: 'Відсутні дані' });
+  generateCertificate(res, { name, quizName, pct, date });
 });
 
 // ── LiqPay: create payment ────────────────────────────────────────────────────

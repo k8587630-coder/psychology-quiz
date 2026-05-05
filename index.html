@@ -1657,37 +1657,15 @@ function finish() {
   triggerCelebration(pct);
 }
 
-async function downloadCertificate() {
-  const btn = document.getElementById('certBtn');
-  btn.textContent = '⏳ Генерується...';
-  btn.style.opacity = '0.7';
-  btn.disabled = true;
-
+function downloadCertificate() {
   const name = currentUser ? currentUser.name : 'Анонімний учасник';
-  const pct = parseInt(document.getElementById('scoreText').textContent);
-
-  try {
-    const r = await fetch('/api/certificate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, quizName: state.quiz.title, pct, date: new Date().toISOString() })
-    });
-    if (!r.ok) throw new Error();
-    const blob = await r.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `psyquiz-${state.quiz.id}-certificate.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-    btn.textContent = '✅ Сертифікат завантажено!';
-    btn.style.background = 'linear-gradient(135deg,#2cb67d,#059669)';
-    btn.style.opacity = '1';
-  } catch {
-    btn.textContent = '❌ Помилка — спробуй ще раз';
-    btn.style.opacity = '1';
-    btn.disabled = false;
-  }
+  const pct  = parseInt(document.getElementById('scoreText').textContent);
+  const date = new Date().toISOString().slice(0, 10);
+  const url  = '/api/certificate?' + new URLSearchParams({
+    name, quizName: state.quiz.title, pct, date
+  });
+  // Відкриваємо в новій вкладці — браузер сам запропонує зберегти PDF
+  window.open(url, '_blank');
 }
 
 function shareCertificate() {
