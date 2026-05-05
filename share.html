@@ -191,31 +191,25 @@
 <script>
 (function() {
   const params = new URLSearchParams(location.search);
-  const raw = params.get('d');
   const content = document.getElementById('content');
 
-  if (!raw) {
+  const name      = params.get('n');
+  const quizName  = params.get('q');
+  const pct       = parseInt(params.get('p'));
+  const dateStr   = params.get('d');
+
+  if (!name || !quizName || isNaN(pct)) {
     content.innerHTML = '<div class="center-msg">❌ Посилання недійсне</div>';
     return;
   }
 
-  let cert;
-  try {
-    // Відновлюємо стандартний base64 з URL-safe варіанту
-    const b64 = raw.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = b64 + '=='.slice(0, (4 - b64.length % 4) % 4);
-    cert = JSON.parse(decodeURIComponent(atob(padded)));
-  } catch {
-    content.innerHTML = '<div class="center-msg">❌ Не вдалось розшифрувати дані</div>';
-    return;
-  }
+  const cert = { name, quizName, pct, date: dateStr };
 
-  const { name, quizName, pct, date } = cert;
   const scoreColor = pct >= 90 ? '#fbbf24' : pct >= 70 ? '#a78bfa' : '#06b6d4';
   const resultLabel = pct >= 90 ? 'ВІДМІННО' : pct >= 70 ? 'ЧУДОВО' : 'ЗАРАХОВАНО';
   const starsHtml = pct >= 90 ? '★★★' : pct >= 70 ? '★★☆' : '★☆☆';
-  const certDate = date
-    ? new Date(date).toLocaleDateString('uk-UA', { year:'numeric', month:'long', day:'numeric' })
+  const certDate = dateStr
+    ? new Date(dateStr).toLocaleDateString('uk-UA', { year:'numeric', month:'long', day:'numeric' })
     : new Date().toLocaleDateString('uk-UA', { year:'numeric', month:'long', day:'numeric' });
 
   // Update OG meta

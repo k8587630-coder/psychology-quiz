@@ -1693,11 +1693,12 @@ async function downloadCertificate() {
 function shareCertificate() {
   const name = currentUser ? currentUser.name : 'Анонімний учасник';
   const pct  = parseInt(document.getElementById('scoreText').textContent);
-  const json = JSON.stringify({ name, quizName: state.quiz.title, pct, date: new Date().toISOString() });
-  // URL-safe base64: замінюємо +→- /→_ і прибираємо =
-  const data = btoa(encodeURIComponent(json))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  const url = `${location.origin}/share?d=${data}`;
+  const url = `${location.origin}/share?` + new URLSearchParams({
+    n: name,
+    q: state.quiz.title,
+    p: pct,
+    d: new Date().toISOString().slice(0, 10)
+  }).toString();
 
   document.getElementById('shareUrlInput').value = url;
 
