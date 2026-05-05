@@ -128,8 +128,10 @@ app.post('/api/admin/create', async (req, res) => {
   }
 });
 
-// ── Serve app ────────────────────────────────────────────────────────────────
-app.get('/{*path}', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+// ── Serve pages ──────────────────────────────────────────────────────────────
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
+app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/{*path}', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 
 const PORT = process.env.PORT || 4056;
 app.listen(PORT, '::', () => console.log(`Server running on port ${PORT}`));
