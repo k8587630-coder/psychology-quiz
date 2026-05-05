@@ -476,6 +476,15 @@
       <div class="score-big" id="scoreText">0%</div>
       <p id="resMessage" style="margin: 0 0 28px; font-size: 1.05rem; color: var(--text2);"></p>
       <div id="resBadge" style="font-size: 3rem; margin-bottom: 24px;"></div>
+      <div id="certBtnWrap" style="display:none; margin-bottom: 16px;">
+        <button id="certBtn" onclick="downloadCertificate()"
+          style="width:100%; padding:14px 24px; border-radius:14px; border:none; cursor:pointer;
+                 background:linear-gradient(135deg,#7f5af0,#5b21b6); color:#fff; font-size:1rem;
+                 font-weight:800; box-shadow:0 4px 24px rgba(127,90,240,0.45); transition:opacity 0.2s;">
+          🎓 Завантажити сертифікат PDF
+        </button>
+        <p style="font-size:0.8rem; color:#8888b0; margin-top:8px;">Результат 80%+ — сертифікат доступний!</p>
+      </div>
       <button class="btn-primary" onclick="showScreen('home')">🏠 На головну</button>
     </div>
   </div>
@@ -1539,6 +1548,9 @@ function finish() {
   document.getElementById('resBadge').textContent = badge;
   document.getElementById('resMessage').textContent = msg;
 
+  // show certificate button if score >= 80%
+  document.getElementById('certBtnWrap').style.display = pct >= 80 ? 'block' : 'none';
+
   // save to server if logged in
   saveResultToServer(state.quiz.id, state.quiz.title, state.score, total, pct, currentLevel || 'senior');
   // update local progress cache
@@ -1555,6 +1567,39 @@ function finish() {
 
   showScreen('results');
   triggerCelebration(pct);
+}
+
+async function downloadCertificate() {
+  const btn = document.getElementById('certBtn');
+  btn.textContent = '⏳ Генерується...';
+  btn.style.opacity = '0.7';
+  btn.disabled = true;
+
+  const name = currentUser ? currentUser.name : 'Анонімний учасник';
+  const pct = parseInt(document.getElementById('scoreText').textContent);
+
+  try {
+    const r = await fetch('/api/certificate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, quizName: state.quiz.title, pct, date: new Date().toISOString() })
+    });
+    if (!r.ok) throw new Error();
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `psyquiz-${state.quiz.id}-certificate.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+    btn.textContent = '✅ Сертифікат завантажено!';
+    btn.style.background = 'linear-gradient(135deg,#2cb67d,#059669)';
+    btn.style.opacity = '1';
+  } catch {
+    btn.textContent = '❌ Помилка — спробуй ще раз';
+    btn.style.opacity = '1';
+    btn.disabled = false;
+  }
 }
 
 const LOTTIE = {
