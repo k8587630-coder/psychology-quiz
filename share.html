@@ -201,7 +201,10 @@
 
   let cert;
   try {
-    cert = JSON.parse(decodeURIComponent(atob(raw)));
+    // Відновлюємо стандартний base64 з URL-safe варіанту
+    const b64 = raw.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = b64 + '=='.slice(0, (4 - b64.length % 4) % 4);
+    cert = JSON.parse(decodeURIComponent(atob(padded)));
   } catch {
     content.innerHTML = '<div class="center-msg">❌ Не вдалось розшифрувати дані</div>';
     return;
