@@ -154,7 +154,12 @@ app.post('/api/certificate', (req, res) => {
   const { name, quizName, pct, date } = req.body;
   if (!name || !quizName || pct == null) return res.status(400).json({ error: 'Відсутні дані' });
 
+  const FONT     = path.join(__dirname, 'fonts', 'Regular.ttf');
+  const FONT_B   = path.join(__dirname, 'fonts', 'Bold.ttf');
+
   const doc = new PDFDocument({ size: 'A4', layout: 'landscape', margin: 0 });
+  doc.registerFont('R',  FONT);
+  doc.registerFont('RB', FONT_B);
   const W = 841.89, H = 595.28;
   const CX = W / 2;
 
@@ -226,7 +231,7 @@ app.post('/api/certificate', (req, res) => {
 
   // ── Header section ────────────────────────────────────────────────────────
   // "PsyQuiz" logo
-  doc.fontSize(13).font('Helvetica-Bold').fillColor('#a78bfa', 0.9)
+  doc.fontSize(13).font('RB').fillColor('#a78bfa', 0.9)
      .text('PSY', 0, 52, { align: 'center', continued: true, characterSpacing: 4 });
   doc.fillColor('#06b6d4', 0.9)
      .text('QUIZ', { characterSpacing: 4 });
@@ -243,17 +248,17 @@ app.post('/api/certificate', (req, res) => {
   });
 
   // Subtitle
-  doc.fontSize(9).font('Helvetica').fillColor('#8888b0', 0.8)
+  doc.fontSize(9).font('R').fillColor('#8888b0', 0.8)
      .text('С Е Р Т И Ф І К А Т   П Р О   П Р О Х О Д Ж Е Н Н Я', 0, 94, { align: 'center', characterSpacing: 2 });
 
   // ── Main content ─────────────────────────────────────────────────────────
-  doc.fontSize(13).font('Helvetica').fillColor('#8888b0')
+  doc.fontSize(13).font('R').fillColor('#8888b0')
      .text('Цим підтверджується, що', 0, 122, { align: 'center' });
 
   // Name with glow effect (fake — layered text)
-  doc.fontSize(38).font('Helvetica-Bold').fillColor('#a78bfa', 0.15)
+  doc.fontSize(38).font('RB').fillColor('#a78bfa', 0.15)
      .text(name, 2, 146, { align: 'center' });
-  doc.fontSize(38).font('Helvetica-Bold').fillColor('#e2d9fa')
+  doc.fontSize(38).font('RB').fillColor('#e2d9fa')
      .text(name, 0, 144, { align: 'center' });
 
   // Name underline (gradient-like with two lines)
@@ -262,7 +267,7 @@ app.post('/api/certificate', (req, res) => {
   doc.moveTo(nx, 193).lineTo(CX, 193).lineWidth(1.5).strokeColor('#7c3aed', 0.7).stroke();
   doc.moveTo(CX, 193).lineTo(nx + nw, 193).lineWidth(1.5).strokeColor('#06b6d4', 0.7).stroke();
 
-  doc.fontSize(13).font('Helvetica').fillColor('#8888b0')
+  doc.fontSize(13).font('R').fillColor('#8888b0')
      .text('успішно пройшов(ла) квіз з психології', 0, 204, { align: 'center' });
 
   // Quiz name box
@@ -273,7 +278,7 @@ app.post('/api/certificate', (req, res) => {
      .fillColor('#7c3aed', 0.12).fill();
   doc.roundedRect(qnX, qnY, qnW, 38, 8)
      .lineWidth(0.8).strokeColor('#7c3aed', 0.5).stroke();
-  doc.fontSize(18).font('Helvetica-Bold').fillColor('#c4b5fd')
+  doc.fontSize(18).font('RB').fillColor('#c4b5fd')
      .text(`«${quizName}»`, qnX, qnY + 10, { width: qnW, align: 'center' });
 
   // ── Score seal (right side) ────────────────────────────────────────────
@@ -306,12 +311,12 @@ app.post('/api/certificate', (req, res) => {
 
   // Score number
   const scoreColor = pct >= 90 ? '#fbbf24' : pct >= 70 ? '#a78bfa' : '#06b6d4';
-  doc.fontSize(34).font('Helvetica-Bold').fillColor(scoreColor)
+  doc.fontSize(34).font('RB').fillColor(scoreColor)
      .text(`${pct}%`, sealX - sealR, sealY - 20, { width: sealR * 2, align: 'center' });
 
   // Result label inside seal
   const resultLabel = pct >= 90 ? 'ВІДМІННО' : pct >= 70 ? 'ЧУДОВО' : 'ЗАРАХОВАНО';
-  doc.fontSize(8).font('Helvetica-Bold').fillColor('#8888b0', 0.9)
+  doc.fontSize(8).font('RB').fillColor('#8888b0', 0.9)
      .text(resultLabel, sealX - sealR, sealY + 20, { width: sealR * 2, align: 'center', characterSpacing: 1.5 });
 
   // Stars in seal
@@ -332,11 +337,11 @@ app.post('/api/certificate', (req, res) => {
 
   const verifyCode = `PSQ-${String(pct).padStart(3,'0')}-${Date.now().toString(36).slice(-5).toUpperCase()}`;
 
-  doc.fontSize(9).font('Helvetica').fillColor('#555580')
+  doc.fontSize(9).font('R').fillColor('#555580')
      .text(`Дата видачі: ${certDate}`, 60, H - 68)
      .text(`Код: ${verifyCode}`, 60, H - 54);
 
-  doc.fontSize(9).font('Helvetica').fillColor('#555580')
+  doc.fontSize(9).font('R').fillColor('#555580')
      .text('katerynap.vibe.brobots.org.ua', W - 280, H - 68, { width: 220, align: 'right' })
      .text('Психологічні квізи · PsyQuiz', W - 280, H - 54, { width: 220, align: 'right' });
 
