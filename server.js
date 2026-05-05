@@ -4,12 +4,23 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const crypto = require('crypto');
 const PDFDocument = require('pdfkit');
 const { PrismaClient } = require('@prisma/client');
 
 const app = express();
 const prisma = new PrismaClient();
 const SECRET = process.env.JWT_SECRET;
+const LIQPAY_PUBLIC  = process.env.LIQPAY_PUBLIC_KEY;
+const LIQPAY_PRIVATE = process.env.LIQPAY_PRIVATE_KEY;
+const APP_URL = process.env.APP_URL || 'http://localhost:4056';
+
+function liqpayEncode(params) {
+  return Buffer.from(JSON.stringify(params)).toString('base64');
+}
+function liqpaySign(data) {
+  return crypto.createHash('sha1').update(LIQPAY_PRIVATE + data + LIQPAY_PRIVATE).digest('base64');
+}
 
 app.use(cors());
 app.use(express.json());
@@ -44,8 +55,8 @@ app.post('/api/register', async (req, res) => {
     const user = await prisma.user.create({
       data: { name, email: email.toLowerCase(), password: hash }
     });
-    const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, SECRET);
-    res.json({ token, user: { id: user.id, name: user.name, role: user.role } });
+    const token = jwt.sign({ id: user.id, name: user.name, role: user.role, isPremium: false }, SECRET);
+    res.json({ token, user: { id: user.id, name: user.name, role: user.role, isPremium: false } });
   } catch (e) {
     if (e.code === 'P2002') return res.status(400).json({ error: 'Цей email вже зареєстровано' });
     res.status(500).json({ error: 'Помилка сервера' });
@@ -59,8 +70,9 @@ app.post('/api/login', async (req, res) => {
   if (!user) return res.status(400).json({ error: 'Користувача не знайдено' });
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.status(400).json({ error: 'Невірний пароль' });
-  const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, SECRET);
-  res.json({ token, user: { id: user.id, name: user.name, role: user.role } });
+  const premium = user.isPremium && (!user.premiumUntil || user.premiumUntil > new Date());
+  const token = jwt.sign({ id: user.id, name: user.name, role: user.role, isPremium: premium }, SECRET);
+  res.json({ token, user: { id: user.id, name: user.name, role: user.role, isPremium: premium } });
 });
 
 // ── Quick login (nickname only) ───────────────────────────────────────────────
@@ -71,11 +83,19 @@ app.post('/api/quick-login', async (req, res) => {
   try {
     let user = await prisma.user.findFirst({ where: { name: name.trim(), email: null } });
     if (!user) user = await prisma.user.create({ data: { name: name.trim() } });
-    const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, SECRET);
-    res.json({ token, user: { id: user.id, name: user.name, role: user.role } });
+    const token = jwt.sign({ id: user.id, name: user.name, role: user.role, isPremium: false }, SECRET);
+    res.json({ token, user: { id: user.id, name: user.name, role: user.role, isPremium: false } });
   } catch {
     res.status(500).json({ error: 'Помилка сервера' });
   }
+});
+
+// ── Premium status check ──────────────────────────────────────────────────────
+app.get('/api/me', auth, async (req, res) => {
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  if (!user) return res.status(404).json({ error: 'Не знайдено' });
+  const premium = user.isPremium && (!user.premiumUntil || user.premiumUntil > new Date());
+  res.json({ id: user.id, name: user.name, role: user.role, isPremium: premium, premiumUntil: user.premiumUntil });
 });
 
 // ── Save result ──────────────────────────────────────────────────────────────
@@ -233,6 +253,67 @@ app.post('/api/certificate', (req, res) => {
   });
 
   doc.end();
+});
+
+// ── LiqPay: create payment ────────────────────────────────────────────────────
+app.post('/api/payment/create', auth, (req, res) => {
+  const { plan } = req.body; // 'monthly' | 'class'
+  const amount = plan === 'class' ? 799 : 149;
+  const description = plan === 'class' ? 'PsyQuiz — Для класу (1 місяць)' : 'PsyQuiz Преміум (1 місяць)';
+
+  const params = {
+    public_key:  LIQPAY_PUBLIC,
+    version:     '3',
+    action:      'pay',
+    amount,
+    currency:    'UAH',
+    description,
+    order_id:    `psyquiz_${req.user.id}_${Date.now()}`,
+    result_url:  `${APP_URL}/app?payment=success`,
+    server_url:  `${APP_URL}/api/payment/callback`,
+  };
+
+  const data = liqpayEncode(params);
+  const signature = liqpaySign(data);
+  res.json({ data, signature });
+});
+
+// ── LiqPay: payment callback (webhook) ───────────────────────────────────────
+app.post('/api/payment/callback', express.urlencoded({ extended: true }), async (req, res) => {
+  const { data, signature } = req.body;
+  if (!data || !signature) return res.sendStatus(400);
+
+  const expectedSig = liqpaySign(data);
+  if (expectedSig !== signature) return res.sendStatus(403);
+
+  const payload = JSON.parse(Buffer.from(data, 'base64').toString('utf-8'));
+  if (payload.status !== 'success' && payload.status !== 'sandbox') return res.sendStatus(200);
+
+  // order_id format: psyquiz_{userId}_{timestamp}
+  const userId = parseInt(payload.order_id?.split('_')[1]);
+  if (!userId) return res.sendStatus(400);
+
+  const premiumUntil = new Date();
+  premiumUntil.setMonth(premiumUntil.getMonth() + 1);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { isPremium: true, premiumUntil }
+  });
+
+  res.sendStatus(200);
+});
+
+// ── Admin: grant premium manually ────────────────────────────────────────────
+app.post('/api/admin/premium', auth, adminOnly, async (req, res) => {
+  const { userId, months } = req.body;
+  const until = new Date();
+  until.setMonth(until.getMonth() + (months || 1));
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: { isPremium: true, premiumUntil: until }
+  });
+  res.json({ ok: true, premiumUntil: user.premiumUntil });
 });
 
 // ── Serve pages ──────────────────────────────────────────────────────────────
