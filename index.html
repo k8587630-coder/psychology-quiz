@@ -1748,10 +1748,26 @@ function selectIce(el, mood) {
   fb.innerHTML = `✨ Чудово! Ти сьогодні — <b>${mood}</b>. Відмінний настрій для навчання!`;
 }
 
+function shuffleQuizAnswers(quiz) {
+  // Deep copy to avoid mutating original data
+  const copy = JSON.parse(JSON.stringify(quiz));
+  copy.questions = copy.questions.map(q => {
+    const correct = q.opts[q.ans];
+    // Fisher-Yates shuffle
+    for (let i = q.opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [q.opts[i], q.opts[j]] = [q.opts[j], q.opts[i]];
+    }
+    q.ans = q.opts.indexOf(correct);
+    return q;
+  });
+  return copy;
+}
+
 function startQuiz(id) {
   const q = getCurrentQuizzes().find(x => x.id === id);
   if (!q || !q.questions.length) { alert('Квіз у розробці!'); return; }
-  state = { quiz: q, qIdx: 0, score: 0 };
+  state = { quiz: shuffleQuizAnswers(q), qIdx: 0, score: 0 };
   document.getElementById('playTitle').textContent = q.icon + ' ' + q.title;
   showScreen('quiz');
   showQ();
