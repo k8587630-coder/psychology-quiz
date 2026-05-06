@@ -551,6 +551,12 @@
       <div id="aiResultLoading" style="display:none; text-align:center; color:#a78bfa; margin: 8px 0 20px; font-size:0.88rem;">
         ✨ Gemini аналізує твої результати...
       </div>
+      <button onclick="shareResult()" style="width:100%; margin-bottom:12px; padding:13px 24px;
+        border-radius:14px; border:1px solid rgba(34,197,94,0.4); cursor:pointer;
+        background:rgba(34,197,94,0.08); color:#4ade80; font-size:0.95rem;
+        font-weight:800; transition:opacity 0.2s;">
+        📤 Поділитись результатом
+      </button>
       <button class="btn-primary" onclick="showScreen('home')">🏠 На головну</button>
     </div>
   </div>
@@ -1828,6 +1834,21 @@ async function analyzeResultWithGemini(quizTitle, pct, correct, total) {
     // silently hide if error
   } finally {
     document.getElementById('aiResultLoading').style.display = 'none';
+  }
+}
+
+function shareResult() {
+  const pct = document.getElementById('scoreText').textContent;
+  const title = state.quiz?.title || 'Психологія';
+  const badge = document.getElementById('resBadge').textContent;
+  const text = `${badge} Я пройшов(ла) квіз "${title}" і набрав(ла) ${pct}!\n\nПеревір себе: https://katerynap.vibe.brobots.org.ua`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'Мій результат квізу', text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✅ Скопійовано в буфер! Вставляй куди хочеш.');
+    });
   }
 }
 
