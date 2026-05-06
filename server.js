@@ -591,12 +591,17 @@ app.post('/api/generate-quiz', async (req, res) => {
       model: 'gemini-3.1-flash-lite-preview',
       contents: prompt,
     });
-    const text = response.text.trim().replace(/```json\n?|```/g, '');
+    // strip markdown code fences and extract JSON array
+    let text = response.text.trim().replace(/```json\n?|```/g, '').trim();
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']');
+    if (start === -1 || end === -1) throw new Error('No JSON array in response');
+    text = text.slice(start, end + 1);
     const questions = JSON.parse(text);
     res.json({ questions });
   } catch (e) {
     console.error('Gemini error:', e.message);
-    res.status(500).json({ error: 'Не вдалось згенерувати питання' });
+    res.status(500).json({ error: 'Не вдалось згенерувати питання: ' + e.message });
   }
 });
 
