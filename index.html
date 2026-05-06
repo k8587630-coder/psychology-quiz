@@ -1704,6 +1704,8 @@ function viewLesson(id) {
     <div class="section-title" style="margin-top:40px;">Питання для закріплення</div>
     <div id="lAcc"></div>
     <button class="btn-primary" style="margin-top:28px;" onclick="startQuiz('${id}')">✍️ Почати квіз за темою</button>
+    <button class="btn-secondary" style="margin-top:12px;" id="genQuizBtn" onclick="generateLessonQuiz('${quiz.title}')">🤖 Перевірити знання з Gemini</button>
+    <div id="genQuizLoading" style="display:none; text-align:center; color:#a78bfa; margin-top:12px; font-size:0.9rem;">✨ Gemini генерує питання...</div>
   `;
 
   const acc = document.getElementById('lAcc');
@@ -1738,6 +1740,39 @@ function startQuiz(id) {
   document.getElementById('playTitle').textContent = q.icon + ' ' + q.title;
   showScreen('quiz');
   showQ();
+}
+
+async function generateLessonQuiz(lessonTitle) {
+  const lessonText = document.querySelector('.lesson-rich-content')?.innerText || '';
+  const btn = document.getElementById('genQuizBtn');
+  const loading = document.getElementById('genQuizLoading');
+
+  btn.disabled = true;
+  loading.style.display = 'block';
+
+  try {
+    const res = await fetch('/api/generate-quiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lessonTitle, lessonText })
+    });
+    const data = await res.json();
+    if (!data.questions) throw new Error(data.error);
+
+    // Start quiz with generated questions
+    state = {
+      quiz: { id: 'gemini', title: '🤖 ' + lessonTitle, icon: '🤖', questions: data.questions },
+      qIdx: 0, score: 0
+    };
+    document.getElementById('playTitle').textContent = '🤖 ' + lessonTitle;
+    showScreen('quiz');
+    showQ();
+  } catch (e) {
+    alert('Помилка генерації: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    loading.style.display = 'none';
+  }
 }
 
 function showQ() {

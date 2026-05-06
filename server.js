@@ -7,8 +7,10 @@ const path = require('path');
 const crypto = require('crypto');
 const PDFDocument = require('pdfkit');
 const { PrismaClient } = require('@prisma/client');
+const { GoogleGenAI } = require('@google/genai');
 
 const app = express();
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const prisma = new PrismaClient();
 const SECRET = process.env.JWT_SECRET;
 const LIQPAY_PUBLIC  = process.env.LIQPAY_PUBLIC_KEY;
@@ -557,6 +559,46 @@ app.get('/share', (req, res) => {
 </html>`);
 });
 app.get('/{*path}', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
+
+// ── Gemini: generate quiz from lesson ────────────────────────────────────────
+app.post('/api/generate-quiz', async (req, res) => {
+  const { lessonTitle, lessonText } = req.body;
+  if (!lessonTitle || !lessonText)
+    return res.status(400).json({ error: 'Потрібні lessonTitle і lessonText' });
+
+  const prompt = `Ти — вчитель психології. На основі цього уроку створи 5 тестових питань українською мовою.
+
+Урок: "${lessonTitle}"
+Текст: ${lessonText}
+
+Поверни ТІЛЬКИ JSON масив без зайвого тексту:
+[
+  {
+    "q": "Текст питання",
+    "opts": ["Варіант А", "Варіант Б", "Варіант В", "Варіант Г"],
+    "ans": 0,
+    "info": "Коротке пояснення правильної відповіді"
+  }
+]
+
+Правила:
+- ans — індекс правильної відповіді (0-3)
+- питання мають бути різноманітними і цікавими
+- варіанти відповідей — правдоподібні, не очевидні`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.1-flash-lite-preview',
+      contents: prompt,
+    });
+    const text = response.text.trim().replace(/```json\n?|```/g, '');
+    const questions = JSON.parse(text);
+    res.json({ questions });
+  } catch (e) {
+    console.error('Gemini error:', e.message);
+    res.status(500).json({ error: 'Не вдалось згенерувати питання' });
+  }
+});
 
 const PORT = process.env.PORT || 4056;
 app.listen(PORT, '::', () => console.log(`Server running on port ${PORT}`));
