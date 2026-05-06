@@ -542,6 +542,15 @@
         </div>
         <p style="font-size:0.8rem; color:#8888b0; margin-top:8px; text-align:center;">🏆 Результат 80%+ — сертифікат доступний!</p>
       </div>
+      <div id="aiResultBlock" style="display:none; margin: 4px 0 20px; padding: 18px 20px;
+        background: rgba(127,90,240,0.08); border: 1px solid rgba(127,90,240,0.25);
+        border-radius: 16px; text-align: left;">
+        <p style="font-size:0.78rem; color:#a78bfa; font-weight:700; margin:0 0 8px; letter-spacing:0.05em;">🤖 AI-АНАЛІЗ ВІД GEMINI</p>
+        <p id="aiResultText" style="color:#e0e0f0; font-size:0.92rem; line-height:1.65; margin:0;"></p>
+      </div>
+      <div id="aiResultLoading" style="display:none; text-align:center; color:#a78bfa; margin: 8px 0 20px; font-size:0.88rem;">
+        ✨ Gemini аналізує твої результати...
+      </div>
       <button class="btn-primary" onclick="showScreen('home')">🏠 На головну</button>
     </div>
   </div>
@@ -1792,6 +1801,36 @@ async function generateLessonQuiz(lessonTitle) {
   }
 }
 
+async function analyzeResultWithGemini(quizTitle, pct, correct, total) {
+  const GEMINI_KEY = 'AIzaSyDZtg7PzJT8_zhl0ZGcm9Q_OexTySO5pYE';
+  const prompt = `Ти — дружній психолог-наставник. Учень пройшов тест "${quizTitle}" і набрав ${pct}% (${correct} з ${total} питань).
+Напиши короткий персоналізований аналіз (3-4 речення) українською мовою:
+- Оціни результат позитивно і підтримай учня
+- Поясни що це означає для розуміння теми
+- Дай одну конкретну пораду що робити далі
+Тон: теплий, мотивуючий, як від старшого друга.`;
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINI_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+      }
+    );
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    const text = data.candidates[0].content.parts[0].text.trim();
+    document.getElementById('aiResultText').textContent = text;
+    document.getElementById('aiResultBlock').style.display = 'block';
+  } catch (e) {
+    // silently hide if error
+  } finally {
+    document.getElementById('aiResultLoading').style.display = 'none';
+  }
+}
+
 function showQ() {
   const q = state.quiz.questions[state.qIdx];
   const total = state.quiz.questions.length;
@@ -1877,8 +1916,15 @@ function finish() {
   void scoreEl.offsetWidth;
   scoreEl.classList.add('animate-score');
 
+  // reset AI block before showing
+  document.getElementById('aiResultBlock').style.display = 'none';
+  document.getElementById('aiResultLoading').style.display = 'block';
+
   showScreen('results');
   triggerCelebration(pct);
+
+  // async Gemini analysis (don't await — show results immediately)
+  analyzeResultWithGemini(state.quiz.title, pct, state.score, total);
 }
 
 function downloadCertificate() {
