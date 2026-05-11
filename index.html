@@ -2126,16 +2126,32 @@ async function loadUserProgress() {
   const token = localStorage.getItem('psy_token');
   if (!token) return;
   try {
-    const r = await fetch('/api/results/my', { headers: {'Authorization': 'Bearer ' + token} });
-    if (!r.ok) return;
-    const results = await r.json();
-    userProgress = {};
-    results.forEach(res => {
-      if (!userProgress[res.quizId] || res.pct > userProgress[res.quizId]) {
-        userProgress[res.quizId] = res.pct;
+    const [rQuiz, rDiag] = await Promise.all([
+      fetch('/api/results/my',      { headers: {'Authorization': 'Bearer ' + token} }),
+      fetch('/api/diag-results/my', { headers: {'Authorization': 'Bearer ' + token} }),
+    ]);
+    if (rQuiz.ok) {
+      const results = await rQuiz.json();
+      userProgress = {};
+      results.forEach(res => {
+        if (!userProgress[res.quizId] || res.pct > userProgress[res.quizId]) {
+          userProgress[res.quizId] = res.pct;
+        }
+      });
+      updateLevelCards();
+    }
+    if (rDiag.ok) {
+      const diagResults = await rDiag.json();
+      if (diagResults.length) {
+        const storage = getStorage();
+        storage.diagResults = diagResults.map(r => ({
+          testId: r.testId, testName: r.testName, emoji: r.emoji,
+          resultKey: r.resultKey, resultName: r.resultName,
+          scores: r.scores, date: r.createdAt
+        }));
+        saveStorage(storage);
       }
-    });
-    updateLevelCards();
+    }
   } catch {}
 }
 
