@@ -66,7 +66,23 @@
     .app { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 20px; min-height: 100vh; }
 
     /* ── Topbar ── */
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 0 24px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 0 12px; }
+    .main-tabs {
+      display: none; gap: 6px; margin-bottom: 20px;
+      background: var(--card); border: 1px solid var(--card-b);
+      border-radius: 16px; padding: 5px;
+    }
+    .main-tab {
+      flex: 1; padding: 10px 14px; border-radius: 12px; border: none;
+      font-weight: 700; cursor: pointer; font-size: 0.92rem;
+      background: transparent; color: var(--text2);
+      transition: all 0.22s; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .main-tab.active {
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      color: #fff; box-shadow: 0 3px 12px rgba(127,90,240,0.35);
+    }
+    .main-tab:not(.active):hover { background: rgba(127,90,240,0.09); color: var(--text); }
     .logo {
       font-size: 1.5rem; font-weight: 900; cursor: pointer; letter-spacing: -0.04em;
       background: linear-gradient(135deg, var(--purple), var(--cyan));
@@ -458,11 +474,16 @@
     <div class="topbar-right">
       <span class="topbar-lv-badge" id="levelBadge" onclick="showScreen('level')">🌈 1-4 клас</span>
       <button class="icon-btn" onclick="showScreen('level')" title="Вибір рівня">🎓</button>
-      <button class="icon-btn" onclick="showScreen('lessons')">📚</button>
       <button class="icon-btn" id="btnMyStats" onclick="showMyStats()" style="display:none" title="Мої результати">📊</button>
       <button class="icon-btn" id="btnAuth" onclick="openAuthModal()">🔑</button>
       <button class="icon-btn" onclick="toggleTheme()">🌓</button>
     </div>
+  </div>
+
+  <!-- MAIN TAB BAR -->
+  <div class="main-tabs" id="mainTabs">
+    <button class="main-tab" id="tabLibrary" onclick="showScreen('lessons')">📚 Бібліотека</button>
+    <button class="main-tab" id="tabQuizzes" onclick="showScreen('home')">🎯 Квізи</button>
   </div>
 
   <!-- LEVEL SELECTOR -->
@@ -500,31 +521,20 @@
     </div>
   </div>
 
-  <!-- HOME -->
+  <!-- HOME (Квізи) -->
   <div class="screen" id="screen-home">
-    <div class="hero">
-      <div class="hero-pill">✦ Психологія · 2026</div>
-      <h1>Відкрий таємниці<br><span class="grad">власного розуму</span></h1>
-      <p>Квізи, уроки і факти — все що треба знати про психологію.</p>
-    </div>
-    <div class="stats-bar">
+    <div class="stats-bar" style="margin-bottom: 16px;">
       <div class="stat-card"><div class="stat-value" id="totalPlayed">0</div><div class="stat-label">Ігор</div></div>
       <div class="stat-card"><div class="stat-value" id="avgScore">0%</div><div class="stat-label">Бал</div></div>
       <div class="stat-card"><div class="stat-value" id="totalXP">0</div><div class="stat-label">XP</div></div>
       <div class="stat-card"><div class="stat-value">🎓</div><div class="stat-label">Статус</div></div>
     </div>
-    <div class="section-title">Оберіть квіз</div>
     <div class="quiz-bento" id="quizGrid"></div>
   </div>
 
   <!-- LESSONS -->
   <div class="screen" id="screen-lessons">
-    <div class="hero" style="padding-bottom: 8px;">
-      <h1 style="font-size: 2rem;">📚 Бібліотека знань</h1>
-      <p>Оберіть тему для глибокого вивчення</p>
-    </div>
-    <div id="lessonsModulesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;"></div>
-    <button class="btn-secondary" style="margin-top: 28px;" onclick="showScreen('home')">← Назад</button>
+    <div id="lessonsModulesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;"></div>
   </div>
 
   <!-- LESSON DETAIL -->
@@ -599,7 +609,7 @@
         font-weight:800; transition:opacity 0.2s;">
         📤 Поділитись результатом
       </button>
-      <button class="btn-primary" onclick="showScreen('home')">🏠 На головну</button>
+      <button class="btn-primary" onclick="showScreen('lessons')">📚 До бібліотеки</button>
     </div>
   </div>
 </div>
@@ -2040,7 +2050,7 @@ function selectLevel(level) {
   const labels = { junior: '🌈 1-4 клас', mid: '⚡ 5-7 клас', senior: '🎯 8-11 клас' };
   badge.textContent = labels[level] || '';
   badge.style.display = 'inline-flex';
-  showScreen('home');
+  showScreen('lessons');
 }
 
 function getStorage() {
@@ -2054,6 +2064,16 @@ function showScreen(name) {
   if (el) el.classList.add('active');
   if (name === 'home') renderHome();
   if (name === 'lessons') renderLessons();
+
+  // Tab bar: show on home/lessons, hide on other screens
+  const tabs = document.getElementById('mainTabs');
+  if (tabs) {
+    const showTabs = name === 'home' || name === 'lessons';
+    tabs.style.display = showTabs ? 'flex' : 'none';
+    document.getElementById('tabLibrary')?.classList.toggle('active', name === 'lessons');
+    document.getElementById('tabQuizzes')?.classList.toggle('active', name === 'home');
+  }
+
   window.scrollTo(0, 0);
 }
 
@@ -2065,14 +2085,6 @@ function renderHome() {
   document.getElementById('avgScore').textContent = (results.length ? Math.round(total / results.length) : 0) + '%';
   document.getElementById('totalXP').textContent = data.xp || 0;
 
-  const heroTitles = {
-    junior: ['Привіт, досліднику<br><span class="grad">психології!</span>', 'Квізи та уроки про емоції, дружбу і твій мозок — просто і весело!'],
-    mid:    ['Зрозумій себе<br><span class="grad">і своє оточення</span>', 'Самооцінка, стрес, спілкування — психологія для реального підліткового життя.'],
-    senior: ['Відкрий таємниці<br><span class="grad">власного розуму</span>', 'Квізи, уроки і факти — все що треба знати про психологію.']
-  };
-  const [title, sub] = heroTitles[currentLevel] || heroTitles.senior;
-  document.querySelector('#screen-home .hero h1').innerHTML = title;
-  document.querySelector('#screen-home .hero p').textContent = sub;
 
   const grid = document.getElementById('quizGrid');
   grid.innerHTML = '';
