@@ -519,6 +519,18 @@
     .diag-q-cell.sanguine { background: rgba(44,182,125,0.12); color: var(--green); }
     .diag-q-cell.melancholic { background: rgba(127,90,240,0.12); color: var(--purple-l); }
     .diag-q-cell.phlegmatic { background: rgba(6,182,212,0.1); color: #06b6d4; }
+    .diag-bars { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+    .diag-bar-row { display: grid; grid-template-columns: 140px 1fr 36px; align-items: center; gap: 10px; }
+    .diag-bar-label { font-size: 0.82rem; font-weight: 700; }
+    .diag-bar-track { height: 10px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+    .diag-bar-fill { height: 100%; border-radius: 100px; transition: width 1s cubic-bezier(0.34,1.56,0.64,1); }
+    .diag-bar-val { font-size: 0.78rem; font-weight: 700; color: var(--text2); text-align: right; }
+    .diag-level-ring { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+    .diag-level-track { width: 100%; height: 14px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+    .diag-level-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(0.34,1.56,0.64,1); }
+    .diag-level-labels { display: flex; justify-content: space-between; width: 100%; font-size: 0.72rem; color: var(--text2); font-weight: 700; }
+    .diag-top-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 100px;
+      font-size: 0.85rem; font-weight: 800; margin-bottom: 16px; }
 
     /* ── Premium modal ── */
     #premiumModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75);
@@ -2203,6 +2215,12 @@ function showScreen(name) {
 const diagTests = {
   temperament: {
     title: '🔥 Тип темпераменту',
+    quadrant: [
+      { key: 'sanguine',    label: '☀️ Сангвінік',  cls: 'sanguine'    },
+      { key: 'choleric',    label: '🔥 Холерик',    cls: 'choleric'    },
+      { key: 'phlegmatic',  label: '🗿 Флегматик',  cls: 'phlegmatic'  },
+      { key: 'melancholic', label: '🌙 Меланхолік', cls: 'melancholic' },
+    ],
     questions: [
       { q: 'Тобі легко знайомитися з новими людьми?',                              dim: 'E', dir: 1  },
       { q: 'Ти любиш бути в компанії та на вечірках?',                             dim: 'E', dir: 1  },
@@ -2361,6 +2379,275 @@ const diagTests = {
         growth: ['📚 Розвивай терпіння до теорії', '✍️ Записуй ключові думки', '🧘 Практикуй сидяче навчання поступово']
       }
     }
+  },
+
+  // ── Rosenberg Self-Esteem Scale (10 items, 4-point) ──
+  rosenberg: {
+    title: '💪 Самооцінка (Розенберг)',
+    questionType: 'choice',
+    questions: [
+      { q: 'Загалом я задоволений(а) собою.',                                    rev: false },
+      { q: 'Іноді я думаю, що я нічого не вартий(а).',                          rev: true  },
+      { q: 'Я думаю, що маю низку хороших якостей.',                            rev: false },
+      { q: 'Я можу робити речі так само добре, як і більшість людей.',           rev: false },
+      { q: 'Мені важко знайти, чим пишатися в собі.',                           rev: true  },
+      { q: 'Іноді я справді відчуваю себе непотрібним(ою).',                    rev: true  },
+      { q: 'Я відчуваю себе людиною, не гіршою за інших.',                      rev: false },
+      { q: 'Мені б хотілося більш поважати себе.',                              rev: true  },
+      { q: 'Загалом я схильний(а) вважати себе невдахою.',                      rev: true  },
+      { q: 'Я ставлюся до себе позитивно.',                                      rev: false },
+    ].map(q => ({ ...q, options: [
+      { label: '💯 Повністю згоден(а)', value: 'sa' },
+      { label: '👍 Згоден(а)',          value: 'a'  },
+      { label: '🤔 Не згоден(а)',       value: 'd'  },
+      { label: '❌ Зовсім не згоден(а)',value: 'sd' },
+    ]})),
+    calculate(answers) {
+      const pos = { sa:4, a:3, d:2, sd:1 };
+      let total = 0;
+      this.questions.forEach((q,i) => {
+        const v = pos[answers[i]] || 0;
+        total += q.rev ? 5 - v : v;
+      });
+      if (total >= 30) return 'high';
+      if (total >= 21) return 'medium';
+      return 'low';
+    },
+    results: {
+      high: {
+        emoji: '💪', name: 'Висока самооцінка',
+        desc: 'Ти добре ставишся до себе, приймаєш свої сильні і слабкі сторони. Висока самооцінка допомагає тобі впевнено діяти, відстоювати свою думку та відновлюватись після невдач.',
+        strengths: ['😊 Впевненість у собі', '🚀 Сміливість у нових справах', '💪 Стійкість до критики', '🌱 Прийняття себе'],
+        growth: ['🎯 Залишайся реалістичним(ою)', '👂 Цінуй чужу думку', '🤝 Підтримуй інших']
+      },
+      medium: {
+        emoji: '⚖️', name: 'Середня самооцінка',
+        desc: 'Твоя самооцінка коливається залежно від ситуації — в одних моментах ти впевнений(а), в інших сумніваєшся. Це нормально і є простір для зростання.',
+        strengths: ['🔍 Критичне мислення про себе', '📈 Потенціал для розвитку', '🤝 Розуміння інших'],
+        growth: ['💬 Практикуй позитивні самоствердження', '🏆 Відзначай свої досягнення', '🧘 Не порівнюй себе з іншими']
+      },
+      low: {
+        emoji: '🌱', name: 'Низька самооцінка',
+        desc: 'Зараз тобі важко бачити свою цінність. Це може бути тимчасово — самооцінка змінюється і її можна розвивати. Поговори з людиною, якій довіряєш.',
+        strengths: ['💜 Чуйність до себе і інших', '🔍 Глибина самоаналізу', '🌱 Потенціал для змін'],
+        tips: ['📝 Щодня записуй 3 речі, за які пишаєшся', '🤝 Поговори з психологом або близькою людиною', '🚫 Уникай порівнянь з іншими в соцмережах']
+      }
+    }
+  },
+
+  // ── PSS-10 Stress (10 items, 5-point) ──
+  stress: {
+    title: '🧘 Рівень стресу (PSS)',
+    questionType: 'choice',
+    questions: [
+      { q: 'Як часто тебе засмучувало щось несподіване?',                              rev: false },
+      { q: 'Як часто ти відчував(ла), що не можеш контролювати важливі речі?',         rev: false },
+      { q: 'Як часто ти відчував(ла) нервовість і напругу?',                           rev: false },
+      { q: 'Як часто ти успішно справлявся(лась) з повсякденними труднощами?',         rev: true  },
+      { q: 'Як часто ти відчував(ла), що зміни перевищують твої можливості?',          rev: false },
+      { q: 'Як часто ти міг(ла) контролювати своє роздратування?',                     rev: true  },
+      { q: 'Як часто ти міг(ла) впоратися зі своїми труднощами?',                      rev: true  },
+      { q: 'Як часто ти відчував(ла), що не справляєшся зі своїми обов\'язками?',      rev: false },
+      { q: 'Як часто тебе дратувало те, що поза твоїм контролем?',                     rev: false },
+      { q: 'Як часто ти відчував(ла), що труднощі накопичуються і ти не можеш з ними впоратись?', rev: false },
+    ].map(q => ({ ...q, options: [
+      { label: '😊 Ніколи',          value: '0' },
+      { label: '🙂 Майже ніколи',    value: '1' },
+      { label: '😐 Іноді',           value: '2' },
+      { label: '😟 Досить часто',    value: '3' },
+      { label: '😰 Дуже часто',      value: '4' },
+    ]})),
+    calculate(answers) {
+      let total = 0;
+      this.questions.forEach((q,i) => {
+        const v = parseInt(answers[i]) || 0;
+        total += q.rev ? 4 - v : v;
+      });
+      if (total <= 13) return 'low';
+      if (total <= 26) return 'medium';
+      return 'high';
+    },
+    results: {
+      low: {
+        emoji: '🌿', name: 'Низький рівень стресу',
+        desc: 'Ти добре справляєшся з повсякденними викликами. Твій організм і психіка зараз у хорошому стані. Продовжуй дбати про себе!',
+        strengths: ['😌 Психологічна стійкість', '🔋 Добрий рівень енергії', '🧠 Ясне мислення', '🌙 Якісний відпочинок'],
+        tips: ['🏃 Підтримуй фізичну активність', '😴 Зберігай режим сну', '🤝 Не ізолюйся від близьких']
+      },
+      medium: {
+        emoji: '⚡', name: 'Помірний рівень стресу',
+        desc: 'Ти відчуваєш певну напругу — це нормально для активного шкільного або підліткового життя. Важливо регулярно відновлюватись.',
+        strengths: ['💪 Ти справляєшся!', '🎯 Відчуваєш виклики', '📈 Стрес може мотивувати'],
+        tips: ['🧘 Спробуй 5 хвилин дихальних вправ щодня', '📵 Роби паузи від телефону', '🏃 Фізична активність знижує кортизол']
+      },
+      high: {
+        emoji: '🔥', name: 'Високий рівень стресу',
+        desc: 'Зараз тобі дуже важко. Такий рівень стресу може впливати на здоров\'я, навчання і настрій. Не ігноруй це — поговори з кимось.',
+        strengths: ['🦁 Ти сильніший(а) ніж думаєш', '🌱 Є вихід'],
+        tips: ['🤝 Поговори з батьками або психологом', '😴 Приділяй сну 8+ годин', '🚶 Прогулянка 20 хв знижує стрес', '📝 Запиши, що турбує — це вивільняє']
+      }
+    }
+  },
+
+  // ── EQ: Emotional Intelligence (16 items, Yes/No, 4 dimensions) ──
+  eq: {
+    title: '💜 Емоційний інтелект (EQ)',
+    questions: [
+      { q: 'Ти зазвичай розумієш, яку саме емоцію відчуваєш прямо зараз?',        dim: 'SA' },
+      { q: 'Ти помічаєш, як твій настрій впливає на твої слова і вчинки?',        dim: 'SA' },
+      { q: 'Ти легко можеш назвати 5 різних емоцій, які відчуваєш протягом дня?', dim: 'SA' },
+      { q: 'Ти розумієш, що саме спричинило твій поганий настрій?',               dim: 'SA' },
+      { q: 'Коли ти злишся, ти можеш зупинитись і не сказати зайвого?',           dim: 'SR' },
+      { q: 'Ти вмієш заспокоїтися самостійно, без допомоги інших?',               dim: 'SR' },
+      { q: 'Ти можеш відкласти задоволення заради важливішої цілі?',              dim: 'SR' },
+      { q: 'Навіть у стресі ти залишаєшся зосередженим(ою) на задачі?',           dim: 'SR' },
+      { q: 'Ти легко помічаєш, коли хтось засмучений, навіть якщо він мовчить?',  dim: 'EM' },
+      { q: 'Тобі легко поставити себе на місце іншої людини?',                    dim: 'EM' },
+      { q: 'Ти розумієш, що потрібно людині, просто спостерігаючи за нею?',       dim: 'EM' },
+      { q: 'Ти відчуваєш чужу радість або біль майже як свої?',                   dim: 'EM' },
+      { q: 'Тобі легко налагоджувати стосунки з новими людьми?',                  dim: 'SS' },
+      { q: 'Ти вмієш вирішувати конфлікти так, щоб обидві сторони були задоволені?', dim: 'SS' },
+      { q: 'Люди часто звертаються до тебе за порадою або підтримкою?',           dim: 'SS' },
+      { q: 'Ти вмієш надихати або мотивувати інших своїм прикладом?',             dim: 'SS' },
+    ],
+    renderResult(answers) {
+      const dims = { SA: 0, SR: 0, EM: 0, SS: 0 };
+      this.questions.forEach((q,i) => { if (answers[i] === 1) dims[q.dim]++; });
+      const total = Object.values(dims).reduce((a,b)=>a+b,0);
+      const pct = Math.round(total / 16 * 100);
+      const labels = { SA: '🧠 Усвідомлення себе', SR: '🎛️ Саморегуляція', EM: '💜 Емпатія', SS: '🤝 Соціальні навички' };
+      const colors = { SA: '#7f5af0', SR: '#06b6d4', EM: '#ec4899', SS: '#2cb67d' };
+      const barsHTML = Object.entries(dims).map(([k,v]) =>
+        `<div class="diag-bar-row">
+          <div class="diag-bar-label">${labels[k]}</div>
+          <div class="diag-bar-track"><div class="diag-bar-fill" style="width:${v/4*100}%;background:${colors[k]}"></div></div>
+          <div class="diag-bar-val">${v}/4</div>
+        </div>`).join('');
+      const level = pct >= 75 ? { emoji:'🌟', name:'Сильний EQ' } : pct >= 50 ? { emoji:'💪', name:'Середній EQ' } : { emoji:'🌱', name:'EQ розвивається' };
+      const tips = pct >= 75
+        ? 'Ти маєш розвинений емоційний інтелект! Продовжуй розвивати найслабшу зі своїх 4 компетенцій.'
+        : pct >= 50
+        ? 'Гарна база! Зосередься на тих компетенціях, де набрав(ла) менше — там найбільший потенціал.'
+        : 'EQ — навичка, яку можна тренувати. Почни з усвідомлення своїх емоцій — це фундамент.';
+      return `<div class="diag-result-wrap">
+        <span class="diag-result-emoji">${level.emoji}</span>
+        <div class="diag-result-name">${level.name}: ${pct}%</div>
+        <div class="diag-result-desc">${tips}</div>
+        <div class="diag-bars">${barsHTML}</div>
+        ${diagFooter()}
+      </div>`;
+    }
+  },
+
+  // ── Gardner Multiple Intelligences (24 items, Yes/No, 8 types) ──
+  gardner: {
+    title: '🎨 Множинний інтелект (Гарднер)',
+    questions: [
+      { q: 'Тобі легко підбирати слова і ти любиш розповідати або писати?',          dim: 'L'  },
+      { q: 'У тебе великий словниковий запас і ти помічаєш мовні помилки?',           dim: 'L'  },
+      { q: 'Ти любиш читати і легко переказуєш прочитане?',                           dim: 'L'  },
+      { q: 'Тобі подобається вирішувати логічні задачі і шукати закономірності?',     dim: 'LM' },
+      { q: 'Ти мислиш числами і любиш точні дані та факти?',                          dim: 'LM' },
+      { q: 'Тебе цікавить, чому речі працюють саме так, а не інакше?',               dim: 'LM' },
+      { q: 'Ти легко орієнтуєшся на місцевості і добре пам\'ятаєш розташування?',    dim: 'SP' },
+      { q: 'Тобі подобається малювати, фотографувати або проектувати?',               dim: 'SP' },
+      { q: 'Ти добре уявляєш об\'єкти в просторі і легко читаєш карти?',             dim: 'SP' },
+      { q: 'У тебе хороший музичний слух і ти легко впізнаєш мелодії?',              dim: 'MU' },
+      { q: 'Ти легко запам\'ятовуєш пісні і підспівуєш улюбленій музиці?',           dim: 'MU' },
+      { q: 'Музика сильно впливає на твій настрій?',                                  dim: 'MU' },
+      { q: 'Ти добре координуєш рухи і маєш хорошу фізичну пам\'ять?',               dim: 'BK' },
+      { q: 'Тобі важко довго сидіти нерухомо — тіло хоче рухатись?',                 dim: 'BK' },
+      { q: 'Ти навчаєшся через практику краще, ніж через читання?',                   dim: 'BK' },
+      { q: 'Ти добре розумієш почуття інших і легко знаходиш спільну мову?',         dim: 'IP' },
+      { q: 'Тобі подобається організовувати людей і бути частиною команди?',          dim: 'IP' },
+      { q: 'Ти помічаєш зміни у настрої людей і знаєш, як їх підтримати?',           dim: 'IP' },
+      { q: 'Ти добре знаєш свої сильні та слабкі сторони?',                           dim: 'IA' },
+      { q: 'Ти любиш розмірковувати про себе, своє майбутнє і сенс?',                dim: 'IA' },
+      { q: 'Ти часто аналізуєш свої вчинки і відчуття?',                             dim: 'IA' },
+      { q: 'Тебе захоплює природа: рослини, тварини, погода, екологія?',              dim: 'NA' },
+      { q: 'Ти помічаєш деталі у природі, які інші зазвичай пропускають?',            dim: 'NA' },
+      { q: 'Тобі легко доглядати за рослинами або тваринами?',                        dim: 'NA' },
+    ],
+    renderResult(answers) {
+      const score = { L:0, LM:0, SP:0, MU:0, BK:0, IP:0, IA:0, NA:0 };
+      this.questions.forEach((q,i) => { if (answers[i] === 1) score[q.dim]++; });
+      const labels = { L:'📝 Мовний', LM:'🔢 Логіко-матем.', SP:'🗺️ Просторовий', MU:'🎵 Музичний',
+                       BK:'🏃 Тілесний', IP:'🤝 Міжособистісний', IA:'🧘 Внутрішньо-особистісний', NA:'🌿 Природничий' };
+      const colors = ['#7f5af0','#06b6d4','#ec4899','#f59e0b','#2cb67d','#f97316','#a78bfa','#34d399'];
+      const sorted = Object.entries(score).sort((a,b)=>b[1]-a[1]);
+      const top3 = sorted.slice(0,3).map(([k])=>k);
+      const barsHTML = sorted.map(([k,v],i) =>
+        `<div class="diag-bar-row">
+          <div class="diag-bar-label" style="${top3.includes(k)?'color:'+colors[i]:''}">${labels[k]}${top3[0]===k?' ✦':''}</div>
+          <div class="diag-bar-track"><div class="diag-bar-fill" style="width:${v/3*100}%;background:${colors[i]}"></div></div>
+          <div class="diag-bar-val">${v}/3</div>
+        </div>`).join('');
+      const topName = labels[top3[0]];
+      return `<div class="diag-result-wrap">
+        <span class="diag-result-emoji">🎨</span>
+        <div class="diag-result-name">Твій провідний інтелект:</div>
+        <div class="diag-result-desc">${topName} — саме тут твоя природна сила. Топ-3: ${top3.map(k=>labels[k]).join(', ')}.</div>
+        <div class="diag-bars">${barsHTML}</div>
+        ${diagFooter()}
+      </div>`;
+    }
+  },
+
+  // ── Holland RIASEC (18 items, Yes/No, 6 types) ──
+  riasec: {
+    title: '🚀 Профорієнтація (Голланд)',
+    questions: [
+      { q: 'Тобі подобається майструвати, ремонтувати або збирати речі руками?',      dim: 'R' },
+      { q: 'Тебе цікавлять техніка, машини або сільське господарство?',               dim: 'R' },
+      { q: 'Ти надаєш перевагу конкретним, практичним діям, а не теорії?',            dim: 'R' },
+      { q: 'Тобі подобається досліджувати і ставити питання "чому і як?"',            dim: 'I' },
+      { q: 'Ти любиш вирішувати складні логічні задачі або головоломки?',             dim: 'I' },
+      { q: 'Тебе захоплює наука, технології або нові відкриття?',                     dim: 'I' },
+      { q: 'Тобі подобається виражати себе через мистецтво, музику або письмо?',      dim: 'A' },
+      { q: 'Ти цінуєш творчість і оригінальний підхід більше, ніж правила?',         dim: 'A' },
+      { q: 'Ти любиш уявляти і створювати щось нове і унікальне?',                   dim: 'A' },
+      { q: 'Тобі подобається допомагати іншим і підтримувати їх?',                   dim: 'S' },
+      { q: 'Ти хочеш навчати, лікувати або консультувати людей?',                    dim: 'S' },
+      { q: 'Ти добре відчуваєш потреби інших і прагнеш зробити їхнє життя кращим?',  dim: 'S' },
+      { q: 'Ти любиш переконувати людей і досягати амбітних цілей?',                 dim: 'E' },
+      { q: 'Тобі подобається організовувати інших, брати ініціативу і вести?',        dim: 'E' },
+      { q: 'Ти прагнеш до успіху, визнання і підприємницьких проектів?',             dim: 'E' },
+      { q: 'Тобі подобається порядок, чіткі правила і структуровані завдання?',      dim: 'C' },
+      { q: 'Ти уважний(а) до деталей і любиш систематизувати інформацію?',           dim: 'C' },
+      { q: 'Тобі подобається вести записи, таблиці або слідкувати за точністю?',     dim: 'C' },
+    ],
+    renderResult(answers) {
+      const score = { R:0, I:0, A:0, S:0, E:0, C:0 };
+      this.questions.forEach((q,i) => { if (answers[i] === 1) score[q.dim]++; });
+      const info = {
+        R: { label:'🔧 Реалістичний', desc:'Практичний, технічний, любить роботу руками', careers:'Інженер, технік, агроном, архітектор, пілот' },
+        I: { label:'🔬 Дослідницький', desc:'Аналітичний, допитливий, любить науку', careers:'Вчений, програміст, лікар, аналітик, математик' },
+        A: { label:'🎨 Артистичний', desc:'Творчий, оригінальний, цінує красу', careers:'Дизайнер, письменник, музикант, актор, архітектор' },
+        S: { label:'🤝 Соціальний', desc:'Допомагає, навчає, піклується про людей', careers:'Психолог, вчитель, лікар, соціальний працівник' },
+        E: { label:'💼 Підприємницький', desc:'Лідер, переконливий, орієнтований на успіх', careers:'Менеджер, підприємець, юрист, маркетолог' },
+        C: { label:'📊 Конвенційний', desc:'Організований, точний, любить порядок', careers:'Бухгалтер, адміністратор, IT-фахівець, банкір' },
+      };
+      const sorted = Object.entries(score).sort((a,b)=>b[1]-a[1]);
+      const colors = ['#7f5af0','#06b6d4','#ec4899','#2cb67d','#f97316','#f59e0b'];
+      const [top1, top2] = sorted.slice(0,2).map(([k])=>k);
+      const barsHTML = sorted.map(([k,v],i) =>
+        `<div class="diag-bar-row">
+          <div class="diag-bar-label">${info[k].label}</div>
+          <div class="diag-bar-track"><div class="diag-bar-fill" style="width:${v/3*100}%;background:${colors[i]}"></div></div>
+          <div class="diag-bar-val">${v}/3</div>
+        </div>`).join('');
+      return `<div class="diag-result-wrap">
+        <span class="diag-result-emoji">🚀</span>
+        <div class="diag-result-name">Твій Holland-код: ${top1}${top2}</div>
+        <div class="diag-result-desc">${info[top1].label}: ${info[top1].desc}<br><small style="color:var(--text2)">Можливі професії: ${info[top1].careers}</small></div>
+        <div class="diag-bars">${barsHTML}</div>
+        <div class="diag-result-block" style="margin-bottom:16px;">
+          <h5>💼 Найкраще підходять професії</h5>
+          <ul><li>${info[top1].careers}</li><li style="opacity:0.7">${info[top2].careers}</li></ul>
+        </div>
+        ${diagFooter()}
+      </div>`;
+    }
   }
 };
 
@@ -2414,43 +2701,41 @@ function answerDiag(val) {
   }
 }
 
+function diagFooter() {
+  return `<button class="btn-primary" onclick="startDiag('${activeDiagTestId}')" style="margin-bottom:12px;">🔄 Пройти ще раз</button>
+  <button class="btn-secondary" onclick="showScreen('diagnostics')">← До діагностик</button>`;
+}
+
+function diagSingleResult(r, typeKey, test) {
+  const grid = r.strengths && r.growth ? `<div class="diag-result-grid">
+    <div class="diag-result-block"><h5>💪 Сильні сторони</h5><ul>${r.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    <div class="diag-result-block"><h5>🌱 Зони росту</h5><ul>${r.growth.map(g=>`<li>${g}</li>`).join('')}</ul></div>
+  </div>` : '';
+  const tips = r.tips ? `<div class="diag-result-block" style="margin-bottom:16px;"><h5>💡 Поради</h5><ul>${r.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>` : '';
+  const quad = test.quadrant ? `<div class="diag-quadrant">${test.quadrant.map(c=>
+    `<div class="diag-q-cell ${c.cls}${c.key===typeKey?' active':''}">${c.label}</div>`).join('')}</div>` : '';
+  return `<div class="diag-result-wrap">
+    <span class="diag-result-emoji">${r.emoji}</span>
+    <div class="diag-result-name">${r.name}</div>
+    <div class="diag-result-desc">${r.desc}</div>
+    ${quad}${grid}${tips}${diagFooter()}
+  </div>`;
+}
+
 function showDiagResult() {
   const test = diagTests[activeDiagTestId];
-  const typeKey = test.calculate(diagAnswers);
-  const r = test.results[typeKey];
-
   document.getElementById('diagProgFill').style.width = '100%';
   document.getElementById('diagTestView').style.display = 'none';
 
-  const quadrantCells = [
-    { key: 'choleric',   label: '🔥 Холерик',   cls: 'choleric',   pos: 'top-right' },
-    { key: 'sanguine',   label: '☀️ Сангвінік',  cls: 'sanguine',   pos: 'top-left'  },
-    { key: 'melancholic',label: '🌙 Меланхолік', cls: 'melancholic',pos: 'bot-right' },
-    { key: 'phlegmatic', label: '🗿 Флегматик',  cls: 'phlegmatic', pos: 'bot-left'  },
-  ];
-  const quadHTML = quadrantCells.map(c =>
-    `<div class="diag-q-cell ${c.cls}${c.key === typeKey ? ' active' : ''}">${c.label}</div>`
-  ).join('');
+  let html;
+  if (test.renderResult) {
+    html = test.renderResult(diagAnswers);
+  } else {
+    const typeKey = test.calculate(diagAnswers);
+    html = diagSingleResult(test.results[typeKey], typeKey, test);
+  }
 
-  document.getElementById('diagResultView').innerHTML = `
-    <div class="diag-result-wrap">
-      <span class="diag-result-emoji">${r.emoji}</span>
-      <div class="diag-result-name">${r.name}</div>
-      <div class="diag-result-desc">${r.desc}</div>
-      <div class="diag-quadrant">${quadHTML}</div>
-      <div class="diag-result-grid">
-        <div class="diag-result-block">
-          <h5>💪 Сильні сторони</h5>
-          <ul>${r.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
-        </div>
-        <div class="diag-result-block">
-          <h5>🌱 Зони росту</h5>
-          <ul>${r.growth.map(g => `<li>${g}</li>`).join('')}</ul>
-        </div>
-      </div>
-      <button class="btn-primary" onclick="startDiag('${activeDiagTestId}')" style="margin-bottom:12px;">🔄 Пройти ще раз</button>
-      <button class="btn-secondary" onclick="showScreen('diagnostics')">← До діагностик</button>
-    </div>`;
+  document.getElementById('diagResultView').innerHTML = html;
   document.getElementById('diagResultView').style.display = 'block';
 }
 
@@ -2479,9 +2764,8 @@ const diagnosticsData = [
   {
     id: 'gardner', category: 'intelligence', icon: '🎨',
     name: 'Множинний інтелект (Гарднер)',
-    desc: '9 видів інтелекту: логічний, музичний, просторовий, мовний, тілесний, природничий та ін. Дізнайся свій тип розуму.',
-    age: '10+', time: '15 хв', type: 'external',
-    url: 'https://www.idrlabs.com/multiple-intelligences/test.php'
+    desc: '8 видів інтелекту: мовний, логічний, просторовий, музичний, тілесний, соціальний, внутрішній, природничий. Хто ти?',
+    age: '10+', time: '7 хв', type: 'builtin', testId: 'gardner'
   },
   {
     id: 'vak', category: 'intelligence', icon: '📖',
@@ -2492,16 +2776,14 @@ const diagnosticsData = [
   {
     id: 'eq', category: 'emotions', icon: '💜',
     name: 'Емоційний інтелект (EQ)',
-    desc: 'Наскільки добре ти розумієш власні та чужі емоції, керуєш настроєм і будуєш стосунки. EQ — навичка, яку можна розвивати.',
-    age: '12+', time: '10 хв', type: 'external',
-    url: 'https://www.idrlabs.com/emotional-intelligence/test.php'
+    desc: 'Усвідомлення себе, саморегуляція, емпатія і соціальні навички — 4 компоненти EQ. Дізнайся де твої сильні сторони.',
+    age: '12+', time: '5 хв', type: 'builtin', testId: 'eq'
   },
   {
     id: 'selfesteem', category: 'emotions', icon: '💪',
     name: 'Самооцінка (шкала Розенберга)',
-    desc: '28 питань — науково валідований тест Розенберга. Один з найнадійніших вимірювачів самооцінки у психології.',
-    age: '12+', time: '7 хв', type: 'external',
-    url: 'https://www.idrlabs.com/self-esteem/test.php'
+    desc: '10 питань — найнадійніший науковий тест самооцінки. Оригінальна шкала RSE адаптована для підлітків.',
+    age: '12+', time: '4 хв', type: 'builtin', testId: 'rosenberg'
   },
   {
     id: 'via', category: 'values', icon: '⚡',
@@ -2512,17 +2794,15 @@ const diagnosticsData = [
   },
   {
     id: 'stress', category: 'emotions', icon: '🧘',
-    name: 'Стрес, тривога, депресія (DASS-21)',
-    desc: 'Клінічно валідована шкала DASS — вимірює рівні стресу, тривожності та депресії. Золотий стандарт у психології.',
-    age: '13+', time: '10 хв', type: 'external',
-    url: 'https://openpsychometrics.org/tests/DASS/'
+    name: 'Рівень стресу (PSS)',
+    desc: 'Шкала сприйнятого стресу PSS-10 — науково валідований тест для підлітків. Дізнайся, як ти справляєшся з тиском.',
+    age: '13+', time: '4 хв', type: 'builtin', testId: 'stress'
   },
   {
     id: 'career', category: 'values', icon: '🚀',
     name: 'Профорієнтація (Holland RIASEC)',
-    desc: 'Теорія Голланда — 6 типів: реалістичний, дослідницький, артистичний, соціальний, підприємницький, конвенційний. Хто ти?',
-    age: '14+', time: '10 хв', type: 'external',
-    url: 'https://openpsychometrics.org/tests/RIASEC/'
+    desc: '6 типів: реалістичний, дослідницький, артистичний, соціальний, підприємницький, конвенційний. Дізнайся свій Holland-код і можливі професії.',
+    age: '14+', time: '6 хв', type: 'builtin', testId: 'riasec'
   }
 ];
 
