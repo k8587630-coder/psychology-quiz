@@ -2366,8 +2366,9 @@ const diagnosticsData = [
   {
     id: 'gardner', category: 'intelligence', icon: '🎨',
     name: 'Множинний інтелект (Гарднер)',
-    desc: '8 видів інтелекту: логічний, музичний, просторовий, мовний, тілесний, природничий та ін. Дізнайся свій тип розуму.',
-    age: '10+', time: '10 хв', type: 'builtin'
+    desc: '9 видів інтелекту: логічний, музичний, просторовий, мовний, тілесний, природничий та ін. Дізнайся свій тип розуму.',
+    age: '10+', time: '15 хв', type: 'external',
+    url: 'https://www.idrlabs.com/multiple-intelligences/test.php'
   },
   {
     id: 'vak', category: 'intelligence', icon: '📖',
@@ -2379,13 +2380,15 @@ const diagnosticsData = [
     id: 'eq', category: 'emotions', icon: '💜',
     name: 'Емоційний інтелект (EQ)',
     desc: 'Наскільки добре ти розумієш власні та чужі емоції, керуєш настроєм і будуєш стосунки. EQ — навичка, яку можна розвивати.',
-    age: '12+', time: '10 хв', type: 'soon'
+    age: '12+', time: '10 хв', type: 'external',
+    url: 'https://www.idrlabs.com/emotional-intelligence/test.php'
   },
   {
     id: 'selfesteem', category: 'emotions', icon: '💪',
     name: 'Самооцінка (шкала Розенберга)',
-    desc: '10 коротких питань — і ти знаєш рівень своєї самооцінки. Один з найнадійніших наукових тестів у світі.',
-    age: '12+', time: '5 хв', type: 'soon'
+    desc: '28 питань — науково валідований тест Розенберга. Один з найнадійніших вимірювачів самооцінки у психології.',
+    age: '12+', time: '7 хв', type: 'external',
+    url: 'https://www.idrlabs.com/self-esteem/test.php'
   },
   {
     id: 'via', category: 'values', icon: '⚡',
@@ -2396,15 +2399,16 @@ const diagnosticsData = [
   },
   {
     id: 'stress', category: 'emotions', icon: '🧘',
-    name: 'Рівень стресостійкості',
-    desc: 'Як ти реагуєш на стресові ситуації? Тест допоможе зрозуміти свої ресурси та слабкі місця.',
-    age: '13+', time: '8 хв', type: 'soon'
+    name: 'Стрес, тривога, депресія (DASS-21)',
+    desc: 'Клінічно валідована шкала DASS — вимірює рівні стресу, тривожності та депресії. Золотий стандарт у психології.',
+    age: '13+', time: '10 хв', type: 'external',
+    url: 'https://openpsychometrics.org/tests/DASS/'
   },
   {
     id: 'career', category: 'values', icon: '🚀',
-    name: 'Профорієнтація (Holland)',
+    name: 'Профорієнтація (Holland RIASEC)',
     desc: 'Теорія Голланда — 6 типів: реалістичний, дослідницький, артистичний, соціальний, підприємницький, конвенційний. Хто ти?',
-    age: '14+', time: '15 хв', type: 'external',
+    age: '14+', time: '10 хв', type: 'external',
     url: 'https://openpsychometrics.org/tests/RIASEC/'
   }
 ];
