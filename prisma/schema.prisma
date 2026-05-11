@@ -8,17 +8,15 @@ datasource db {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  name           String
-  email          String?       @unique
-  password       String?
-  role           String        @default("student")
-  isPremium      Boolean       @default(false)
-  premiumUntil   DateTime?
-  createdAt      DateTime      @default(now())
-  results        Result[]
-  teacherClasses Class[]       @relation("TeacherClasses")
-  classMembers   ClassMember[]
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String?   @unique
+  password     String?
+  role         String    @default("student")
+  isPremium    Boolean   @default(false)
+  premiumUntil DateTime?
+  createdAt    DateTime  @default(now())
+  results      Result[]
 }
 
 model Result {
@@ -32,25 +30,4 @@ model Result {
   pct       Int
   level     String   @default("senior")
   createdAt DateTime @default(now())
-}
-
-model Class {
-  id        Int           @id @default(autoincrement())
-  name      String
-  code      String        @unique
-  teacherId Int
-  teacher   User          @relation("TeacherClasses", fields: [teacherId], references: [id])
-  members   ClassMember[]
-  createdAt DateTime      @default(now())
-}
-
-model ClassMember {
-  id       Int      @id @default(autoincrement())
-  classId  Int
-  class    Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
-  userId   Int
-  user     User     @relation(fields: [userId], references: [id])
-  joinedAt DateTime @default(now())
-
-  @@unique([classId, userId])
 }
