@@ -489,6 +489,13 @@
     .diag-yn-btn.yes:hover { background: rgba(44,182,125,0.22); transform: translateY(-3px); }
     .diag-yn-btn.no { background: rgba(236,72,153,0.08); color: #ec4899; border-color: rgba(236,72,153,0.2); }
     .diag-yn-btn.no:hover { background: rgba(236,72,153,0.18); transform: translateY(-3px); }
+    .diag-choice-btns { display: flex; flex-direction: column; gap: 10px; }
+    .diag-choice-btn { padding: 14px 16px; border-radius: 16px; border: 2px solid var(--card-b);
+      background: var(--card); color: var(--text); font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; text-align: left; line-height: 1.4;
+      transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+    .diag-choice-btn:hover { border-color: rgba(127,90,240,0.45); background: rgba(127,90,240,0.08);
+      color: var(--purple-l); transform: translateX(4px); }
     .diag-result-wrap { animation: fadeUp 0.45s both; }
     @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
     .diag-result-type-badge { display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px;
@@ -644,10 +651,7 @@
       <div class="diag-q-card">
         <div class="diag-q-num" id="diagQNum"></div>
         <div class="diag-q-text" id="diagQText"></div>
-        <div class="diag-yn-btns">
-          <button class="diag-yn-btn yes" onclick="answerDiag(1)">✓ Так</button>
-          <button class="diag-yn-btn no" onclick="answerDiag(0)">✕ Ні</button>
-        </div>
+        <div id="diagButtons"></div>
       </div>
     </div>
     <div id="diagResultView" style="display:none"></div>
@@ -2262,6 +2266,101 @@ const diagTests = {
         growth: ['⚡ Розвивай ініціативність', '🌊 Адаптуйся до змін', '🔥 Іноді дозволяй собі діяти швидше']
       }
     }
+  },
+
+  vak: {
+    title: '📖 Стиль навчання (VAK)',
+    questionType: 'choice',
+    questions: [
+      { q: 'Коли ти вивчаєш щось нове, тобі найлегше…', options: [
+        { label: '👁️ Читати або розглядати схеми й малюнки', value: 'V' },
+        { label: '👂 Слухати пояснення або аудіо', value: 'A' },
+        { label: '✋ Спробувати самостійно на практиці', value: 'K' }
+      ]},
+      { q: 'Як ти запам\'ятовуєш номер телефону?', options: [
+        { label: '👁️ Уявляю його написаним або записую', value: 'V' },
+        { label: '👂 Промовляю вголос кілька разів', value: 'A' },
+        { label: '✋ Набираю пальцями або пишу рукою', value: 'K' }
+      ]},
+      { q: 'На уроці тобі краще, коли вчитель…', options: [
+        { label: '👁️ Пише на дошці і показує картинки', value: 'V' },
+        { label: '👂 Розповідає і пояснює словами', value: 'A' },
+        { label: '✋ Дає практичні завдання і досліди', value: 'K' }
+      ]},
+      { q: 'Коли ти пояснюєш щось іншому, ти…', options: [
+        { label: '👁️ Малюю схему або показую рукою', value: 'V' },
+        { label: '👂 Пояснюю словами, детально', value: 'A' },
+        { label: '✋ Показую на прикладі або демонструю', value: 'K' }
+      ]},
+      { q: 'Під час відпочинку ти надаєш перевагу…', options: [
+        { label: '👁️ Читати, дивитись фільми або малювати', value: 'V' },
+        { label: '👂 Слухати музику або спілкуватись', value: 'A' },
+        { label: '✋ Займатись спортом або рукоділлям', value: 'K' }
+      ]},
+      { q: 'Коли ти хвилюєшся або сердишся, ти…', options: [
+        { label: '👁️ Дивлюся в одну точку або уявляю ситуацію', value: 'V' },
+        { label: '👂 Хочу виговоритись або промовити проблему', value: 'A' },
+        { label: '✋ Рухаюсь, не можу всидіти на місці', value: 'K' }
+      ]},
+      { q: 'Як ти запам\'ятовуєш людей?', options: [
+        { label: '👁️ Легко — добре пам\'ятаю зовнішність', value: 'V' },
+        { label: '👂 Пам\'ятаю голос краще, ніж обличчя', value: 'A' },
+        { label: '✋ Пам\'ятаю загальне відчуття від людини', value: 'K' }
+      ]},
+      { q: 'Коли ти читаєш книгу, ти…', options: [
+        { label: '👁️ Яскраво уявляю картинки і сцени', value: 'V' },
+        { label: '👂 Чую голоси персонажів подумки', value: 'A' },
+        { label: '✋ Відчуваю себе всередині подій', value: 'K' }
+      ]},
+      { q: 'Як ти вчиш вірш або текст напам\'ять?', options: [
+        { label: '👁️ Кілька разів перечитую і уявляю текст', value: 'V' },
+        { label: '👂 Вголос повторюю, поки не запам\'ятаю', value: 'A' },
+        { label: '✋ Записую кілька разів або ходжу по кімнаті', value: 'K' }
+      ]},
+      { q: 'Коли щось зламалось, ти…', options: [
+        { label: '👁️ Шукаю інструкцію з малюнками', value: 'V' },
+        { label: '👂 Питаю когось або дивлюся відео з поясненням', value: 'A' },
+        { label: '✋ Одразу починаю розбирати і пробувати', value: 'K' }
+      ]},
+      { q: 'Твої нотатки в зошиті зазвичай…', options: [
+        { label: '👁️ Акуратні, з підкресленнями, схемами і кольорами', value: 'V' },
+        { label: '👂 Записані у вигляді речень і слів', value: 'A' },
+        { label: '✋ Мінімальні — краще діяти, ніж писати', value: 'K' }
+      ]},
+      { q: 'Коли тебе хвалять, тобі важливіше…', options: [
+        { label: '👁️ Побачити усмішку або схвальний жест', value: 'V' },
+        { label: '👂 Почути слова похвали', value: 'A' },
+        { label: '✋ Відчути потиск руки або обійми', value: 'K' }
+      ]},
+    ],
+    calculate(answers) {
+      const count = { V: 0, A: 0, K: 0 };
+      answers.forEach(a => { if (count[a] !== undefined) count[a]++; });
+      return Object.entries(count).sort((a, b) => b[1] - a[1])[0][0];
+    },
+    results: {
+      V: {
+        emoji: '👁️', name: 'Візуал',
+        color: 'rgba(59,130,246,0.15)', textColor: '#60a5fa',
+        desc: 'Ти сприймаєш світ насамперед через зір. Тобі легше навчатись за допомогою схем, малюнків і відеоматеріалів. Ти добре пам\'ятаєш обличчя, кольори і зовнішній вигляд речей — твій мозок мислить образами.',
+        strengths: ['🗺️ Добре бачиш "загальну картину"', '🎨 Уважність до деталей і кольорів', '📊 Легко читаєш графіки і схеми', '🧠 Сильна зорова пам\'ять'],
+        growth: ['📖 Читай вголос складні місця', '🗣️ Практикуй усні відповіді', '👥 Навчайся в групі — не тільки з книгами']
+      },
+      A: {
+        emoji: '👂', name: 'Аудіал',
+        color: 'rgba(249,115,22,0.12)', textColor: 'var(--orange)',
+        desc: 'Ти сприймаєш інформацію найкраще через слух. Тобі легше навчатись, слухаючи пояснення, обговорення та аудіо. Ти добре пам\'ятаєш голоси, музику і сказані слова — твій мозок мислить звуками.',
+        strengths: ['🎵 Відмінна слухова пам\'ять', '🗣️ Легко переказуєш і пояснюєш', '👂 Добре сприймаєш усні інструкції', '🤝 Навчаєшся краще в дискусіях'],
+        growth: ['📝 Роби конспекти — слова не завжди запам\'ятовуються', '🔕 Навчись працювати в тиші', '👁️ Практикуй роботу зі схемами']
+      },
+      K: {
+        emoji: '✋', name: 'Кінестетик',
+        color: 'rgba(44,182,125,0.12)', textColor: 'var(--green)',
+        desc: 'Ти вчишся через дію і досвід. Тобі найкраще запам\'ятовується те, що ти спробував сам, відчув руками або пережив на практиці. Тобі важко сидіти нерухомо — тіло і рух є частиною твого мислення.',
+        strengths: ['🔬 Навчання через практику і досліди', '💪 Сильна м\'язова пам\'ять', '🛠️ Вміння майструвати і створювати', '⚡ Швидко вчишся "роблячи"'],
+        growth: ['📚 Розвивай терпіння до теорії', '✍️ Записуй ключові думки', '🧘 Практикуй сидяче навчання поступово']
+      }
+    }
   }
 };
 
@@ -2287,7 +2386,21 @@ function renderDiagQuestion() {
   const pct = Math.round((diagCurrentQ / total) * 100);
   document.getElementById('diagProgFill').style.width = pct + '%';
   document.getElementById('diagQNum').textContent = `Питання ${diagCurrentQ + 1} з ${total}`;
-  document.getElementById('diagQText').textContent = test.questions[diagCurrentQ].q;
+  const q = test.questions[diagCurrentQ];
+  document.getElementById('diagQText').textContent = q.q;
+
+  if (test.questionType === 'choice') {
+    document.getElementById('diagButtons').innerHTML =
+      `<div class="diag-choice-btns">${q.options.map((o, i) =>
+        `<button class="diag-choice-btn" onclick="answerDiag('${o.value}')">${o.label}</button>`
+      ).join('')}</div>`;
+  } else {
+    document.getElementById('diagButtons').innerHTML =
+      `<div class="diag-yn-btns">
+        <button class="diag-yn-btn yes" onclick="answerDiag(1)">✓ Так</button>
+        <button class="diag-yn-btn no" onclick="answerDiag(0)">✕ Ні</button>
+      </div>`;
+  }
 }
 
 function answerDiag(val) {
@@ -2374,7 +2487,7 @@ const diagnosticsData = [
     id: 'vak', category: 'intelligence', icon: '📖',
     name: 'Стиль навчання (VAK)',
     desc: 'Як ти краще засвоюєш інформацію — через зір (Візуал), слух (Аудіал) чи рух (Кінестетик)? Корисно для навчання.',
-    age: '8+', time: '7 хв', type: 'soon'
+    age: '8+', time: '5 хв', type: 'builtin', testId: 'vak'
   },
   {
     id: 'eq', category: 'emotions', icon: '💜',
