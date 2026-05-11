@@ -17,6 +17,7 @@ model User {
   premiumUntil DateTime?
   createdAt    DateTime  @default(now())
   results      Result[]
+  diagResults  DiagResult[]
 }
 
 model Result {
@@ -30,4 +31,17 @@ model Result {
   pct       Int
   level     String   @default("senior")
   createdAt DateTime @default(now())
+}
+
+model DiagResult {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  testId     String
+  testName   String
+  emoji      String
+  resultKey  String?
+  resultName String
+  scores     Json?
+  createdAt  DateTime @default(now())
 }

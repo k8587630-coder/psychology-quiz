@@ -119,6 +119,23 @@ app.get('/api/results/my', auth, async (req, res) => {
   res.json(results);
 });
 
+// ── Diag results ─────────────────────────────────────────────────────────────
+app.post('/api/diag-results', auth, async (req, res) => {
+  const { testId, testName, emoji, resultKey, resultName, scores } = req.body;
+  const result = await prisma.diagResult.create({
+    data: { userId: req.user.id, testId, testName, emoji, resultKey: resultKey || null, resultName, scores: scores || null }
+  });
+  res.json(result);
+});
+
+app.get('/api/diag-results/my', auth, async (req, res) => {
+  const results = await prisma.diagResult.findMany({
+    where: { userId: req.user.id },
+    orderBy: { createdAt: 'desc' }
+  });
+  res.json(results);
+});
+
 // ── Admin: all students ───────────────────────────────────────────────────────
 app.get('/api/admin/students', auth, adminOnly, async (req, res) => {
   const students = await prisma.user.findMany({

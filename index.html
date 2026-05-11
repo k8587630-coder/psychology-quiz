@@ -567,6 +567,37 @@
     .pay-btn:hover { opacity:0.88; transform:translateY(-1px); }
     .pay-note { font-size:0.78rem; color:#8888b0; }
     .premium-crown { font-size:3rem; margin-bottom:16px; }
+    /* ── Cabinet ── */
+    .cabinet-hero { display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+      background: var(--card); border: 1px solid var(--card-b); border-radius: 24px; padding: 20px 18px; }
+    .cabinet-avatar { font-size: 3rem; flex-shrink: 0; }
+    .cabinet-hero-info h2 { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .cabinet-hero-info p { font-size: 0.85rem; color: var(--text2); }
+    .cabinet-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+    .cabinet-stat { background: var(--card); border: 1px solid var(--card-b); border-radius: 18px;
+      padding: 14px 10px; text-align: center; }
+    .cabinet-stat-val { font-size: 1.6rem; font-weight: 900; letter-spacing: -0.04em; }
+    .cabinet-stat-lbl { font-size: 0.72rem; color: var(--text2); font-weight: 700; margin-top: 2px; }
+    .cabinet-section-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text2); margin-bottom: 12px; }
+    .cabinet-diag-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .cabinet-diag-item { background: var(--card); border: 1px solid var(--card-b); border-radius: 18px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;
+      transition: all 0.2s; }
+    .cabinet-diag-item:hover { border-color: rgba(127,90,240,0.3); transform: translateX(3px); }
+    .cabinet-diag-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .cabinet-diag-body { flex: 1; min-width: 0; }
+    .cabinet-diag-body h4 { font-size: 0.9rem; font-weight: 800; margin-bottom: 2px; }
+    .cabinet-diag-body p  { font-size: 0.8rem; color: var(--text2); }
+    .cabinet-diag-date { font-size: 0.72rem; color: var(--text2); flex-shrink: 0; }
+    .cabinet-empty { text-align: center; padding: 32px 0; color: var(--text2); font-size: 0.9rem; }
+    .cabinet-empty span { font-size: 3rem; display: block; margin-bottom: 12px; }
+    .cabinet-profile-card { background: linear-gradient(135deg, rgba(127,90,240,0.12), rgba(6,182,212,0.08));
+      border: 1px solid rgba(127,90,240,0.2); border-radius: 24px; padding: 20px 18px; margin-bottom: 24px; }
+    .cabinet-profile-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 12px; }
+    .cabinet-profile-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cabinet-profile-tag { padding: 6px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 700;
+      background: rgba(127,90,240,0.12); color: var(--purple-l); border: 1px solid rgba(127,90,240,0.2); }
   </style>
 </head>
 <body>
@@ -578,7 +609,7 @@
     <div class="topbar-right">
       <span class="topbar-lv-badge" id="levelBadge" onclick="showScreen('level')">🌈 1-4 клас</span>
       <button class="icon-btn" onclick="showScreen('level')" title="Вибір рівня">🎓</button>
-      <button class="icon-btn" id="btnMyStats" onclick="showMyStats()" style="display:none" title="Мої результати">📊</button>
+      <button class="icon-btn" id="btnCabinet" onclick="showScreen('cabinet')" style="display:none" title="Мій кабінет">🗂️</button>
       <button class="icon-btn" id="btnAuth" onclick="openAuthModal()">🔑</button>
       <button class="icon-btn" onclick="toggleTheme()">🌓</button>
     </div>
@@ -650,6 +681,11 @@
     </div>
     <div class="diag-filters" id="diagFilters"></div>
     <div class="diag-grid" id="diagGrid"></div>
+  </div>
+
+  <!-- CABINET -->
+  <div class="screen" id="screen-cabinet">
+    <div id="cabinetContent"></div>
   </div>
 
   <!-- BUILT-IN DIAG TEST -->
@@ -2197,6 +2233,7 @@ function showScreen(name) {
   if (name === 'home') renderHome();
   if (name === 'lessons') renderLessons();
   if (name === 'diagnostics') renderDiagnostics();
+  if (name === 'cabinet') renderCabinet();
 
   // Tab bar: show on home/lessons/diagnostics, hide on other screens
   const tabs = document.getElementById('mainTabs');
@@ -2529,13 +2566,14 @@ const diagTests = {
         : pct >= 50
         ? 'Гарна база! Зосередься на тих компетенціях, де набрав(ла) менше — там найбільший потенціал.'
         : 'EQ — навичка, яку можна тренувати. Почни з усвідомлення своїх емоцій — це фундамент.';
-      return `<div class="diag-result-wrap">
+      const html = `<div class="diag-result-wrap">
         <span class="diag-result-emoji">${level.emoji}</span>
         <div class="diag-result-name">${level.name}: ${pct}%</div>
         <div class="diag-result-desc">${tips}</div>
         <div class="diag-bars">${barsHTML}</div>
         ${diagFooter()}
       </div>`;
+      return { html, data: { emoji: level.emoji, resultName: level.name + ': ' + pct + '%', scores: dims } };
     }
   },
 
@@ -2583,13 +2621,14 @@ const diagTests = {
           <div class="diag-bar-val">${v}/3</div>
         </div>`).join('');
       const topName = labels[top3[0]];
-      return `<div class="diag-result-wrap">
+      const html = `<div class="diag-result-wrap">
         <span class="diag-result-emoji">🎨</span>
         <div class="diag-result-name">Твій провідний інтелект:</div>
         <div class="diag-result-desc">${topName} — саме тут твоя природна сила. Топ-3: ${top3.map(k=>labels[k]).join(', ')}.</div>
         <div class="diag-bars">${barsHTML}</div>
         ${diagFooter()}
       </div>`;
+      return { html, data: { emoji: '🎨', resultName: topName.replace(/^\S+\s/, ''), scores: score } };
     }
   },
 
@@ -2636,7 +2675,7 @@ const diagTests = {
           <div class="diag-bar-track"><div class="diag-bar-fill" style="width:${v/3*100}%;background:${colors[i]}"></div></div>
           <div class="diag-bar-val">${v}/3</div>
         </div>`).join('');
-      return `<div class="diag-result-wrap">
+      const html = `<div class="diag-result-wrap">
         <span class="diag-result-emoji">🚀</span>
         <div class="diag-result-name">Твій Holland-код: ${top1}${top2}</div>
         <div class="diag-result-desc">${info[top1].label}: ${info[top1].desc}<br><small style="color:var(--text2)">Можливі професії: ${info[top1].careers}</small></div>
@@ -2647,6 +2686,7 @@ const diagTests = {
         </div>
         ${diagFooter()}
       </div>`;
+      return { html, data: { emoji: '🚀', resultName: 'Код ' + top1 + top2 + ': ' + info[top1].label.replace(/^\S+\s/,''), scores: score } };
     }
   }
 };
@@ -2727,16 +2767,132 @@ function showDiagResult() {
   document.getElementById('diagProgFill').style.width = '100%';
   document.getElementById('diagTestView').style.display = 'none';
 
-  let html;
+  let html, saveData;
   if (test.renderResult) {
-    html = test.renderResult(diagAnswers);
+    const out = test.renderResult(diagAnswers);
+    html = typeof out === 'object' ? out.html : out;
+    saveData = typeof out === 'object' ? out.data : { resultName: test.title, emoji: test.title.split(' ')[0] };
   } else {
     const typeKey = test.calculate(diagAnswers);
-    html = diagSingleResult(test.results[typeKey], typeKey, test);
+    const r = test.results[typeKey];
+    html = diagSingleResult(r, typeKey, test);
+    saveData = { resultKey: typeKey, resultName: r.name, emoji: r.emoji };
   }
+
+  saveDiagResult({
+    testId: activeDiagTestId,
+    testName: test.title.replace(/^\S+\s/, ''),
+    ...saveData
+  });
 
   document.getElementById('diagResultView').innerHTML = html;
   document.getElementById('diagResultView').style.display = 'block';
+}
+
+// ── Save & Cabinet ────────────────────────────────────────────────────────────
+function saveDiagResult(data) {
+  // Save to localStorage
+  const storage = getStorage();
+  if (!storage.diagResults) storage.diagResults = [];
+  // Replace if same testId exists (keep latest)
+  storage.diagResults = storage.diagResults.filter(r => r.testId !== data.testId);
+  storage.diagResults.unshift({ ...data, date: new Date().toISOString() });
+  saveStorage(storage);
+
+  // Save to server if logged in
+  const token = localStorage.getItem('psy_token');
+  if (token) {
+    fetch('/api/diag-results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(data)
+    }).catch(() => {});
+  }
+}
+
+async function renderCabinet() {
+  const el = document.getElementById('cabinetContent');
+  const storage = getStorage();
+  const localDiag = storage.diagResults || [];
+  const quizResults = storage.results || [];
+
+  const levelLabel = { junior: '🌈 Молодша школа', mid: '⚡ Середня школа', senior: '🎯 Старша школа' };
+  const lvl = levelLabel[currentLevel] || '—';
+  const name = currentUser ? currentUser.name : 'Гість';
+  const avatarEmojis = ['🦊','🐼','🦁','🐬','🦋','🌟','🎯','🚀'];
+  const avatar = avatarEmojis[(name.charCodeAt(0) || 0) % avatarEmojis.length];
+  const diagCount = localDiag.length;
+  const xp = storage.xp || 0;
+
+  // Psychological profile tags from results
+  const profileTags = [];
+  localDiag.forEach(r => {
+    if (r.resultKey || r.resultName) profileTags.push({ emoji: r.emoji, label: r.resultName });
+  });
+
+  const diagHTML = diagCount === 0
+    ? `<div class="cabinet-empty"><span>🧪</span>Ти ще не пройшов жодного тесту.<br>Перейди в 🧠 Діагностики і дізнайся більше про себе!</div>`
+    : localDiag.map(r => {
+        const ago = timeAgo(r.date);
+        return `<div class="cabinet-diag-item" onclick="startDiag('${r.testId}')">
+          <div class="cabinet-diag-icon">${r.emoji}</div>
+          <div class="cabinet-diag-body">
+            <h4>${r.resultName}</h4>
+            <p>${r.testName}</p>
+          </div>
+          <div class="cabinet-diag-date">${ago}</div>
+        </div>`;
+      }).join('');
+
+  const profileHTML = profileTags.length > 0 ? `
+    <div class="cabinet-profile-card">
+      <h3>🧠 Мій психологічний профіль</h3>
+      <div class="cabinet-profile-tags">
+        ${profileTags.map(t => `<span class="cabinet-profile-tag">${t.emoji} ${t.label}</span>`).join('')}
+      </div>
+    </div>` : '';
+
+  el.innerHTML = `
+    <div class="cabinet-hero">
+      <div class="cabinet-avatar">${avatar}</div>
+      <div class="cabinet-hero-info">
+        <h2>${name}</h2>
+        <p>${lvl}${currentUser ? ' · <span style="color:var(--green)">●</span> Онлайн' : ' · Гість'}</p>
+      </div>
+    </div>
+    <div class="cabinet-stats">
+      <div class="cabinet-stat">
+        <div class="cabinet-stat-val" style="color:var(--purple-l)">${quizResults.length}</div>
+        <div class="cabinet-stat-lbl">Квізів</div>
+      </div>
+      <div class="cabinet-stat">
+        <div class="cabinet-stat-val" style="color:#06b6d4">${diagCount}</div>
+        <div class="cabinet-stat-lbl">Тестів</div>
+      </div>
+      <div class="cabinet-stat">
+        <div class="cabinet-stat-val" style="color:var(--orange)">${xp}</div>
+        <div class="cabinet-stat-lbl">XP</div>
+      </div>
+    </div>
+    ${profileHTML}
+    <div class="cabinet-section-title">📊 Результати діагностик</div>
+    <div class="cabinet-diag-list">${diagHTML}</div>
+    ${!currentUser ? `<button class="btn-primary" onclick="openAuthModal()" style="margin-bottom:16px;">🔑 Увійти щоб зберегти на сервері</button>` : ''}
+    <button class="btn-secondary" onclick="showScreen('diagnostics')">🧠 Пройти тести</button>
+  `;
+}
+
+function timeAgo(isoDate) {
+  if (!isoDate) return '';
+  const diff = Date.now() - new Date(isoDate).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'щойно';
+  if (m < 60) return m + ' хв тому';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + ' год тому';
+  const d = Math.floor(h / 24);
+  if (d < 7) return d + ' дн тому';
+  return new Date(isoDate).toLocaleDateString('uk-UA');
 }
 
 // ── Diagnostics data ──
@@ -3570,15 +3726,15 @@ if (new URLSearchParams(location.search).get('payment') === 'success') {
 
 function updateAuthUI() {
   const btn = document.getElementById('btnAuth');
-  const statsBtn = document.getElementById('btnMyStats');
+  const cabinetBtn = document.getElementById('btnCabinet');
   if (currentUser) {
     btn.textContent = currentUser.name.split(' ')[0] + ' 👋';
     btn.onclick = showUserMenu;
-    statsBtn.style.display = 'inline-flex';
+    cabinetBtn.style.display = 'inline-flex';
   } else {
     btn.textContent = '🔑';
     btn.onclick = openAuthModal;
-    statsBtn.style.display = 'none';
+    cabinetBtn.style.display = 'none';
   }
 }
 
