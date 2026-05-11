@@ -4273,6 +4273,19 @@ async function doQuickLogin() {
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
 
+async function syncLocalDiagResults(token) {
+  const storage = getStorage();
+  const local = storage.diagResults || [];
+  if (!local.length) return;
+  for (const r of local) {
+    await fetch('/api/diag-results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(r)
+    }).catch(() => {});
+  }
+}
+
 async function doLogin() {
   const email = (document.getElementById('loginEmail')?.value || '');
   const password = (document.getElementById('loginPass')?.value || '');
@@ -4287,6 +4300,7 @@ async function doLogin() {
     currentUser = data.user;
     updateAuthUI();
     closeAuthModal();
+    await syncLocalDiagResults(data.token);
     await loadUserProgress();
     if (data.user.role === 'admin') { showAdminDashboard(); return; }
     showScreen('cabinet');
@@ -4308,6 +4322,7 @@ async function doRegister() {
     currentUser = data.user;
     updateAuthUI();
     closeAuthModal();
+    await syncLocalDiagResults(data.token);
     await loadUserProgress();
     showScreen('cabinet');
   } catch { err.textContent = 'Помилка з\'єднання'; }
