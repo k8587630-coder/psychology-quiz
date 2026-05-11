@@ -3803,8 +3803,6 @@ function openAuthModal(view = 'login') {
 }
 function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
 
-// Keep legacy functions for any existing calls
-function switchTab() {}
 
 async function doQuickLogin() {
   const name = (document.getElementById('quickName')?.value || '').trim();
