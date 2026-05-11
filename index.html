@@ -796,40 +796,11 @@
 </div>
 
 <!-- AUTH MODAL -->
-<div id="authModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:20000; display:none; align-items:center; justify-content:center;">
-  <div style="background:#0e0e2a; border:1px solid rgba(168,85,247,0.3); border-radius:24px; padding:36px; width:min(420px,92vw); position:relative;">
-    <button onclick="closeAuthModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#888; font-size:1.4rem; cursor:pointer;">✕</button>
-
-    <!-- tabs -->
-    <div style="display:flex; gap:8px; margin-bottom:28px;">
-      <button id="tabQuick" onclick="switchTab('quick')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:var(--purple); color:#fff; font-size:0.95rem;">⚡ Швидкий вхід</button>
-      <button id="tabLogin" onclick="switchTab('login')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:rgba(255,255,255,0.08); color:#aaa; font-size:0.95rem;">Увійти</button>
-      <button id="tabReg" onclick="switchTab('reg')" style="flex:1; padding:10px; border-radius:12px; border:none; font-weight:700; cursor:pointer; background:rgba(255,255,255,0.08); color:#aaa; font-size:0.95rem;">Реєстрація</button>
-    </div>
-
-    <!-- quick login form -->
-    <div id="formQuick">
-      <p style="color:#aaa; font-size:0.9rem; margin-bottom:16px; text-align:center;">Просто введи своє ім'я — і грай!</p>
-      <input id="quickName" type="text" placeholder="Твоє ім'я або нікнейм" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:20px; outline:none;">
-      <button onclick="doQuickLogin()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#a855f7,#06b6d4); color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer;">⚡ Увійти без реєстрації</button>
-    </div>
-
-    <!-- login form -->
-    <div id="formLogin" style="display:none;">
-      <input id="loginEmail" type="email" placeholder="Email" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
-      <input id="loginPass" type="password" placeholder="Пароль" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:20px; outline:none;">
-      <button onclick="doLogin()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#a855f7,#06b6d4); color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer;">Увійти</button>
-    </div>
-
-    <!-- register form -->
-    <div id="formReg" style="display:none;">
-      <input id="regName" type="text" placeholder="Твоє ім'я" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
-      <input id="regEmail" type="email" placeholder="Email" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
-      <input id="regPass" type="password" placeholder="Пароль (мін. 4 символи)" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:20px; outline:none;">
-      <button onclick="doRegister()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#a855f7,#06b6d4); color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer;">Зареєструватись</button>
-    </div>
-
-    <p id="authError" style="color:#f87171; text-align:center; margin-top:14px; min-height:20px; font-size:0.9rem;"></p>
+<div id="authModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(10px); z-index:20000; align-items:center; justify-content:center;">
+  <div style="background:#0e0e2a; border:1px solid rgba(168,85,247,0.3); border-radius:28px; padding:36px 32px; width:min(420px,92vw); position:relative;">
+    <button onclick="closeAuthModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#666; font-size:1.4rem; cursor:pointer; line-height:1;">✕</button>
+    <div id="authContent"></div>
+    <p id="authError" style="color:#f87171; text-align:center; margin-top:12px; min-height:18px; font-size:0.88rem;"></p>
   </div>
 </div>
 
@@ -2791,15 +2762,12 @@ function showDiagResult() {
 
 // ── Save & Cabinet ────────────────────────────────────────────────────────────
 function saveDiagResult(data) {
-  // Save to localStorage
   const storage = getStorage();
   if (!storage.diagResults) storage.diagResults = [];
-  // Replace if same testId exists (keep latest)
   storage.diagResults = storage.diagResults.filter(r => r.testId !== data.testId);
   storage.diagResults.unshift({ ...data, date: new Date().toISOString() });
   saveStorage(storage);
 
-  // Save to server if logged in
   const token = localStorage.getItem('psy_token');
   if (token) {
     fetch('/api/diag-results', {
@@ -2808,6 +2776,22 @@ function saveDiagResult(data) {
       body: JSON.stringify(data)
     }).catch(() => {});
   }
+
+  showToast('🗂️ Результат збережено в кабінеті');
+}
+
+function showToast(msg) {
+  let t = document.getElementById('psyToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'psyToast';
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a3e;border:1px solid rgba(127,90,240,0.4);color:#e0e0ff;padding:10px 20px;border-radius:100px;font-size:0.85rem;font-weight:700;z-index:99999;transition:opacity 0.4s;pointer-events:none;white-space:nowrap;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2500);
 }
 
 async function renderCabinet() {
@@ -2877,7 +2861,17 @@ async function renderCabinet() {
     ${profileHTML}
     <div class="cabinet-section-title">📊 Результати діагностик</div>
     <div class="cabinet-diag-list">${diagHTML}</div>
-    ${!currentUser ? `<button class="btn-primary" onclick="openAuthModal()" style="margin-bottom:16px;">🔑 Увійти щоб зберегти на сервері</button>` : ''}
+    ${!currentUser ? `
+    <div style="background:linear-gradient(135deg,rgba(127,90,240,0.1),rgba(6,182,212,0.06));border:1px solid rgba(127,90,240,0.2);border-radius:20px;padding:18px 16px;margin-bottom:16px;text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🔑</div>
+      <p style="font-size:0.88rem;color:#8888b0;line-height:1.5;margin-bottom:12px;">Зареєструйся щоб результати зберігались назавжди — навіть якщо зміниш браузер або пристрій</p>
+      <button class="btn-primary" onclick="openAuthModal('register')" style="margin-bottom:8px;">Зареєструватись безкоштовно →</button>
+      <br><button onclick="openAuthModal('login')" style="background:none;border:none;color:#a78bfa;font-size:0.85rem;cursor:pointer;text-decoration:underline;">Вже є акаунт? Увійти</button>
+    </div>` : currentUser && !currentUser.email ? `
+    <div style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:20px;padding:14px 16px;margin-bottom:16px;text-align:center;">
+      <p style="font-size:0.85rem;color:#f97316;margin-bottom:10px;">⚡ Ти зайшов без email — додай його щоб не втратити акаунт</p>
+      <button onclick="openAuthModal('register')" style="background:none;border:1px solid rgba(249,115,22,0.4);color:#f97316;padding:8px 16px;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;">Додати email →</button>
+    </div>` : ''}
     <button class="btn-secondary" onclick="showScreen('diagnostics')">🧠 Пройти тести</button>
   `;
 }
@@ -3727,45 +3721,93 @@ if (new URLSearchParams(location.search).get('payment') === 'success') {
 function updateAuthUI() {
   const btn = document.getElementById('btnAuth');
   const cabinetBtn = document.getElementById('btnCabinet');
+  cabinetBtn.style.display = 'inline-flex'; // always visible
   if (currentUser) {
     btn.textContent = currentUser.name.split(' ')[0] + ' 👋';
     btn.onclick = showUserMenu;
-    cabinetBtn.style.display = 'inline-flex';
+    cabinetBtn.title = 'Мій кабінет';
   } else {
     btn.textContent = '🔑';
     btn.onclick = openAuthModal;
-    cabinetBtn.style.display = 'none';
+    cabinetBtn.title = 'Мій кабінет (гість)';
   }
 }
 
 function showUserMenu() {
-  const isAdmin = currentUser?.role === 'admin';
-  if (isAdmin) {
-    showAdminDashboard();
-  } else {
-    showMyStats();
-  }
+  if (currentUser?.role === 'admin') { showAdminDashboard(); return; }
+  showScreen('cabinet');
 }
 
-function openAuthModal() {
+// ── Auth modal ────────────────────────────────────────────────────────────────
+const authInputStyle = 'width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;font-size:1rem;margin-bottom:12px;outline:none;box-sizing:border-box;';
+const authBtnStyle  = 'width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#a855f7,#06b6d4);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;margin-top:4px;';
+const authLinkStyle = 'background:none;border:none;color:#a78bfa;font-size:0.88rem;cursor:pointer;text-decoration:underline;';
+const authDivider   = '<div style="display:flex;align-items:center;gap:10px;margin:18px 0;"><div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div><span style="color:#555;font-size:0.8rem;">або</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div></div>';
+
+function authViews() {
+  return {
+    login: `
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:2rem;margin-bottom:8px;">👋</div>
+        <h2 style="font-size:1.4rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:6px;">З поверненням!</h2>
+        <p style="color:#8888b0;font-size:0.88rem;line-height:1.5;">Увійди щоб зберегти психологічний профіль і переглядати результати будь-коли</p>
+      </div>
+      <input id="loginEmail" type="email" placeholder="Email" style="${authInputStyle}">
+      <input id="loginPass" type="password" placeholder="Пароль" style="${authInputStyle}">
+      <button onclick="doLogin()" style="${authBtnStyle}">Увійти →</button>
+      <p style="text-align:center;margin-top:14px;font-size:0.88rem;color:#8888b0;">
+        Ще немає акаунту? <button onclick="openAuthModal('register')" style="${authLinkStyle}">Зареєструватись</button>
+      </p>
+      ${authDivider}
+      <button onclick="openAuthModal('guest')" style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#aaa;font-size:0.9rem;font-weight:700;cursor:pointer;">
+        Спробувати без реєстрації →
+      </button>`,
+
+    register: `
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:2rem;margin-bottom:8px;">🚀</div>
+        <h2 style="font-size:1.4rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:6px;">Створити акаунт</h2>
+        <p style="color:#8888b0;font-size:0.88rem;">Безкоштовно · Безпечно · 1 хвилина</p>
+      </div>
+      <input id="regName" type="text" placeholder="Ім'я або нікнейм" style="${authInputStyle}">
+      <input id="regEmail" type="email" placeholder="Email" style="${authInputStyle}">
+      <input id="regPass" type="password" placeholder="Пароль (мін. 4 символи)" style="${authInputStyle}">
+      <button onclick="doRegister()" style="${authBtnStyle}">Зареєструватись →</button>
+      <p style="text-align:center;margin-top:14px;font-size:0.88rem;color:#8888b0;">
+        Вже є акаунт? <button onclick="openAuthModal('login')" style="${authLinkStyle}">Увійти</button>
+      </p>
+      ${authDivider}
+      <button onclick="openAuthModal('guest')" style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#aaa;font-size:0.9rem;font-weight:700;cursor:pointer;">
+        Спробувати без реєстрації →
+      </button>`,
+
+    guest: `
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:2rem;margin-bottom:8px;">🎯</div>
+        <h2 style="font-size:1.4rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:6px;">Як тебе звати?</h2>
+        <p style="color:#8888b0;font-size:0.88rem;line-height:1.5;">Результати збережуться у цьому браузері.<br>Щоб не втратити — зареєструйся пізніше.</p>
+      </div>
+      <input id="quickName" type="text" placeholder="Твоє ім'я або нікнейм" style="${authInputStyle}">
+      <button onclick="doQuickLogin()" style="${authBtnStyle}">Грати! →</button>
+      <div style="text-align:center;margin-top:16px;">
+        <button onclick="openAuthModal('login')" style="${authLinkStyle}">← Назад до входу</button>
+      </div>`
+  };
+}
+
+function openAuthModal(view = 'login') {
   const m = document.getElementById('authModal');
   m.style.display = 'flex';
   document.getElementById('authError').textContent = '';
+  document.getElementById('authContent').innerHTML = authViews()[view] || authViews().login;
 }
 function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
 
-function switchTab(tab) {
-  ['quick', 'login', 'reg'].forEach(t => {
-    document.getElementById('form' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
-    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
-    btn.style.background = t === tab ? 'var(--purple)' : 'rgba(255,255,255,0.08)';
-    btn.style.color = t === tab ? '#fff' : '#aaa';
-  });
-  document.getElementById('authError').textContent = '';
-}
+// Keep legacy functions for any existing calls
+function switchTab() {}
 
 async function doQuickLogin() {
-  const name = document.getElementById('quickName').value.trim();
+  const name = (document.getElementById('quickName')?.value || '').trim();
   const err = document.getElementById('authError');
   if (!name) { err.textContent = 'Введи своє ім\'я'; return; }
   try {
@@ -3778,14 +3820,15 @@ async function doQuickLogin() {
     updateAuthUI();
     closeAuthModal();
     await loadUserProgress();
-    renderHome();
+    showScreen('cabinet');
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
 
 async function doLogin() {
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPass').value;
+  const email = (document.getElementById('loginEmail')?.value || '');
+  const password = (document.getElementById('loginPass')?.value || '');
   const err = document.getElementById('authError');
+  if (!email || !password) { err.textContent = 'Заповни всі поля'; return; }
   try {
     const r = await fetch('/api/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
     const data = await r.json();
@@ -3796,16 +3839,17 @@ async function doLogin() {
     updateAuthUI();
     closeAuthModal();
     await loadUserProgress();
-    renderHome();
-    if (data.user.role === 'admin') showAdminDashboard();
+    if (data.user.role === 'admin') { showAdminDashboard(); return; }
+    showScreen('cabinet');
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
 
 async function doRegister() {
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  const password = document.getElementById('regPass').value;
+  const name = (document.getElementById('regName')?.value || '').trim();
+  const email = (document.getElementById('regEmail')?.value || '');
+  const password = (document.getElementById('regPass')?.value || '');
   const err = document.getElementById('authError');
+  if (!name || !email || !password) { err.textContent = 'Заповни всі поля'; return; }
   try {
     const r = await fetch('/api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, email, password}) });
     const data = await r.json();
@@ -3816,7 +3860,7 @@ async function doRegister() {
     updateAuthUI();
     closeAuthModal();
     await loadUserProgress();
-    renderHome();
+    showScreen('cabinet');
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
 
@@ -3825,7 +3869,7 @@ function logout() {
   localStorage.removeItem('psy_user');
   currentUser = null;
   updateAuthUI();
-  closeMyStats();
+  showScreen('level');
 }
 
 // ── PREMIUM MODAL ────────────────────────────────────────────────────────────
