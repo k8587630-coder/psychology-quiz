@@ -47,18 +47,19 @@ function adminOnly(req, res, next) {
 
 // ── Register ─────────────────────────────────────────────────────────────────
 app.post('/api/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, isTeacher } = req.body;
   if (!name || !email || !password)
     return res.status(400).json({ error: 'Заповни всі поля' });
   if (password.length < 4)
     return res.status(400).json({ error: 'Пароль мінімум 4 символи' });
+  const role = isTeacher ? 'teacher' : 'student';
   try {
     const hash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { name, email: email.toLowerCase(), password: hash }
+      data: { name, email: email.toLowerCase(), password: hash, role }
     });
-    const token = jwt.sign({ id: user.id, name: user.name, role: user.role, isPremium: false }, SECRET);
-    res.json({ token, user: { id: user.id, name: user.name, role: user.role, isPremium: false } });
+    const token = jwt.sign({ id: user.id, name: user.name, role, isPremium: false }, SECRET);
+    res.json({ token, user: { id: user.id, name: user.name, role, isPremium: false } });
   } catch (e) {
     if (e.code === 'P2002') return res.status(400).json({ error: 'Цей email вже зареєстровано' });
     res.status(500).json({ error: 'Помилка сервера' });
@@ -149,6 +150,133 @@ app.post('/api/admin/create', async (req, res) => {
   } catch {
     res.status(400).json({ error: 'Email вже існує' });
   }
+});
+
+// ── Register with teacher role ───────────────────────────────────────────────
+app.post('/api/register-teacher', async (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password)
+    return res.status(400).json({ error: 'Заповни всі поля' });
+  if (password.length < 4)
+    return res.status(400).json({ error: 'Пароль мінімум 4 символи' });
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: { name, email: email.toLowerCase(), password: hash, role: 'teacher' }
+    });
+    const token = jwt.sign({ id: user.id, name: user.name, role: 'teacher', isPremium: false }, SECRET);
+    res.json({ token, user: { id: user.id, name: user.name, role: 'teacher', isPremium: false } });
+  } catch (e) {
+    if (e.code === 'P2002') return res.status(400).json({ error: 'Цей email вже зареєстровано' });
+    res.status(500).json({ error: 'Помилка сервера' });
+  }
+});
+
+// ── CLASS MODE ───────────────────────────────────────────────────────────────
+function teacherOnly(req, res, next) {
+  if (req.user.role !== 'teacher' && req.user.role !== 'admin')
+    return res.status(403).json({ error: 'Тільки для вчителя' });
+  next();
+}
+
+function generateClassCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+// Create class
+app.post('/api/classes', auth, teacherOnly, async (req, res) => {
+  const { name } = req.body;
+  if (!name?.trim()) return res.status(400).json({ error: 'Введи назву класу' });
+  let code, attempts = 0;
+  do {
+    code = generateClassCode();
+    attempts++;
+  } while (attempts < 10 && await prisma.class.findUnique({ where: { code } }));
+  const cls = await prisma.class.create({
+    data: { name: name.trim(), code, teacherId: req.user.id }
+  });
+  res.json(cls);
+});
+
+// Get teacher's classes with stats
+app.get('/api/classes/my', auth, teacherOnly, async (req, res) => {
+  const classes = await prisma.class.findMany({
+    where: { teacherId: req.user.id },
+    include: { members: { include: { user: true } } },
+    orderBy: { createdAt: 'desc' }
+  });
+  res.json(classes);
+});
+
+// Get class details with students and their results
+app.get('/api/classes/:id', auth, teacherOnly, async (req, res) => {
+  const cls = await prisma.class.findUnique({
+    where: { id: parseInt(req.params.id) },
+    include: {
+      members: {
+        include: {
+          user: { include: { results: { orderBy: { createdAt: 'desc' } } } }
+        },
+        orderBy: { joinedAt: 'asc' }
+      }
+    }
+  });
+  if (!cls) return res.status(404).json({ error: 'Клас не знайдено' });
+  if (cls.teacherId !== req.user.id) return res.status(403).json({ error: 'Немає доступу' });
+  res.json(cls);
+});
+
+// Delete class
+app.delete('/api/classes/:id', auth, teacherOnly, async (req, res) => {
+  const cls = await prisma.class.findUnique({ where: { id: parseInt(req.params.id) } });
+  if (!cls) return res.status(404).json({ error: 'Клас не знайдено' });
+  if (cls.teacherId !== req.user.id) return res.status(403).json({ error: 'Немає доступу' });
+  await prisma.class.delete({ where: { id: cls.id } });
+  res.json({ ok: true });
+});
+
+// Remove student from class
+app.delete('/api/classes/:id/members/:userId', auth, teacherOnly, async (req, res) => {
+  const classId = parseInt(req.params.id);
+  const userId = parseInt(req.params.userId);
+  const cls = await prisma.class.findUnique({ where: { id: classId } });
+  if (!cls || cls.teacherId !== req.user.id) return res.status(403).json({ error: 'Немає доступу' });
+  await prisma.classMember.deleteMany({ where: { classId, userId } });
+  res.json({ ok: true });
+});
+
+// Student: join class by code
+app.post('/api/classes/join', auth, async (req, res) => {
+  const { code } = req.body;
+  if (!code?.trim()) return res.status(400).json({ error: 'Введи код класу' });
+  const cls = await prisma.class.findUnique({ where: { code: code.trim().toUpperCase() } });
+  if (!cls) return res.status(404).json({ error: 'Клас не знайдено. Перевір код!' });
+  try {
+    await prisma.classMember.create({ data: { classId: cls.id, userId: req.user.id } });
+    res.json({ ok: true, className: cls.name });
+  } catch (e) {
+    if (e.code === 'P2002') return res.status(400).json({ error: 'Ти вже в цьому класі' });
+    res.status(500).json({ error: 'Помилка сервера' });
+  }
+});
+
+// Student: get my class
+app.get('/api/classes/student/mine', auth, async (req, res) => {
+  const memberships = await prisma.classMember.findMany({
+    where: { userId: req.user.id },
+    include: { class: { include: { teacher: true } } },
+    orderBy: { joinedAt: 'desc' }
+  });
+  res.json(memberships.map(m => ({ id: m.class.id, name: m.class.name, teacher: m.class.teacher.name, joinedAt: m.joinedAt })));
+});
+
+// Student: leave class
+app.delete('/api/classes/:id/leave', auth, async (req, res) => {
+  await prisma.classMember.deleteMany({ where: { classId: parseInt(req.params.id), userId: req.user.id } });
+  res.json({ ok: true });
 });
 
 // ── Certificate PDF ──────────────────────────────────────────────────────────

@@ -303,6 +303,41 @@
     .lesson-item.active .lesson-content { max-height: 500px; }
     .lesson-body { padding: 0 20px 16px; font-size: 0.88rem; color: var(--text2); line-height: 1.65; }
 
+    /* ── Teacher dashboard ── */
+    .teacher-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+    .teacher-header h2 { font-size:1.4rem; font-weight:900; margin:0; }
+    .class-card {
+      background:var(--card); border:1px solid var(--card-b); border-radius:20px;
+      padding:20px; margin-bottom:16px;
+    }
+    .class-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
+    .class-name { font-size:1.1rem; font-weight:800; color:var(--text); }
+    .class-code-block { background:rgba(127,90,240,0.12); border:1.5px dashed var(--purple); border-radius:12px; padding:10px 16px; display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .class-code-label { font-size:0.7rem; color:var(--text2); font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+    .class-code-val { font-size:1.5rem; font-weight:900; color:var(--purple); letter-spacing:.12em; font-family:monospace; }
+    .copy-code-btn { background:var(--purple); color:#fff; border:none; border-radius:8px; padding:6px 12px; font-size:0.8rem; font-weight:700; cursor:pointer; transition:.2s; }
+    .copy-code-btn:hover { opacity:.85; }
+    .student-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+    .student-table th { text-align:left; color:var(--text2); font-weight:700; padding:8px 10px; border-bottom:1px solid var(--card-b); font-size:0.75rem; text-transform:uppercase; letter-spacing:.04em; }
+    .student-table td { padding:10px 10px; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .student-table tr:last-child td { border-bottom:none; }
+    .student-score-badge { display:inline-block; padding:3px 10px; border-radius:8px; font-weight:700; font-size:0.8rem; }
+    .score-high { background:rgba(16,185,129,0.15); color:#10b981; }
+    .score-mid  { background:rgba(245,158,11,0.15); color:#f59e0b; }
+    .score-low  { background:rgba(239,68,68,0.12);  color:#ef4444; }
+    .class-stats-row { display:flex; gap:12px; margin-bottom:14px; }
+    .class-stat { flex:1; background:rgba(127,90,240,0.07); border-radius:12px; padding:10px; text-align:center; }
+    .class-stat-val { font-size:1.2rem; font-weight:900; color:var(--purple); }
+    .class-stat-label { font-size:0.68rem; color:var(--text2); font-weight:600; text-transform:uppercase; }
+    .join-class-box { background:var(--card); border:1px solid var(--card-b); border-radius:20px; padding:20px; margin-bottom:20px; }
+    .join-class-box h3 { font-size:1rem; font-weight:800; margin:0 0 12px; }
+    .join-row { display:flex; gap:10px; }
+    .join-input { flex:1; padding:12px 14px; border-radius:12px; border:1px solid var(--card-b); background:var(--bg); color:var(--text); font-size:0.95rem; outline:none; text-transform:uppercase; letter-spacing:.1em; }
+    .join-btn { padding:12px 18px; border-radius:12px; border:none; background:linear-gradient(135deg,var(--purple),var(--cyan)); color:#fff; font-weight:800; cursor:pointer; white-space:nowrap; }
+    .my-class-card { background:linear-gradient(135deg,rgba(127,90,240,.12),rgba(6,182,212,.08)); border:1px solid rgba(127,90,240,.25); border-radius:16px; padding:16px; margin-bottom:16px; }
+    .my-class-card h4 { margin:0 0 4px; font-size:1rem; font-weight:800; }
+    .my-class-card p  { margin:0; font-size:0.82rem; color:var(--text2); }
+
     /* ── Buttons ── */
     .btn-primary {
       width: 100%; padding: 16px; border-radius: 16px; border: none;
@@ -534,6 +569,7 @@
 
   <!-- LESSONS -->
   <div class="screen" id="screen-lessons">
+    <div id="studentClassBlock"></div>
     <div id="lessonsModulesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;"></div>
   </div>
 
@@ -541,6 +577,23 @@
   <div class="screen" id="screen-lesson-detail">
     <div id="lessonDetailContent"></div>
     <button class="btn-secondary" style="margin-top: 20px; margin-bottom: 40px;" onclick="showScreen('lessons')">← До бібліотеки</button>
+  </div>
+
+  <!-- TEACHER DASHBOARD -->
+  <div class="screen" id="screen-teacher">
+    <div class="teacher-header">
+      <h2>🎓 Мої класи</h2>
+      <button class="btn-primary" style="width:auto; padding:10px 20px;" onclick="showCreateClass()">+ Створити клас</button>
+    </div>
+    <div id="createClassForm" style="display:none; background:var(--card); border:1px solid var(--card-b); border-radius:16px; padding:16px; margin-bottom:20px;">
+      <p style="font-weight:700; margin:0 0 10px;">Назва класу (наприклад: 7-А, Психологія 9):</p>
+      <div style="display:flex; gap:10px;">
+        <input id="newClassName" type="text" placeholder="Назва класу" style="flex:1; padding:12px; border-radius:12px; border:1px solid var(--card-b); background:var(--bg); color:var(--text); font-size:0.95rem; outline:none;">
+        <button onclick="doCreateClass()" style="padding:12px 18px; border-radius:12px; border:none; background:linear-gradient(135deg,var(--purple),var(--cyan)); color:#fff; font-weight:800; cursor:pointer;">Створити</button>
+        <button onclick="document.getElementById('createClassForm').style.display='none'" style="padding:12px; border-radius:12px; border:1px solid var(--card-b); background:none; color:var(--text2); cursor:pointer;">✕</button>
+      </div>
+    </div>
+    <div id="teacherClassesList"></div>
   </div>
 
   <!-- QUIZ -->
@@ -657,7 +710,11 @@
     <div id="formReg" style="display:none;">
       <input id="regName" type="text" placeholder="Твоє ім'я" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
       <input id="regEmail" type="email" placeholder="Email" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
-      <input id="regPass" type="password" placeholder="Пароль (мін. 4 символи)" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:20px; outline:none;">
+      <input id="regPass" type="password" placeholder="Пароль (мін. 4 символи)" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; margin-bottom:12px; outline:none;">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-bottom:18px; color:#c4b5fd; font-size:0.92rem; font-weight:600;">
+        <input type="checkbox" id="isTeacherCheck" style="width:18px; height:18px; accent-color:#a855f7; cursor:pointer;">
+        Я вчитель — хочу режим класу 🎓
+      </label>
       <button onclick="doRegister()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#a855f7,#06b6d4); color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer;">Зареєструватись</button>
     </div>
 
@@ -2063,7 +2120,8 @@ function showScreen(name) {
   const el = document.getElementById('screen-' + name);
   if (el) el.classList.add('active');
   if (name === 'home') renderHome();
-  if (name === 'lessons') renderLessons();
+  if (name === 'lessons') { renderLessons(); if (currentUser && currentUser.role !== 'teacher') loadStudentClass(); }
+  if (name === 'teacher') renderTeacherDashboard();
 
   // Tab bar: show on home/lessons, hide on other screens
   const tabs = document.getElementById('mainTabs');
@@ -2793,6 +2851,15 @@ function updateAuthUI() {
     btn.textContent = currentUser.name.split(' ')[0] + ' 👋';
     btn.onclick = showUserMenu;
     statsBtn.style.display = 'inline-flex';
+    if (currentUser.role === 'teacher') {
+      statsBtn.textContent = '🎓';
+      statsBtn.title = 'Мої класи';
+      statsBtn.onclick = () => showScreen('teacher');
+    } else {
+      statsBtn.textContent = '📊';
+      statsBtn.title = 'Мої результати';
+      statsBtn.onclick = showMyStats;
+    }
   } else {
     btn.textContent = '🔑';
     btn.onclick = openAuthModal;
@@ -2801,12 +2868,10 @@ function updateAuthUI() {
 }
 
 function showUserMenu() {
-  const isAdmin = currentUser?.role === 'admin';
-  if (isAdmin) {
-    showAdminDashboard();
-  } else {
-    showMyStats();
-  }
+  const role = currentUser?.role;
+  if (role === 'admin') showAdminDashboard();
+  else if (role === 'teacher') showScreen('teacher');
+  else showMyStats();
 }
 
 function openAuthModal() {
@@ -2867,9 +2932,10 @@ async function doRegister() {
   const name = document.getElementById('regName').value;
   const email = document.getElementById('regEmail').value;
   const password = document.getElementById('regPass').value;
+  const isTeacher = document.getElementById('isTeacherCheck')?.checked || false;
   const err = document.getElementById('authError');
   try {
-    const r = await fetch('/api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, email, password}) });
+    const r = await fetch('/api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, email, password, isTeacher}) });
     const data = await r.json();
     if (!r.ok) { err.textContent = data.error; return; }
     localStorage.setItem('psy_token', data.token);
@@ -2878,8 +2944,167 @@ async function doRegister() {
     updateAuthUI();
     closeAuthModal();
     await loadUserProgress();
-    renderHome();
+    if (currentUser.role === 'teacher') { showScreen('teacher'); renderTeacherDashboard(); }
+    else renderHome();
   } catch { err.textContent = 'Помилка з\'єднання'; }
+}
+
+// ── TEACHER DASHBOARD ────────────────────────────────────────────────────────
+function showCreateClass() {
+  const f = document.getElementById('createClassForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  if (f.style.display === 'block') document.getElementById('newClassName').focus();
+}
+
+async function doCreateClass() {
+  const name = document.getElementById('newClassName').value.trim();
+  if (!name) return;
+  const token = localStorage.getItem('psy_token');
+  try {
+    const r = await fetch('/api/classes', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({name}) });
+    const data = await r.json();
+    if (!r.ok) { alert(data.error); return; }
+    document.getElementById('newClassName').value = '';
+    document.getElementById('createClassForm').style.display = 'none';
+    renderTeacherDashboard();
+  } catch { alert('Помилка з\'єднання'); }
+}
+
+async function renderTeacherDashboard() {
+  const token = localStorage.getItem('psy_token');
+  const list = document.getElementById('teacherClassesList');
+  list.innerHTML = '<p style="color:var(--text2); text-align:center;">⏳ Завантаження...</p>';
+  try {
+    const r = await fetch('/api/classes/my', { headers: {'Authorization':'Bearer '+token} });
+    const classes = await r.json();
+    if (!classes.length) {
+      list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--text2);"><div style="font-size:3rem; margin-bottom:12px;">🎓</div><p>У тебе ще немає класів.<br>Створи перший — і поділись кодом з учнями!</p></div>';
+      return;
+    }
+    list.innerHTML = classes.map(cls => {
+      const members = cls.members || [];
+      const allResults = members.flatMap(m => m.user?.results || []);
+      const avgPct = allResults.length ? Math.round(allResults.reduce((s,r) => s+r.pct, 0) / allResults.length) : 0;
+      const membersHTML = members.length ? `
+        <table class="student-table">
+          <thead><tr><th>#</th><th>Учень</th><th>Квізів</th><th>Середній бал</th><th></th></tr></thead>
+          <tbody>
+            ${members.map((m, i) => {
+              const results = m.user?.results || [];
+              const avg = results.length ? Math.round(results.reduce((s,r) => s+r.pct, 0) / results.length) : null;
+              const badgeClass = avg === null ? '' : avg >= 80 ? 'score-high' : avg >= 50 ? 'score-mid' : 'score-low';
+              const badge = avg !== null ? `<span class="student-score-badge ${badgeClass}">${avg}%</span>` : '<span style="color:var(--text2);font-size:0.8rem;">—</span>';
+              return `<tr>
+                <td style="color:var(--text2);">${i+1}</td>
+                <td style="font-weight:600;">${m.user?.name || '?'}</td>
+                <td style="color:var(--text2);">${results.length}</td>
+                <td>${badge}</td>
+                <td><button onclick="removeStudent(${cls.id}, ${m.userId})" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:0.8rem;" title="Видалити">✕</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      ` : '<p style="color:var(--text2); font-size:0.88rem; margin:0;">Ще немає учнів. Поділись кодом!</p>';
+
+      return `<div class="class-card">
+        <div class="class-card-top">
+          <div>
+            <div class="class-name">${cls.name}</div>
+            <div style="color:var(--text2); font-size:0.82rem; margin-top:2px;">Створено ${new Date(cls.createdAt).toLocaleDateString('uk-UA')}</div>
+          </div>
+          <button onclick="deleteClass(${cls.id})" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:0.85rem;" title="Видалити клас">🗑️</button>
+        </div>
+        <div class="class-stats-row">
+          <div class="class-stat"><div class="class-stat-val">${members.length}</div><div class="class-stat-label">Учнів</div></div>
+          <div class="class-stat"><div class="class-stat-val">${allResults.length}</div><div class="class-stat-label">Квізів пройдено</div></div>
+          <div class="class-stat"><div class="class-stat-val">${avgPct ? avgPct+'%' : '—'}</div><div class="class-stat-label">Середній бал</div></div>
+        </div>
+        <div class="class-code-block">
+          <div>
+            <div class="class-code-label">Код для учнів</div>
+            <div class="class-code-val">${cls.code}</div>
+          </div>
+          <button class="copy-code-btn" onclick="copyCode('${cls.code}', this)">📋 Копіювати</button>
+        </div>
+        ${membersHTML}
+      </div>`;
+    }).join('');
+  } catch { list.innerHTML = '<p style="color:#ef4444;">Помилка завантаження</p>'; }
+}
+
+function copyCode(code, btn) {
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ Скопійовано!';
+    setTimeout(() => btn.textContent = '📋 Копіювати', 2000);
+  });
+}
+
+async function deleteClass(id) {
+  if (!confirm('Видалити клас? Всі учні будуть відраховані.')) return;
+  const token = localStorage.getItem('psy_token');
+  await fetch('/api/classes/'+id, { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
+  renderTeacherDashboard();
+}
+
+async function removeStudent(classId, userId) {
+  const token = localStorage.getItem('psy_token');
+  await fetch(`/api/classes/${classId}/members/${userId}`, { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
+  renderTeacherDashboard();
+}
+
+// ── STUDENT CLASS ────────────────────────────────────────────────────────────
+async function loadStudentClass() {
+  if (!currentUser || currentUser.role === 'teacher') return;
+  const token = localStorage.getItem('psy_token');
+  try {
+    const r = await fetch('/api/classes/student/mine', { headers:{'Authorization':'Bearer '+token} });
+    const classes = await r.json();
+    renderStudentClassBlock(classes);
+  } catch {}
+}
+
+function renderStudentClassBlock(classes) {
+  const container = document.getElementById('studentClassBlock');
+  if (!container) return;
+  if (!classes || !classes.length) {
+    container.innerHTML = `
+      <div class="join-class-box">
+        <h3>🏫 Приєднатись до класу</h3>
+        <p style="color:var(--text2); font-size:0.85rem; margin:0 0 12px;">Введи код від вчителя — і твої результати будуть видні в класі</p>
+        <div class="join-row">
+          <input class="join-input" id="classCodeInput" type="text" placeholder="XXX-XXX" maxlength="6">
+          <button class="join-btn" onclick="joinClass()">Приєднатись</button>
+        </div>
+        <p id="joinError" style="color:#ef4444; font-size:0.82rem; margin:8px 0 0;"></p>
+      </div>`;
+  } else {
+    container.innerHTML = classes.map(c => `
+      <div class="my-class-card">
+        <h4>🏫 ${c.name}</h4>
+        <p>Вчитель: ${c.teacher} · З ${new Date(c.joinedAt).toLocaleDateString('uk-UA')}</p>
+        <button onclick="leaveClass(${c.id})" style="margin-top:8px; background:none; border:1px solid var(--card-b); border-radius:8px; padding:4px 10px; color:var(--text2); cursor:pointer; font-size:0.8rem;">Покинути клас</button>
+      </div>`).join('');
+  }
+}
+
+async function joinClass() {
+  const code = document.getElementById('classCodeInput')?.value.trim().toUpperCase();
+  const errEl = document.getElementById('joinError');
+  if (!code) { errEl.textContent = 'Введи код'; return; }
+  const token = localStorage.getItem('psy_token');
+  try {
+    const r = await fetch('/api/classes/join', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({code}) });
+    const data = await r.json();
+    if (!r.ok) { errEl.textContent = data.error; return; }
+    loadStudentClass();
+  } catch { errEl.textContent = 'Помилка з\'єднання'; }
+}
+
+async function leaveClass(id) {
+  if (!confirm('Покинути клас?')) return;
+  const token = localStorage.getItem('psy_token');
+  await fetch('/api/classes/'+id+'/leave', { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
+  loadStudentClass();
 }
 
 function logout() {
