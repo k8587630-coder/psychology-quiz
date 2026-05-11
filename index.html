@@ -471,6 +471,48 @@
     .diag-btn.go:hover { background: rgba(127,90,240,0.28); }
     .diag-btn.disabled { background: rgba(255,255,255,0.05); color: #555; cursor: not-allowed; }
 
+    /* ── Built-in diag test ── */
+    .diag-test-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .diag-test-header h3 { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; flex: 1; }
+    .diag-back-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--card-b); border-radius: 12px;
+      padding: 8px 14px; color: var(--text2); font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .diag-back-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .diag-q-card { background: var(--card); border: 1px solid var(--card-b); border-radius: 24px;
+      padding: 28px 22px; margin-top: 6px; }
+    .diag-q-num { font-size: 0.75rem; font-weight: 700; color: var(--purple-l); letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 14px; }
+    .diag-q-text { font-size: 1.15rem; font-weight: 700; line-height: 1.45; letter-spacing: -0.02em; margin-bottom: 28px; }
+    .diag-yn-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .diag-yn-btn { padding: 16px; border-radius: 16px; border: 2px solid transparent;
+      font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1); }
+    .diag-yn-btn.yes { background: rgba(44,182,125,0.1); color: var(--green); border-color: rgba(44,182,125,0.25); }
+    .diag-yn-btn.yes:hover { background: rgba(44,182,125,0.22); transform: translateY(-3px); }
+    .diag-yn-btn.no { background: rgba(236,72,153,0.08); color: #ec4899; border-color: rgba(236,72,153,0.2); }
+    .diag-yn-btn.no:hover { background: rgba(236,72,153,0.18); transform: translateY(-3px); }
+    .diag-result-wrap { animation: fadeUp 0.45s both; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .diag-result-type-badge { display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px;
+      border-radius: 100px; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.04em;
+      text-transform: uppercase; margin-bottom: 20px; }
+    .diag-result-emoji { font-size: 4rem; margin-bottom: 12px; display: block; text-align: center; }
+    .diag-result-name { font-size: 2rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 10px; text-align: center; }
+    .diag-result-desc { font-size: 0.95rem; color: var(--text2); line-height: 1.65; margin-bottom: 24px; text-align: center; }
+    .diag-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .diag-result-block { background: var(--card); border: 1px solid var(--card-b); border-radius: 18px; padding: 16px 14px; }
+    .diag-result-block h5 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text2); margin-bottom: 10px; }
+    .diag-result-block ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .diag-result-block li { font-size: 0.85rem; display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
+    .diag-quadrant { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+      gap: 6px; border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+    .diag-q-cell { padding: 10px 14px; font-size: 0.78rem; font-weight: 700; opacity: 0.35; text-align: center;
+      border-radius: 10px; transition: opacity 0.3s; }
+    .diag-q-cell.active { opacity: 1; border: 2px solid rgba(255,255,255,0.2); }
+    .diag-q-cell.choleric { background: rgba(249,115,22,0.15); color: var(--orange); }
+    .diag-q-cell.sanguine { background: rgba(44,182,125,0.12); color: var(--green); }
+    .diag-q-cell.melancholic { background: rgba(127,90,240,0.12); color: var(--purple-l); }
+    .diag-q-cell.phlegmatic { background: rgba(6,182,212,0.1); color: #06b6d4; }
+
     /* ── Premium modal ── */
     #premiumModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75);
       backdrop-filter:blur(10px); z-index:30000; align-items:center; justify-content:center; }
@@ -589,6 +631,26 @@
     </div>
     <div class="diag-filters" id="diagFilters"></div>
     <div class="diag-grid" id="diagGrid"></div>
+  </div>
+
+  <!-- BUILT-IN DIAG TEST -->
+  <div class="screen" id="screen-diag-test">
+    <div id="diagTestView">
+      <div class="diag-test-header">
+        <button class="diag-back-btn" onclick="showScreen('diagnostics')">← Назад</button>
+        <h3 id="diagTestTitle"></h3>
+      </div>
+      <div class="quiz-prog-bar"><div class="quiz-prog-fill" id="diagProgFill" style="width:0%"></div></div>
+      <div class="diag-q-card">
+        <div class="diag-q-num" id="diagQNum"></div>
+        <div class="diag-q-text" id="diagQText"></div>
+        <div class="diag-yn-btns">
+          <button class="diag-yn-btn yes" onclick="answerDiag(1)">✓ Так</button>
+          <button class="diag-yn-btn no" onclick="answerDiag(0)">✕ Ні</button>
+        </div>
+      </div>
+    </div>
+    <div id="diagResultView" style="display:none"></div>
   </div>
 
   <!-- LESSON DETAIL -->
@@ -2123,14 +2185,160 @@ function showScreen(name) {
   // Tab bar: show on home/lessons/diagnostics, hide on other screens
   const tabs = document.getElementById('mainTabs');
   if (tabs) {
-    const showTabs = name === 'home' || name === 'lessons' || name === 'diagnostics';
+    const showTabs = name === 'home' || name === 'lessons' || name === 'diagnostics' || name === 'diag-test';
     tabs.style.display = showTabs ? 'flex' : 'none';
     document.getElementById('tabLibrary')?.classList.toggle('active', name === 'lessons');
     document.getElementById('tabQuizzes')?.classList.toggle('active', name === 'home');
-    document.getElementById('tabDiag')?.classList.toggle('active', name === 'diagnostics');
+    document.getElementById('tabDiag')?.classList.toggle('active', name === 'diagnostics' || name === 'diag-test');
   }
 
   window.scrollTo(0, 0);
+}
+
+// ── Built-in diagnostic tests ──
+const diagTests = {
+  temperament: {
+    title: '🔥 Тип темпераменту',
+    questions: [
+      { q: 'Тобі легко знайомитися з новими людьми?',                              dim: 'E', dir: 1  },
+      { q: 'Ти любиш бути в компанії та на вечірках?',                             dim: 'E', dir: 1  },
+      { q: 'Ти зазвичай першим починаєш розмову?',                                 dim: 'E', dir: 1  },
+      { q: 'Спілкування з людьми заряджає тебе енергією, а не виснажує?',          dim: 'E', dir: 1  },
+      { q: 'Після довгого спілкування тобі треба побути на самоті, щоб відновитись?', dim: 'E', dir: -1 },
+      { q: 'Ти надаєш перевагу тихому вечору вдома, а не гучній тусовці?',        dim: 'E', dir: -1 },
+      { q: 'Ти добре почуваєшся наодинці й рідко сумуєш без компанії?',           dim: 'E', dir: -1 },
+      { q: 'Ти довго обдумуєш, перш ніж щось сказати вголос?',                    dim: 'E', dir: -1 },
+      { q: 'Твій настрій часто змінюється без помітних причин?',                  dim: 'N', dir: 1  },
+      { q: 'Ти легко починаєш хвилюватися через дрібниці?',                       dim: 'N', dir: 1  },
+      { q: 'Після неприємної ситуації тобі важко одразу заспокоїтися?',           dim: 'N', dir: 1  },
+      { q: 'Ти часто відчуваєш тривогу навіть без конкретної причини?',           dim: 'N', dir: 1  },
+      { q: 'У стресових ситуаціях ти зазвичай залишаєшся спокійним?',             dim: 'N', dir: -1 },
+      { q: 'Після невдачі ти швидко відновлюєшся і рухаєшся далі?',              dim: 'N', dir: -1 },
+      { q: 'Твій настрій здебільшого рівний і стабільний?',                       dim: 'N', dir: -1 },
+      { q: 'Тобі легко не брати дрібні неприємності близько до серця?',           dim: 'N', dir: -1 },
+    ],
+    calculate(answers) {
+      let E = 0, N = 0;
+      this.questions.forEach((q, i) => {
+        if (answers[i] === 1) {
+          if (q.dim === 'E') E += q.dir;
+          else N += q.dir;
+        }
+      });
+      const extraverted = E >= 0;
+      const neurotic    = N >= 0;
+      if (extraverted && neurotic)  return 'choleric';
+      if (extraverted && !neurotic) return 'sanguine';
+      if (!extraverted && neurotic) return 'melancholic';
+      return 'phlegmatic';
+    },
+    results: {
+      choleric: {
+        emoji: '🔥', name: 'Холерик',
+        color: 'rgba(249,115,22,0.2)', textColor: 'var(--orange)',
+        desc: 'Ти — справжній вогонь! Енергійний, рішучий, пристрасний. Береш ся за справи з ентузіазмом і здатен запалити інших своєю ідеєю. Тобі важливо діяти — і ти дієш, часто вже думаючи по дорозі.',
+        strengths: ['🚀 Лідерство та ініціативність', '⚡ Рішучість і швидкість дій', '🎯 Цілеспрямованість', '🔥 Здатність надихати інших'],
+        growth: ['🧘 Розвивай терпіння', '🎧 Частіше слухай інших', '💭 Думай перед тим, як діяти']
+      },
+      sanguine: {
+        emoji: '☀️', name: 'Сангвінік',
+        color: 'rgba(44,182,125,0.15)', textColor: 'var(--green)',
+        desc: 'Ти — сонечко компанії! Оптимістичний, комунікабельний, легко адаптуєшся до будь-якої ситуації. Тобі легко знайти спільну мову з будь-якою людиною, і люди до тебе тягнуться.',
+        strengths: ['😄 Оптимізм і позитив', '🗣️ Комунікабельність', '🌊 Гнучкість і адаптивність', '✨ Харизма та відкритість'],
+        growth: ['📌 Доводь справи до кінця', '🎯 Розвивай концентрацію', '⏱️ Навчись розставляти пріоритети']
+      },
+      melancholic: {
+        emoji: '🌙', name: 'Меланхолік',
+        color: 'rgba(127,90,240,0.15)', textColor: 'var(--purple-l)',
+        desc: 'Ти — глибина і чутливість. Вдумливий, творчий, помічаєш деталі, які інші пропускають. Твої почуття глибокі, а думки — оригінальні. Ти схильний до аналізу та роздумів.',
+        strengths: ['🎨 Творчість і глибина', '🔍 Увага до деталей', '💜 Чуйність і емпатія', '📚 Аналітичне мислення'],
+        growth: ['💪 Вір у себе більше', '☀️ Шукай позитивне у ситуаціях', '🚀 Дій, не тільки аналізуй']
+      },
+      phlegmatic: {
+        emoji: '🗿', name: 'Флегматик',
+        color: 'rgba(6,182,212,0.1)', textColor: '#06b6d4',
+        desc: 'Ти — скеля надійності. Спокійний, врівноважений, терплячий. На тебе завжди можна покластися. Ти не поспішаєш, але й не відступаєш. Твоя сила — у стабільності та послідовності.',
+        strengths: ['🏔️ Надійність і стабільність', '🧩 Терпіння та витримка', '🤝 Вірність і послідовність', '🧠 Вдумливість'],
+        growth: ['⚡ Розвивай ініціативність', '🌊 Адаптуйся до змін', '🔥 Іноді дозволяй собі діяти швидше']
+      }
+    }
+  }
+};
+
+let activeDiagTestId = null;
+let diagAnswers = [];
+let diagCurrentQ = 0;
+
+function startDiag(testId) {
+  activeDiagTestId = testId;
+  diagAnswers = [];
+  diagCurrentQ = 0;
+  showScreen('diag-test');
+  document.getElementById('diagTestView').style.display = 'block';
+  document.getElementById('diagResultView').style.display = 'none';
+  const test = diagTests[testId];
+  document.getElementById('diagTestTitle').textContent = test.title;
+  renderDiagQuestion();
+}
+
+function renderDiagQuestion() {
+  const test = diagTests[activeDiagTestId];
+  const total = test.questions.length;
+  const pct = Math.round((diagCurrentQ / total) * 100);
+  document.getElementById('diagProgFill').style.width = pct + '%';
+  document.getElementById('diagQNum').textContent = `Питання ${diagCurrentQ + 1} з ${total}`;
+  document.getElementById('diagQText').textContent = test.questions[diagCurrentQ].q;
+}
+
+function answerDiag(val) {
+  diagAnswers.push(val);
+  diagCurrentQ++;
+  const test = diagTests[activeDiagTestId];
+  if (diagCurrentQ >= test.questions.length) {
+    showDiagResult();
+  } else {
+    renderDiagQuestion();
+  }
+}
+
+function showDiagResult() {
+  const test = diagTests[activeDiagTestId];
+  const typeKey = test.calculate(diagAnswers);
+  const r = test.results[typeKey];
+
+  document.getElementById('diagProgFill').style.width = '100%';
+  document.getElementById('diagTestView').style.display = 'none';
+
+  const quadrantCells = [
+    { key: 'choleric',   label: '🔥 Холерик',   cls: 'choleric',   pos: 'top-right' },
+    { key: 'sanguine',   label: '☀️ Сангвінік',  cls: 'sanguine',   pos: 'top-left'  },
+    { key: 'melancholic',label: '🌙 Меланхолік', cls: 'melancholic',pos: 'bot-right' },
+    { key: 'phlegmatic', label: '🗿 Флегматик',  cls: 'phlegmatic', pos: 'bot-left'  },
+  ];
+  const quadHTML = quadrantCells.map(c =>
+    `<div class="diag-q-cell ${c.cls}${c.key === typeKey ? ' active' : ''}">${c.label}</div>`
+  ).join('');
+
+  document.getElementById('diagResultView').innerHTML = `
+    <div class="diag-result-wrap">
+      <span class="diag-result-emoji">${r.emoji}</span>
+      <div class="diag-result-name">${r.name}</div>
+      <div class="diag-result-desc">${r.desc}</div>
+      <div class="diag-quadrant">${quadHTML}</div>
+      <div class="diag-result-grid">
+        <div class="diag-result-block">
+          <h5>💪 Сильні сторони</h5>
+          <ul>${r.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
+        </div>
+        <div class="diag-result-block">
+          <h5>🌱 Зони росту</h5>
+          <ul>${r.growth.map(g => `<li>${g}</li>`).join('')}</ul>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="startDiag('${activeDiagTestId}')" style="margin-bottom:12px;">🔄 Пройти ще раз</button>
+      <button class="btn-secondary" onclick="showScreen('diagnostics')">← До діагностик</button>
+    </div>`;
+  document.getElementById('diagResultView').style.display = 'block';
 }
 
 // ── Diagnostics data ──
@@ -2153,14 +2361,13 @@ const diagnosticsData = [
     id: 'temperament', category: 'personality', icon: '🔥',
     name: 'Тип темпераменту',
     desc: 'Холерик, сангвінік, флегматик чи меланхолік? Класична типологія у сучасній обробці. Підходить для всіх вікових груп.',
-    age: '10+', time: '10 хв', type: 'soon'
+    age: '10+', time: '5 хв', type: 'builtin', testId: 'temperament'
   },
   {
     id: 'gardner', category: 'intelligence', icon: '🎨',
     name: 'Множинний інтелект (Гарднер)',
     desc: '8 видів інтелекту: логічний, музичний, просторовий, мовний, тілесний, природничий та ін. Дізнайся свій тип розуму.',
-    age: '10+', time: '10 хв', type: 'external',
-    url: 'https://openpsychometrics.org/tests/MIBI/'
+    age: '10+', time: '10 хв', type: 'builtin'
   },
   {
     id: 'vak', category: 'intelligence', icon: '📖',
@@ -2226,9 +2433,14 @@ function renderDiagnostics() {
   grid.innerHTML = filtered.map(d => {
     const typeLabel = d.type === 'external' ? '🔗 Зовнішній' : d.type === 'builtin' ? '✦ Вбудований' : '⏳ Скоро';
     const typeCls = d.type === 'external' ? 'ext' : d.type === 'builtin' ? 'builtin' : 'soon';
-    const btn = d.type === 'external'
-      ? `<a href="${d.url}" target="_blank" class="diag-btn go">Пройти тест →</a>`
-      : `<button class="diag-btn disabled" disabled>Скоро в додатку</button>`;
+    let btn;
+    if (d.type === 'external') {
+      btn = `<a href="${d.url}" target="_blank" class="diag-btn go">Пройти тест →</a>`;
+    } else if (d.type === 'builtin' && d.testId) {
+      btn = `<button class="diag-btn go" onclick="startDiag('${d.testId}')">Пройти тест →</button>`;
+    } else {
+      btn = `<button class="diag-btn disabled" disabled>Скоро в додатку</button>`;
+    }
     return `<div class="diag-card">
       <div class="diag-card-icon">${d.icon}</div>
       <div class="diag-card-body">
