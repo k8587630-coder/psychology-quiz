@@ -4214,6 +4214,7 @@ const authInputStyle = 'width:100%;padding:14px 16px;border-radius:12px;border:1
 const authBtnStyle  = 'width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#a855f7,#06b6d4);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;margin-top:4px;';
 const authLinkStyle = 'background:none;border:none;color:#a78bfa;font-size:0.88rem;cursor:pointer;text-decoration:underline;';
 const authDivider   = '<div style="display:flex;align-items:center;gap:10px;margin:18px 0;"><div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div><span style="color:#555;font-size:0.8rem;">або</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div></div>';
+const passFieldHtml = (id, placeholder) => `<div style="position:relative;margin-bottom:12px;"><input id="${id}" type="password" placeholder="${placeholder}" style="width:100%;padding:14px 48px 14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;font-size:1rem;outline:none;box-sizing:border-box;"><button type="button" onclick="togglePassVis('${id}',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;line-height:1;" title="Показати пароль">👁</button></div>`;
 
 function authViews() {
   return {
@@ -4224,7 +4225,7 @@ function authViews() {
         <p style="color:#8888b0;font-size:0.88rem;line-height:1.5;">Увійди щоб зберегти психологічний профіль і переглядати результати будь-коли</p>
       </div>
       <input id="loginEmail" type="email" placeholder="Email" style="${authInputStyle}">
-      <input id="loginPass" type="password" placeholder="Пароль" style="${authInputStyle}">
+      ${passFieldHtml('loginPass', 'Пароль')}
       <button onclick="doLogin()" style="${authBtnStyle}">Увійти →</button>
       <p style="text-align:center;margin-top:14px;font-size:0.88rem;color:#8888b0;">
         Ще немає акаунту? <button onclick="openAuthModal('register')" style="${authLinkStyle}">Зареєструватись</button>
@@ -4241,8 +4242,8 @@ function authViews() {
         <p style="color:#8888b0;font-size:0.88rem;">Безкоштовно · Безпечно · 1 хвилина</p>
       </div>
       <input id="regName" type="text" placeholder="Ім'я або нікнейм" style="${authInputStyle}">
-      <input id="regEmail" type="email" placeholder="Email" style="${authInputStyle}">
-      <input id="regPass" type="password" placeholder="Пароль (мін. 4 символи)" style="${authInputStyle}">
+      <input id="regEmail" type="email" placeholder="Email (необов'язково)" style="${authInputStyle}">
+      ${passFieldHtml('regPass', 'Пароль (мін. 4 символи)')}
       <button onclick="doRegister()" style="${authBtnStyle}">Зареєструватись →</button>
       <p style="text-align:center;margin-top:14px;font-size:0.88rem;color:#8888b0;">
         Вже є акаунт? <button onclick="openAuthModal('login')" style="${authLinkStyle}">Увійти</button>
@@ -4327,14 +4328,22 @@ async function doLogin() {
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
 
+function togglePassVis(id, btn) {
+  const inp = document.getElementById(id);
+  if (!inp) return;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
+
 async function doRegister() {
   const name = (document.getElementById('regName')?.value || '').trim();
-  const email = (document.getElementById('regEmail')?.value || '');
+  const email = (document.getElementById('regEmail')?.value || '').trim();
   const password = (document.getElementById('regPass')?.value || '');
   const err = document.getElementById('authError');
-  if (!name || !email || !password) { err.textContent = 'Заповни всі поля'; return; }
+  if (!name || !password) { err.textContent = 'Введи імʼя і пароль'; return; }
   try {
-    const r = await fetch('/api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, email, password}) });
+    const r = await fetch('/api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, email: email || null, password}) });
     const data = await r.json();
     if (!r.ok) { err.textContent = data.error; return; }
     localStorage.setItem('psy_token', data.token);

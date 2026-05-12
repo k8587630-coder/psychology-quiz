@@ -48,14 +48,14 @@ function adminOnly(req, res, next) {
 // ── Register ─────────────────────────────────────────────────────────────────
 app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
-  if (!name || !email || !password)
-    return res.status(400).json({ error: 'Заповни всі поля' });
+  if (!name || !password)
+    return res.status(400).json({ error: 'Введи імʼя і пароль' });
   if (password.length < 4)
     return res.status(400).json({ error: 'Пароль мінімум 4 символи' });
   try {
     const hash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { name, email: email.toLowerCase(), password: hash }
+      data: { name, email: email ? email.toLowerCase() : null, password: hash }
     });
     const token = jwt.sign({ id: user.id, name: user.name, role: user.role, isPremium: false }, SECRET);
     res.json({ token, user: { id: user.id, name: user.name, role: user.role, isPremium: false } });
