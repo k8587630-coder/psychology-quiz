@@ -4192,14 +4192,14 @@ if (new URLSearchParams(location.search).get('payment') === 'success') {
 function updateAuthUI() {
   const btn = document.getElementById('btnAuth');
   const cabinetBtn = document.getElementById('btnCabinet');
-  cabinetBtn.style.display = 'inline-flex'; // always visible
   if (currentUser) {
     btn.textContent = currentUser.name.split(' ')[0] + ' 👋';
     btn.onclick = showUserMenu;
-    cabinetBtn.title = 'Мій кабінет';
+    cabinetBtn.style.display = 'none'; // ім'я вже веде до кабінету
   } else {
     btn.textContent = '🔑';
     btn.onclick = openAuthModal;
+    cabinetBtn.style.display = 'inline-flex'; // для гостей — кнопка кабінету
     cabinetBtn.title = 'Мій кабінет (гість)';
   }
 }
