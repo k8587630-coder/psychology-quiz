@@ -446,6 +446,22 @@ app.post('/api/admin/premium', auth, adminOnly, async (req, res) => {
   res.json({ ok: true, premiumUntil: user.premiumUntil });
 });
 
+// ── Add email to existing account ────────────────────────────────────────────
+app.post('/api/user/add-email', auth, async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Введи email' });
+  try {
+    const user = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { email: email.toLowerCase() }
+    });
+    res.json({ ok: true, email: user.email });
+  } catch (e) {
+    if (e.code === 'P2002') return res.status(400).json({ error: 'Цей email вже використовується' });
+    res.status(500).json({ error: 'Помилка сервера' });
+  }
+});
+
 // ── Serve pages ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));

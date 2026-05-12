@@ -3305,7 +3305,7 @@ async function renderCabinet() {
     </div>` : currentUser && !currentUser.email ? `
     <div style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:20px;padding:14px 16px;margin-bottom:16px;text-align:center;">
       <p style="font-size:0.85rem;color:#f97316;margin-bottom:10px;">⚡ Ти зайшов без email — додай його щоб не втратити акаунт</p>
-      <button onclick="openAuthModal('register')" style="background:none;border:1px solid rgba(249,115,22,0.4);color:#f97316;padding:8px 16px;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;">Додати email →</button>
+      <button onclick="openAuthModal('addEmail')" style="background:none;border:1px solid rgba(249,115,22,0.4);color:#f97316;padding:8px 16px;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;">Додати email →</button>
     </div>` : ''}
     <button class="btn-secondary" onclick="showScreen('diagnostics')">🧠 Пройти тести</button>
   `;
@@ -4253,6 +4253,18 @@ function authViews() {
         Спробувати без реєстрації →
       </button>`,
 
+    addEmail: `
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:2rem;margin-bottom:8px;">📧</div>
+        <h2 style="font-size:1.4rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:6px;">Додати email</h2>
+        <p style="color:#8888b0;font-size:0.88rem;line-height:1.5;">Щоб не втратити акаунт — прив'яжи email.<br>Зможеш увійти з будь-якого пристрою.</p>
+      </div>
+      <input id="addEmailInput" type="email" placeholder="Твій email" style="${authInputStyle}">
+      <button onclick="doAddEmail()" style="${authBtnStyle}">Зберегти →</button>
+      <div style="text-align:center;margin-top:14px;">
+        <button onclick="closeAuthModal()" style="${authLinkStyle}">Пізніше</button>
+      </div>`,
+
     guest: `
       <div style="text-align:center;margin-bottom:24px;">
         <div style="font-size:2rem;margin-bottom:8px;">🎯</div>
@@ -4325,6 +4337,28 @@ async function doLogin() {
     await loadUserProgress();
     if (data.user.role === 'admin') { showAdminDashboard(); return; }
     showScreen('cabinet');
+  } catch { err.textContent = 'Помилка з\'єднання'; }
+}
+
+async function doAddEmail() {
+  const email = (document.getElementById('addEmailInput')?.value || '').trim();
+  const err = document.getElementById('authError');
+  if (!email) { err.textContent = 'Введи email'; return; }
+  const token = localStorage.getItem('psy_token');
+  try {
+    const r = await fetch('/api/user/add-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ email })
+    });
+    const data = await r.json();
+    if (!r.ok) { err.textContent = data.error; return; }
+    const user = JSON.parse(localStorage.getItem('psy_user') || '{}');
+    user.email = data.email;
+    localStorage.setItem('psy_user', JSON.stringify(user));
+    currentUser = user;
+    closeAuthModal();
+    renderCabinet();
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
 
