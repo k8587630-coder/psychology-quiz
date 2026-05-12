@@ -68,7 +68,12 @@ app.post('/api/register', async (req, res) => {
 // ── Login ────────────────────────────────────────────────────────────────────
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  const user = await prisma.user.findUnique({ where: { email: email?.toLowerCase() } });
+  if (!email || !password) return res.status(400).json({ error: 'Заповни всі поля' });
+  // Try by email first, then by name
+  const isEmail = email.includes('@');
+  const user = isEmail
+    ? await prisma.user.findUnique({ where: { email: email.toLowerCase() } })
+    : await prisma.user.findFirst({ where: { name: email.trim(), password: { not: null } } });
   if (!user) return res.status(400).json({ error: 'Користувача не знайдено' });
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.status(400).json({ error: 'Невірний пароль' });
