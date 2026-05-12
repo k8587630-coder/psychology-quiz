@@ -69,12 +69,13 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Заповни всі поля' });
-  // Try by email first, then by name
+  // Try by email first, then by name (case-insensitive)
   const isEmail = email.includes('@');
   const user = isEmail
     ? await prisma.user.findUnique({ where: { email: email.toLowerCase() } })
-    : await prisma.user.findFirst({ where: { name: email.trim(), password: { not: null } } });
+    : await prisma.user.findFirst({ where: { name: { equals: email.trim(), mode: 'insensitive' } } });
   if (!user) return res.status(400).json({ error: 'Користувача не знайдено' });
+  if (!user.password) return res.status(400).json({ error: 'Цей акаунт створено без пароля. Використай «Грати без реєстрації»' });
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.status(400).json({ error: 'Невірний пароль' });
   const premium = user.isPremium && (!user.premiumUntil || user.premiumUntil > new Date());
