@@ -4192,21 +4192,36 @@ if (new URLSearchParams(location.search).get('payment') === 'success') {
 function updateAuthUI() {
   const btn = document.getElementById('btnAuth');
   const cabinetBtn = document.getElementById('btnCabinet');
+  cabinetBtn.style.display = 'inline-flex';
   if (currentUser) {
     btn.textContent = currentUser.name.split(' ')[0] + ' 👋';
     btn.onclick = showUserMenu;
-    cabinetBtn.style.display = 'none'; // ім'я вже веде до кабінету
+    cabinetBtn.title = 'Мій кабінет';
   } else {
     btn.textContent = '🔑';
     btn.onclick = openAuthModal;
-    cabinetBtn.style.display = 'inline-flex'; // для гостей — кнопка кабінету
     cabinetBtn.title = 'Мій кабінет (гість)';
   }
 }
 
 function showUserMenu() {
   if (currentUser?.role === 'admin') { showAdminDashboard(); return; }
-  showScreen('cabinet');
+  // Show small dropdown: cabinet + logout
+  const existing = document.getElementById('userDropdown');
+  if (existing) { existing.remove(); return; }
+  const btn = document.getElementById('btnAuth');
+  const rect = btn.getBoundingClientRect();
+  const menu = document.createElement('div');
+  menu.id = 'userDropdown';
+  menu.style.cssText = `position:fixed;top:${rect.bottom + 6}px;right:${window.innerWidth - rect.right}px;background:#1a1a2e;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:8px;z-index:9999;min-width:160px;box-shadow:0 8px 32px rgba(0,0,0,0.4);`;
+  menu.innerHTML = `
+    <button onclick="document.getElementById('userDropdown').remove();showScreen('cabinet')" style="display:block;width:100%;text-align:left;padding:10px 14px;background:none;border:none;color:#fff;font-size:0.9rem;cursor:pointer;border-radius:10px;" onmouseover="this.style.background='rgba(255,255,255,0.07)'" onmouseout="this.style.background='none'">🗂️ Мій кабінет</button>
+    <button onclick="document.getElementById('userDropdown').remove();logout()" style="display:block;width:100%;text-align:left;padding:10px 14px;background:none;border:none;color:#f87171;font-size:0.9rem;cursor:pointer;border-radius:10px;" onmouseover="this.style.background='rgba(248,113,113,0.1)'" onmouseout="this.style.background='none'">🚪 Вийти</button>`;
+  document.body.appendChild(menu);
+  setTimeout(() => document.addEventListener('click', function h(e) {
+    if (!menu.contains(e.target) && e.target !== btn) { menu.remove(); }
+    document.removeEventListener('click', h);
+  }), 10);
 }
 
 // ── Auth modal ────────────────────────────────────────────────────────────────
