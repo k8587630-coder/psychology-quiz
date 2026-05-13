@@ -3748,13 +3748,25 @@ async function renderCabinet() {
     }
   });
 
-  const quizHTML = quizResults.length === 0
+  // Quiz name fallback map for old results without quizName
+  const quizNameMap = {};
+  (lessonsData || []).forEach(l => { if (l.id && l.title) quizNameMap[l.id] = l.title; });
+
+  // Deduplicate quiz results — keep best score per quizId
+  const seenQuiz = new Map();
+  quizResults.forEach(r => {
+    const prev = seenQuiz.get(r.quizId);
+    if (!prev || r.pct > prev.pct) seenQuiz.set(r.quizId, r);
+  });
+  const uniqueQuizResults = [...seenQuiz.values()].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const quizHTML = uniqueQuizResults.length === 0
     ? `<div class="cabinet-empty"><span>✍️</span>Ти ще не пройшов жодного квізу.<br>Перейди на вкладку Квізи і спробуй!</div>`
-    : quizResults.slice(0, 20).map(r => {
+    : uniqueQuizResults.slice(0, 20).map(r => {
         const ago = timeAgo(r.date);
         const pctColor = r.pct >= 90 ? 'var(--orange)' : r.pct >= 70 ? 'var(--purple-l)' : 'var(--green)';
         const badge = r.pct >= 90 ? '🏆' : r.pct >= 70 ? '⭐' : '💪';
-        const name = r.quizName || r.quizId;
+        const name = r.quizName || quizNameMap[r.quizId] || r.quizId;
         return `<div class="cabinet-diag-item">
           <div class="cabinet-diag-icon">${badge}</div>
           <div class="cabinet-diag-body">
@@ -3800,7 +3812,7 @@ async function renderCabinet() {
     </div>
     <div class="cabinet-stats">
       <div class="cabinet-stat">
-        <div class="cabinet-stat-val" style="color:var(--purple-l)">${quizResults.length}</div>
+        <div class="cabinet-stat-val" style="color:var(--purple-l)">${seenQuiz.size}</div>
         <div class="cabinet-stat-lbl">Квізів</div>
       </div>
       <div class="cabinet-stat">
