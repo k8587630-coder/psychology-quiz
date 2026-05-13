@@ -54,7 +54,7 @@ app.post('/api/register', async (req, res) => {
     return res.status(400).json({ error: 'Імʼя занадто коротке (мінімум 2 символи)' });
   if (name.trim().length > 30)
     return res.status(400).json({ error: 'Імʼя занадто довге (максимум 30 символів)' });
-  if (/^[\d\s\W]+$/.test(name.trim()))
+  if (!/\p{L}/u.test(name.trim()))
     return res.status(400).json({ error: 'Введи справжнє імʼя або нікнейм' });
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     return res.status(400).json({ error: 'Невірний формат email' });

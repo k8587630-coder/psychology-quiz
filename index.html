@@ -4921,7 +4921,7 @@ async function doQuickLogin() {
   if (!name) { err.textContent = 'Введи своє імʼя'; return; }
   if (name.length < 2) { err.textContent = 'Імʼя занадто коротке (мінімум 2 символи)'; return; }
   if (name.length > 30) { err.textContent = 'Імʼя занадто довге (максимум 30 символів)'; return; }
-  if (/^[\d\s\W]+$/.test(name)) { err.textContent = 'Введи справжнє імʼя або нікнейм'; return; }
+  if (!/\p{L}/u.test(name)) { err.textContent = 'Введи справжнє імʼя або нікнейм'; return; }
   try {
     const r = await fetch('/api/quick-login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
     const data = await r.json();
@@ -5008,7 +5008,7 @@ async function doRegister() {
   if (!name) { err.textContent = 'Введи своє імʼя'; return; }
   if (name.length < 2) { err.textContent = 'Імʼя занадто коротке (мінімум 2 символи)'; return; }
   if (name.length > 30) { err.textContent = 'Імʼя занадто довге (максимум 30 символів)'; return; }
-  if (/^[\d\s\W]+$/.test(name)) { err.textContent = 'Введи справжнє імʼя або нікнейм'; return; }
+  if (!/\p{L}/u.test(name)) { err.textContent = 'Введи справжнє імʼя або нікнейм'; return; }
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Невірний формат email'; return; }
   if (!password) { err.textContent = 'Придумай пароль'; return; }
   if (password.length < 4) { err.textContent = 'Пароль занадто короткий (мінімум 4 символи)'; return; }
