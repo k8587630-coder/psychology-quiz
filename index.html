@@ -2166,11 +2166,10 @@ async function loadUserProgress() {
       const diagResults = await rDiag.json();
       if (diagResults.length) {
         const storage = getStorage();
-        storage.diagResults = diagResults.map(r => ({
-          testId: r.testId, testName: r.testName, emoji: r.emoji,
-          resultKey: r.resultKey, resultName: r.resultName,
-          scores: r.scores, date: r.createdAt
-        }));
+        const seen = new Set();
+        storage.diagResults = diagResults
+          .map(r => ({ testId: r.testId, testName: r.testName, emoji: r.emoji, resultKey: r.resultKey, resultName: r.resultName, scores: r.scores, date: r.createdAt }))
+          .filter(r => { if (seen.has(r.testId)) return false; seen.add(r.testId); return true; });
         saveStorage(storage);
       }
     }
@@ -3716,10 +3715,14 @@ async function renderCabinet() {
   const diagCount = localDiag.length;
   const xp = storage.xp || 0;
 
-  // Psychological profile tags from results
+  // Psychological profile tags — one per test (latest result)
+  const seenTests = new Set();
   const profileTags = [];
   localDiag.forEach(r => {
-    if (r.resultKey || r.resultName) profileTags.push({ emoji: r.emoji, label: r.resultName });
+    if (!seenTests.has(r.testId) && (r.resultKey || r.resultName)) {
+      seenTests.add(r.testId);
+      profileTags.push({ emoji: r.emoji, label: r.resultName });
+    }
   });
 
   const quizHTML = quizResults.length === 0
