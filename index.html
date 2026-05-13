@@ -4177,6 +4177,7 @@ function renderLessons() {
     card.style.position = 'relative';
 
     if (cardState === 'open' && hasLesson) card.onclick = () => viewLesson(q.id);
+    else if (cardState === 'open' && !hasLesson) card.onclick = () => startQuiz(q.id);
     else if (cardState === 'need-auth') card.onclick = () => openAuthModal();
     else if (cardState === 'locked') card.onclick = () => alert('🔒 Спочатку пройди попередню тему!');
 
