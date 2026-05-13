@@ -742,6 +742,11 @@
   </div>
 
   <!-- RESULTS -->
+  <!-- ADMIN SCREEN -->
+  <div class="screen" id="screen-admin">
+    <div id="adminContent" style="max-width:800px;margin:0 auto;padding:24px 16px;"></div>
+  </div>
+
   <div class="screen" id="screen-results">
     <div class="results-card">
       <div class="score-big" id="scoreText">0%</div>
@@ -5138,46 +5143,80 @@ function closeMyStats() { document.getElementById('myStatsModal').style.display 
 
 // ── ADMIN DASHBOARD ──────────────────────────────────────────────────────────
 async function showAdminDashboard() {
-  const modal = document.getElementById('myStatsModal');
-  const content = document.getElementById('myStatsContent');
-  document.querySelector('#myStatsModal h2').textContent = '🎓 Панель вчителя';
-  modal.style.display = 'flex';
-  content.innerHTML = '<p style="color:#aaa;text-align:center">Завантаження...</p>';
+  showScreen('admin');
+  const content = document.getElementById('adminContent');
+  content.innerHTML = '<p style="color:#aaa;text-align:center;padding:40px">Завантаження...</p>';
   try {
     const token = localStorage.getItem('psy_token');
     const r = await fetch('/api/admin/students', { headers: {'Authorization': 'Bearer ' + token} });
     const students = await r.json();
-    if (!students.length) {
-      content.innerHTML = '<p style="color:#aaa;text-align:center">Ще немає учнів 🌱</p>';
-      return;
-    }
+
+    const totalQuizzes = students.reduce((a, s) => a + s.totalQuizzes, 0);
+    const totalDiags = students.reduce((a, s) => a + s.totalDiags, 0);
+    const withActivity = students.filter(s => s.totalQuizzes > 0 || s.totalDiags > 0).length;
+
     content.innerHTML = `
-      <p style="color:#aaa;margin-bottom:16px;">Всього учнів: <strong style="color:#fff">${students.length}</strong></p>
-      ${students.map(s => `
-        <details style="background:rgba(255,255,255,0.04);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;">
-          <summary style="display:flex;justify-content:space-between;align-items:center;list-style:none;">
-            <div>
-              <span style="font-weight:800;font-size:1.05rem;">${s.name}</span>
-              <span style="color:#aaa;font-size:0.8rem;margin-left:10px;">${s.email}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <h2 style="font-size:1.5rem;font-weight:900;">🎓 Панель вчителя</h2>
+        <button onclick="logout()" style="padding:8px 18px;border-radius:10px;border:1px solid #f87171;background:transparent;color:#f87171;font-weight:700;cursor:pointer;font-size:0.85rem;">Вийти →</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px;">
+        <div style="background:rgba(127,90,240,0.12);border:1px solid rgba(127,90,240,0.25);border-radius:16px;padding:16px;text-align:center;">
+          <div style="font-size:2rem;font-weight:900;color:#a78bfa">${students.length}</div>
+          <div style="font-size:0.8rem;color:#aaa;margin-top:4px;">кабінетів</div>
+        </div>
+        <div style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:16px;padding:16px;text-align:center;">
+          <div style="font-size:2rem;font-weight:900;color:#06b6d4">${totalQuizzes}</div>
+          <div style="font-size:0.8rem;color:#aaa;margin-top:4px;">квізів пройдено</div>
+        </div>
+        <div style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.2);border-radius:16px;padding:16px;text-align:center;">
+          <div style="font-size:2rem;font-weight:900;color:#ec4899">${totalDiags}</div>
+          <div style="font-size:0.8rem;color:#aaa;margin-top:4px;">діагностик</div>
+        </div>
+        <div style="background:rgba(44,182,125,0.1);border:1px solid rgba(44,182,125,0.2);border-radius:16px;padding:16px;text-align:center;">
+          <div style="font-size:2rem;font-weight:900;color:#2cb67d">${withActivity}</div>
+          <div style="font-size:0.8rem;color:#aaa;margin-top:4px;">активних</div>
+        </div>
+      </div>
+
+      ${!students.length ? '<p style="color:#aaa;text-align:center">Ще немає учнів 🌱</p>' : students.map(s => {
+        const joined = new Date(s.createdAt).toLocaleDateString('uk-UA', {day:'numeric',month:'short'});
+        const actColor = s.totalQuizzes > 0 || s.totalDiags > 0 ? '#2cb67d' : '#555';
+        return `
+        <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px;margin-bottom:10px;">
+          <summary style="display:flex;justify-content:space-between;align-items:center;list-style:none;cursor:pointer;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#7f5af0,#ec4899);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;">${s.name[0].toUpperCase()}</div>
+              <div>
+                <div style="font-weight:800;font-size:1rem;">${s.name}</div>
+                <div style="color:#888;font-size:0.75rem;">${s.email || 'без email'} · з ${joined}</div>
+              </div>
             </div>
             <div style="text-align:right;">
-              <span style="font-weight:900;font-size:1.3rem;color:#a855f7">${s.avgPct}%</span>
-              <span style="color:#aaa;font-size:0.8rem;display:block">${s.totalQuizzes} квізів</span>
+              <div style="font-size:0.8rem;color:#aaa;">📝 ${s.totalQuizzes} · 🧠 ${s.totalDiags}</div>
+              <div style="font-size:0.75rem;color:${actColor};margin-top:2px;">${s.totalQuizzes>0||s.totalDiags>0?'активний':'не почав'}</div>
             </div>
           </summary>
-          <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
-            ${s.results.map(r => `
-              <div style="display:flex;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:10px;">
-                <div style="font-size:0.9rem;">${r.quizName} <span style="color:#aaa">(${r.level})</span></div>
+          <div style="margin-top:16px;display:flex;flex-direction:column;gap:6px;">
+            ${s.results.length ? `<div style="font-size:0.75rem;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Квізи</div>` + s.results.map(r => `
+              <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.04);border-radius:10px;">
+                <div style="font-size:0.88rem;">${r.quizName}</div>
                 <div style="font-weight:700;color:${r.pct>=90?'#fbbf24':r.pct>=70?'#a855f7':'#06b6d4'}">${r.pct}%</div>
               </div>
-            `).join('') || '<p style="color:#aaa;font-size:0.85rem;">Немає результатів</p>'}
+            `).join('') : ''}
+            ${s.diagResults.length ? `<div style="font-size:0.75rem;color:#888;margin-top:8px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Діагностики</div>` + s.diagResults.map(d => `
+              <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(236,72,153,0.06);border-radius:10px;">
+                <div style="font-size:0.88rem;">${d.emoji} ${d.testName}</div>
+                <div style="font-size:0.82rem;color:#ec4899;font-weight:600;">${d.resultName}</div>
+              </div>
+            `).join('') : ''}
+            ${!s.results.length && !s.diagResults.length ? '<p style="color:#555;font-size:0.85rem;text-align:center;padding:8px;">Нічого не пройдено</p>' : ''}
           </div>
-        </details>
-      `).join('')}
-      <button onclick="logout()" style="margin-top:24px;width:100%;padding:12px;border-radius:12px;border:1px solid #f87171;background:transparent;color:#f87171;font-weight:700;cursor:pointer;">Вийти</button>
+        </details>`;
+      }).join('')}
     `;
-  } catch { content.innerHTML = '<p style="color:#f87171;text-align:center">Помилка завантаження</p>'; }
+  } catch(e) { content.innerHTML = '<p style="color:#f87171;text-align:center">Помилка завантаження</p>'; }
 }
 
 // ── Save result to server ────────────────────────────────────────────────────

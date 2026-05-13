@@ -157,15 +157,18 @@ app.get('/api/admin/students', auth, adminOnly, async (req, res) => {
   const students = await prisma.user.findMany({
     where: { role: 'student' },
     include: {
-      results: { orderBy: { createdAt: 'desc' } }
+      results: { orderBy: { createdAt: 'desc' } },
+      diagResults: { orderBy: { createdAt: 'desc' } }
     },
     orderBy: { createdAt: 'desc' }
   });
   res.json(students.map(s => ({
     id: s.id, name: s.name, email: s.email, createdAt: s.createdAt,
     totalQuizzes: s.results.length,
+    totalDiags: s.diagResults.length,
     avgPct: s.results.length ? Math.round(s.results.reduce((a, r) => a + r.pct, 0) / s.results.length) : 0,
-    results: s.results
+    results: s.results,
+    diagResults: s.diagResults
   })));
 });
 
