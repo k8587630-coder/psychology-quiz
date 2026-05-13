@@ -50,8 +50,18 @@ app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !password)
     return res.status(400).json({ error: 'Введи імʼя і пароль' });
+  if (name.trim().length < 2)
+    return res.status(400).json({ error: 'Імʼя занадто коротке (мінімум 2 символи)' });
+  if (name.trim().length > 30)
+    return res.status(400).json({ error: 'Імʼя занадто довге (максимум 30 символів)' });
+  if (/^[\d\s\W]+$/.test(name.trim()))
+    return res.status(400).json({ error: 'Введи справжнє імʼя або нікнейм' });
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return res.status(400).json({ error: 'Невірний формат email' });
   if (password.length < 4)
     return res.status(400).json({ error: 'Пароль мінімум 4 символи' });
+  if (password.length > 64)
+    return res.status(400).json({ error: 'Пароль занадто довгий' });
   try {
     const hash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
