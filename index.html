@@ -4911,6 +4911,9 @@ function openAuthModal(view = 'login') {
   m.style.display = 'flex';
   document.getElementById('authError').textContent = '';
   document.getElementById('authContent').innerHTML = authViews()[view] || authViews().login;
+  document.getElementById('authContent').querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', () => { document.getElementById('authError').textContent = ''; }, { once: true });
+  });
 }
 function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
 
