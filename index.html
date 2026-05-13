@@ -4848,15 +4848,15 @@ if (new URLSearchParams(location.search).get('payment') === 'success') {
 function updateAuthUI() {
   const btn = document.getElementById('btnAuth');
   const cabinetBtn = document.getElementById('btnCabinet');
-  cabinetBtn.style.display = 'inline-flex';
   if (currentUser) {
     btn.textContent = currentUser.name.split(' ')[0] + ' 👋';
     btn.onclick = showUserMenu;
+    cabinetBtn.style.display = 'inline-flex';
     cabinetBtn.title = 'Мій кабінет';
   } else {
     btn.textContent = '🔑';
     btn.onclick = openAuthModal;
-    cabinetBtn.title = 'Мій кабінет (гість)';
+    cabinetBtn.style.display = 'none';
   }
 }
 
