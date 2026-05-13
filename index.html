@@ -3642,6 +3642,23 @@ function answerDiag(val) {
   }
 }
 
+function showGuestRegisterHint(containerId) {
+  if (currentUser && !currentUser.email) {
+    const hint = `<div style="margin:16px 0;padding:14px 16px;background:rgba(127,90,240,0.1);border:1px solid rgba(127,90,240,0.3);border-radius:14px;text-align:center;">
+      <p style="font-size:0.88rem;color:#a78bfa;margin-bottom:10px;">💾 Результат збережено тільки на цьому пристрої.<br>Зареєструйся щоб не втратити прогрес!</p>
+      <button onclick="openAuthModal('register')" style="padding:10px 20px;border-radius:12px;border:none;background:linear-gradient(135deg,#7f5af0,#5b21b6);color:#fff;font-weight:800;cursor:pointer;font-size:0.88rem;">Зареєструватись безкоштовно →</button>
+    </div>`;
+    if (containerId) {
+      const el = document.getElementById(containerId);
+      if (el) el.insertAdjacentHTML('beforeend', hint);
+    } else {
+      const card = document.querySelector('#screen-results .results-card');
+      const existing = card?.querySelector('.guest-hint');
+      if (card && !existing) { const d = document.createElement('div'); d.className = 'guest-hint'; d.innerHTML = hint; card.insertBefore(d, card.firstChild); }
+    }
+  }
+}
+
 function diagFooter() {
   return `<button class="btn-primary" onclick="startDiag('${activeDiagTestId}')" style="margin-bottom:12px;">🔄 Пройти ще раз</button>
   <button class="btn-secondary" onclick="showScreen('diagnostics')">← До діагностик</button>`;
@@ -3688,6 +3705,7 @@ function showDiagResult() {
 
   document.getElementById('diagResultView').innerHTML = html;
   document.getElementById('diagResultView').style.display = 'block';
+  showGuestRegisterHint('diagResultView');
 }
 
 // ── Save & Cabinet ────────────────────────────────────────────────────────────
@@ -4569,6 +4587,7 @@ function finish() {
 
   showScreen('results');
   triggerCelebration(pct);
+  showGuestRegisterHint();
 
   // async Gemini analysis (don't await — show results immediately)
   analyzeResultWithGemini(state.quiz.title, pct, state.score, total);
