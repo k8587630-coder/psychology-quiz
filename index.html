@@ -4891,13 +4891,16 @@ function authViews() {
 
     guest: `
       <div style="text-align:center;margin-bottom:24px;">
-        <div style="font-size:2rem;margin-bottom:8px;">🎯</div>
-        <h2 style="font-size:1.4rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:6px;">Як тебе звати?</h2>
-        <p style="color:#8888b0;font-size:0.88rem;line-height:1.5;">Результати збережуться у цьому браузері.<br>Щоб не втратити — зареєструйся пізніше.</p>
+        <div style="font-size:2rem;margin-bottom:8px;">👤</div>
+        <h2 style="font-size:1.4rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:6px;">Вхід без реєстрації</h2>
+        <p style="color:#8888b0;font-size:0.88rem;line-height:1.5;">Введи своє імʼя — і можеш одразу починати.<br>Результати збережуться у цьому браузері.</p>
       </div>
-      <input id="quickName" type="text" placeholder="Твоє ім'я або нікнейм" style="${authInputStyle}">
-      <button onclick="doQuickLogin()" style="${authBtnStyle}">Грати! →</button>
-      <div style="text-align:center;margin-top:16px;">
+      <input id="quickName" type="text" placeholder="Твоє імʼя або нікнейм" style="${authInputStyle}" autocomplete="off">
+      <button onclick="doQuickLogin()" style="${authBtnStyle}">Увійти та почати →</button>
+      <p style="text-align:center;margin-top:14px;font-size:0.82rem;color:#8888b0;">
+        Хочеш зберігати результати назавжди? <button onclick="openAuthModal('register')" style="${authLinkStyle}">Зареєструватись</button>
+      </p>
+      <div style="text-align:center;margin-top:4px;">
         <button onclick="openAuthModal('login')" style="${authLinkStyle}">← Назад до входу</button>
       </div>`
   };
