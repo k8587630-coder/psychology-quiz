@@ -2257,7 +2257,7 @@ function showScreen(name) {
   // Tab bar: show on home/lessons/diagnostics, hide on other screens
   const tabs = document.getElementById('mainTabs');
   if (tabs) {
-    const showTabs = name === 'home' || name === 'lessons' || name === 'diagnostics' || name === 'diag-test';
+    const showTabs = name === 'home' || name === 'lessons';
     tabs.style.display = showTabs ? 'flex' : 'none';
     document.getElementById('tabLibrary')?.classList.toggle('active', name === 'lessons');
     document.getElementById('tabQuizzes')?.classList.toggle('active', name === 'home');
