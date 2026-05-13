@@ -669,8 +669,15 @@
       </div>
     </div>
 
-    <div style="max-width:600px;margin:24px auto 0;padding:0 16px;text-align:center;">
-      <button onclick="showScreen('diagnostics')" style="padding:14px 32px;border-radius:16px;border:1px solid rgba(127,90,240,0.4);background:rgba(127,90,240,0.08);color:#a78bfa;font-size:1rem;font-weight:800;cursor:pointer;">🧠 Діагностики</button>
+    <div class="level-cards" style="margin-top:8px;">
+      <div class="level-card" onclick="showScreen('diagnostics')" style="background:rgba(127,90,240,0.08);border-color:rgba(127,90,240,0.25);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);" onmouseover="this.style.boxShadow='0 16px 40px -8px rgba(127,90,240,0.4)';this.style.borderColor='rgba(127,90,240,0.5)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='';this.style.borderColor='rgba(127,90,240,0.25)';this.style.transform=''">
+        <div class="level-card-icon">🧠</div>
+        <div class="level-card-info">
+          <h2>Діагностики</h2>
+          <p>Дізнайся свій тип темпераменту, хронотип, стиль спілкування та більше</p>
+          <span class="lv-tag purple">19 тестів</span>
+        </div>
+      </div>
     </div>
   </div>
 
