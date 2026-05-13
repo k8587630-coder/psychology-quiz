@@ -1,4 +1,4 @@
-# Psychology Quiz Platform — План розвитку
+  # Psychology Quiz Platform — План розвитку
 
 ## Поточна версія: v2.0
 

@@ -4846,17 +4846,21 @@ function authViews() {
       <div style="text-align:center;margin-bottom:24px;">
         <div style="font-size:2rem;margin-bottom:8px;">👋</div>
         <h2 style="font-size:1.4rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:6px;">З поверненням!</h2>
-        <p style="color:#8888b0;font-size:0.88rem;line-height:1.5;">Увійди щоб зберегти психологічний профіль і переглядати результати будь-коли</p>
+        <p style="color:#8888b0;font-size:0.88rem;line-height:1.5;">Введи email або нікнейм і пароль від свого акаунту</p>
       </div>
-      <input id="loginEmail" type="text" placeholder="Email або ім'я" style="${authInputStyle}">
+      <input id="loginEmail" type="text" placeholder="Email або нікнейм" style="${authInputStyle}" autocomplete="username">
       ${passFieldHtml('loginPass', 'Пароль')}
       <button onclick="doLogin()" style="${authBtnStyle}">Увійти →</button>
+      <div id="loginRegisterHint" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(127,90,240,0.1);border:1px solid rgba(127,90,240,0.25);border-radius:12px;text-align:center;">
+        <p style="font-size:0.85rem;color:#8888b0;margin-bottom:8px;">Ще не маєш акаунту?</p>
+        <button onclick="openAuthModal('register')" style="${authBtnStyle};padding:10px;">Зареєструватись безкоштовно →</button>
+      </div>
       <p style="text-align:center;margin-top:14px;font-size:0.88rem;color:#8888b0;">
         Ще немає акаунту? <button onclick="openAuthModal('register')" style="${authLinkStyle}">Зареєструватись</button>
       </p>
       ${authDivider}
       <button onclick="openAuthModal('guest')" style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#aaa;font-size:0.9rem;font-weight:700;cursor:pointer;">
-        Спробувати без реєстрації →
+        Увійти без реєстрації →
       </button>`,
 
     register: `
@@ -4960,7 +4964,14 @@ async function doLogin() {
   try {
     const r = await fetch('/api/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
     const data = await r.json();
-    if (!r.ok) { err.textContent = data.error; return; }
+    if (!r.ok) {
+      err.textContent = data.error;
+      if (data.error && data.error.includes('не знайдено')) {
+        const hint = document.getElementById('loginRegisterHint');
+        if (hint) hint.style.display = 'block';
+      }
+      return;
+    }
     localStorage.setItem('psy_token', data.token);
     localStorage.setItem('psy_user', JSON.stringify(data.user));
     currentUser = data.user;
