@@ -4851,7 +4851,7 @@ function updateAuthUI() {
   if (currentUser) {
     btn.textContent = currentUser.name.split(' ')[0] + ' 👋';
     btn.onclick = showUserMenu;
-    cabinetBtn.style.display = 'inline-flex';
+    cabinetBtn.style.display = currentUser.email ? 'inline-flex' : 'none';
     cabinetBtn.title = 'Мій кабінет';
   } else {
     btn.textContent = '🔑';
