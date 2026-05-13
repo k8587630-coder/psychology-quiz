@@ -196,13 +196,26 @@
     }
     .animal-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
     .animal-card:hover { transform: scale(1.08) translateY(-4px); }
+    .animal-card.selected { animation: iceBounce 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
     .animal-card.selected .animal-img-wrapper { border-color: var(--green); box-shadow: 0 0 0 4px rgba(44,182,125,0.25), 0 4px 20px rgba(0,0,0,0.3); }
     .animal-mood { font-size: 0.72rem; color: var(--text2); margin-top: 8px; font-weight: 500; }
     .animal-card.selected .animal-mood { color: var(--green); font-weight: 700; }
+    @keyframes iceBounce {
+      0%   { transform: scale(1); }
+      25%  { transform: scale(1.22) translateY(-8px) rotate(-4deg); }
+      50%  { transform: scale(1.15) translateY(-5px) rotate(3deg); }
+      75%  { transform: scale(1.1) translateY(-3px) rotate(-1deg); }
+      100% { transform: scale(1.08) translateY(-4px); }
+    }
     .ice-feedback {
       margin-top: 16px; padding: 14px 18px; display: none;
       background: var(--success-bg); border: 1px solid rgba(44,182,125,0.2);
       border-radius: 14px; color: var(--green); font-size: 0.9rem;
+      animation: iceFadeIn 0.4s ease;
+    }
+    @keyframes iceFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── Lesson hero ── */
@@ -3667,6 +3680,8 @@ function viewLesson(id) {
 
 function selectIce(el, mood) {
   document.querySelectorAll('.animal-card').forEach(c => c.classList.remove('selected'));
+  el.classList.remove('selected');
+  void el.offsetWidth; // force reflow to restart animation
   el.classList.add('selected');
   const fb = document.getElementById('iceFB');
   fb.style.display = 'block';
