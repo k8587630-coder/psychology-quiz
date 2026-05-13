@@ -4501,15 +4501,23 @@ function showQ() {
   const total = state.quiz.questions.length;
 
   document.getElementById('progFill').style.width = (state.qIdx / total * 100) + '%';
-
   document.getElementById('qText').textContent = `${state.qIdx + 1}/${total}  ${q.q}`;
+
+  // Shuffle options and track correct answer's new position
+  const indices = q.opts.map((_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  state.shuffledAns = indices.indexOf(q.ans);
+
   const opts = document.getElementById('qOptions');
   opts.innerHTML = '';
-  q.opts.forEach((o, i) => {
+  indices.forEach((origIdx, displayIdx) => {
     const b = document.createElement('button');
     b.className = 'opt-btn';
-    b.textContent = o;
-    b.onclick = () => selAns(i);
+    b.textContent = q.opts[origIdx];
+    b.onclick = () => selAns(displayIdx);
     opts.appendChild(b);
   });
   document.getElementById('qFeedback').style.display = 'none';
@@ -4518,11 +4526,11 @@ function showQ() {
 
 function selAns(idx) {
   const q = state.quiz.questions[state.qIdx];
-  const correct = idx === q.ans;
+  const correct = idx === state.shuffledAns;
   if (correct) state.score++;
 
   document.querySelectorAll('.opt-btn').forEach((b, i) => {
-    if (i === q.ans) b.classList.add('correct');
+    if (i === state.shuffledAns) b.classList.add('correct');
     else if (i === idx) b.classList.add('wrong');
     b.disabled = true;
   });
