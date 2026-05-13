@@ -5024,9 +5024,9 @@ async function doLogin() {
     currentUser = data.user;
     updateAuthUI();
     closeAuthModal();
+    if (data.user.role === 'admin') { showAdminDashboard(); return; }
     await syncLocalDiagResults(data.token);
     await loadUserProgress();
-    if (data.user.role === 'admin') { showAdminDashboard(); return; }
     showScreen('cabinet');
   } catch { err.textContent = 'Помилка з\'єднання'; }
 }
