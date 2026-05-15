@@ -4566,7 +4566,8 @@ function startQuiz(id) {
 }
 
 async function generateLessonQuiz(lessonTitle) {
-  const lessonText = document.querySelector('.lesson-rich-content')?.innerText || '';
+  const lessonText = Array.from(document.querySelectorAll('.slide-card-body'))
+    .map(el => el.innerText).join('\n').slice(0, 3000);
   const btn = document.getElementById('genQuizBtn');
   const loading = document.getElementById('genQuizLoading');
 
@@ -4577,7 +4578,7 @@ async function generateLessonQuiz(lessonTitle) {
   const prompt = `Ти — вчитель психології. На основі цього уроку створи 5 тестових питань українською мовою.
 
 Урок: "${lessonTitle}"
-Текст: ${lessonText.slice(0, 3000)}
+Текст: ${lessonText}
 
 Поверни ТІЛЬКИ JSON масив без зайвого тексту:
 [{"q":"...","opts":["А","Б","В","Г"],"ans":0,"info":"..."}]
@@ -4586,7 +4587,7 @@ async function generateLessonQuiz(lessonTitle) {
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -4626,7 +4627,7 @@ async function analyzeResultWithGemini(quizTitle, pct, correct, total) {
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
