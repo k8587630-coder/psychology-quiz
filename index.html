@@ -636,6 +636,26 @@
     .cabinet-profile-tags { display: flex; flex-wrap: wrap; gap: 8px; }
     .cabinet-profile-tag { padding: 6px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 700;
       background: rgba(127,90,240,0.12); color: var(--purple-l); border: 1px solid rgba(127,90,240,0.2); }
+    .help-hero { background: linear-gradient(135deg,rgba(34,197,94,0.12),rgba(6,182,212,0.08)); border: 1px solid rgba(34,197,94,0.25); border-radius: 24px; padding: 20px 18px; margin-bottom: 20px; text-align: center; }
+    .help-hero h2 { font-size: 1.3rem; font-weight: 900; margin-bottom: 6px; }
+    .help-hero p { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+    .help-section-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2); margin: 20px 0 10px; }
+    .help-card { background: var(--card); border: 1px solid var(--card-b); border-radius: 20px; padding: 16px; margin-bottom: 10px; }
+    .help-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .help-card-icon { font-size: 2rem; flex-shrink: 0; }
+    .help-card-title { font-size: 1rem; font-weight: 800; }
+    .help-card-desc { font-size: 0.82rem; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
+    .help-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .help-tag { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+    .help-tag-green { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .help-tag-blue { background: rgba(6,182,212,0.12); color: #06b6d4; }
+    .help-tag-purple { background: rgba(127,90,240,0.12); color: #a78bfa; }
+    .help-tag-orange { background: rgba(249,115,22,0.12); color: #f97316; }
+    .help-phone-btn { display: block; width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; text-align: center; text-decoration: none; letter-spacing: 0.02em; box-sizing: border-box; }
+    .help-phone-btn-green { background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; }
+    .help-phone-btn-blue { background: linear-gradient(135deg,#06b6d4,#0891b2); color: #fff; }
+    .help-phone-btn-purple { background: linear-gradient(135deg,#7f5af0,#5b21b6); color: #fff; }
+    .help-link-btn { display: block; width: 100%; padding: 11px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: var(--text2); font-size: 0.88rem; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; margin-top: 8px; box-sizing: border-box; }
   </style>
 </head>
 <body>
@@ -648,6 +668,7 @@
       <span class="topbar-lv-badge" id="levelBadge" onclick="showScreen('level')">🌈 1-4 клас</span>
       <button class="icon-btn" onclick="showScreen('level')" title="Вибір рівня">🎓</button>
       <button class="icon-btn" id="btnCabinet" onclick="showScreen('cabinet')" style="display:none" title="Мій кабінет">🗂️</button>
+      <button class="icon-btn" onclick="showScreen('help')" title="Гаряча лінія">🆘</button>
       <button class="icon-btn" id="btnAuth" onclick="openAuthModal()">🔑</button>
       <button class="icon-btn" onclick="toggleTheme()">🌓</button>
     </div>
@@ -707,6 +728,17 @@
         </div>
         <div class="level-card-arrow">→</div>
       </div>
+
+      <div class="level-section-label" style="margin-top:6px;">Підтримка</div>
+      <div class="level-card" style="border-left:3px solid #22c55e;" onclick="showScreen('help')">
+        <div class="level-card-icon" style="font-size:1.6rem;">🆘</div>
+        <div class="level-card-info">
+          <h2>Гарячі лінії</h2>
+          <p>Безкоштовна психологічна допомога — доступна прямо зараз</p>
+          <span class="lv-tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">Безкоштовно · 24/7</span>
+        </div>
+        <div class="level-card-arrow">→</div>
+      </div>
     </div>
   </div>
 
@@ -734,6 +766,11 @@
     </div>
     <div class="diag-filters" id="diagFilters"></div>
     <div class="diag-grid" id="diagGrid"></div>
+  </div>
+
+  <!-- HELP -->
+  <div class="screen" id="screen-help">
+    <div id="helpContent"></div>
   </div>
 
   <!-- CABINET -->
@@ -2282,6 +2319,7 @@ function showScreen(name) {
   if (name === 'lessons') renderLessons();
   if (name === 'diagnostics') renderDiagnostics();
   if (name === 'cabinet') renderCabinet();
+  if (name === 'help') renderHelp();
 
   // Tab bar: show on home/lessons/diagnostics, hide on other screens
   const tabs = document.getElementById('mainTabs');
@@ -5482,6 +5520,130 @@ function toggleTheme() {
   const next = curr === 'light' ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', next === 'dark' ? null : next);
   const d = getStorage(); d.theme = next; saveStorage(d);
+}
+
+// ── Help / Hotlines ──────────────────────────────────────────────────────────
+function renderHelp() {
+  const el = document.getElementById('helpContent');
+  if (!el) return;
+
+  const hotlines = [
+    {
+      icon: '📞', color: 'green',
+      title: 'Дитяча гаряча лінія',
+      desc: 'Для дітей і підлітків — якщо тобі важко, страшно або потрібна порада. Анонімно.',
+      tags: [['green','Для дітей'],['blue','Анонімно'],['green','24/7']],
+      phone: '116 111',
+      note: 'Безкоштовно з будь-якого телефону'
+    },
+    {
+      icon: '🆘', color: 'purple',
+      title: 'Lifeline Ukraine',
+      desc: 'Кризова лінія — якщо думки про самоушкодження або відчуваєш що не впораєшся. Без осуду.',
+      tags: [['purple','Кризова'],['blue','Анонімно'],['green','Безкоштовно']],
+      phone: '7333',
+      note: 'Безкоштовно · для всіх'
+    },
+    {
+      icon: '🛡️', color: 'blue',
+      title: 'Захист від насильства',
+      desc: 'Якщо тебе кривдять вдома, в школі або в інтернеті — тут допоможуть і підкажуть що робити.',
+      tags: [['orange','Насильство'],['blue','Анонімно'],['green','24/7']],
+      phone: '0 800 500 335',
+      note: 'Безкоштовно з мобільного і стаціонарного'
+    },
+    {
+      icon: '🧠', color: 'blue',
+      title: 'Психологічна підтримка МОЗ',
+      desc: 'Офіційна урядова лінія психологічної підтримки для всіх українців.',
+      tags: [['blue','МОЗ України'],['green','Безкоштовно']],
+      phone: '0 800 501 701',
+      note: 'Безкоштовно · пн-пт'
+    },
+    {
+      icon: '💛', color: 'green',
+      title: 'Підтримка під час війни',
+      desc: 'Якщо тривожно через війну, є страхи або важко спати — можна поговорити з психологом.',
+      tags: [['orange','Війна'],['green','Безкоштовно'],['blue','Анонімно']],
+      phone: '1545',
+      note: 'Урядова лінія · безкоштовно'
+    },
+  ];
+
+  const online = [
+    {
+      icon: '💬',
+      title: 'How are you?',
+      desc: 'Безкоштовні онлайн-сесії з психологом для підлітків та молоді',
+      url: 'https://howareu.com',
+      tag: 'Онлайн'
+    },
+    {
+      icon: '🤝',
+      title: 'Teenage UA',
+      desc: 'Психологічна підтримка для підлітків — чат, статті, групи',
+      url: 'https://teenage.com.ua',
+      tag: 'Підлітки'
+    },
+    {
+      icon: '🌻',
+      title: 'ЇЇ підтримка',
+      desc: 'Telegram-бот психологічної підтримки від UNFPA Ukraine',
+      url: 'https://t.me/unfpa_ukraine_bot',
+      tag: 'Telegram'
+    },
+  ];
+
+  const btnClass = { green: 'help-phone-btn-green', blue: 'help-phone-btn-blue', purple: 'help-phone-btn-purple' };
+  const tagClass = { green: 'help-tag-green', blue: 'help-tag-blue', purple: 'help-tag-purple', orange: 'help-tag-orange' };
+
+  el.innerHTML = `
+    <div class="help-hero">
+      <div style="font-size:2.5rem;margin-bottom:10px;">🤝</div>
+      <h2>Тут завжди допоможуть</h2>
+      <p>Всі лінії — офіційні, безкоштовні та анонімні.<br>Якщо важко — не мовчи, телефонуй.</p>
+    </div>
+
+    <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:16px;padding:12px 14px;margin-bottom:20px;font-size:0.82rem;color:var(--text2);line-height:1.6;">
+      ℹ️ <b style="color:var(--text)">Важливо знати:</b> телефонувати на ці лінії — нормально і правильно. Ти не навантажуєш людей — вони там саме для цього.
+    </div>
+
+    <div class="help-section-title">📞 Гарячі телефонні лінії</div>
+    ${hotlines.map(h => `
+    <div class="help-card">
+      <div class="help-card-header">
+        <div class="help-card-icon">${h.icon}</div>
+        <div class="help-card-title">${h.title}</div>
+      </div>
+      <div class="help-card-desc">${h.desc}</div>
+      <div class="help-card-tags">
+        ${h.tags.map(([c,t]) => `<span class="help-tag ${tagClass[c]}">${t}</span>`).join('')}
+      </div>
+      <a href="tel:${h.phone.replace(/\s/g,'')}" class="help-phone-btn ${btnClass[h.color]}">
+        📞 ${h.phone}
+      </a>
+      <div style="text-align:center;font-size:0.75rem;color:var(--text2);margin-top:6px;">${h.note}</div>
+    </div>`).join('')}
+
+    <div class="help-section-title" style="margin-top:24px;">💻 Онлайн-підтримка</div>
+    ${online.map(o => `
+    <div class="help-card">
+      <div class="help-card-header">
+        <div class="help-card-icon">${o.icon}</div>
+        <div>
+          <div class="help-card-title">${o.title}</div>
+          <span class="help-tag help-tag-blue" style="margin-top:4px;display:inline-block;">${o.tag}</span>
+        </div>
+      </div>
+      <div class="help-card-desc">${o.desc}</div>
+      <a href="${o.url}" target="_blank" rel="noopener" class="help-phone-btn help-phone-btn-blue">Перейти →</a>
+    </div>`).join('')}
+
+    <div style="background:rgba(127,90,240,0.08);border:1px solid rgba(127,90,240,0.2);border-radius:16px;padding:14px;margin-top:20px;margin-bottom:8px;font-size:0.82rem;color:var(--text2);text-align:center;line-height:1.6;">
+      Якщо комусь загрожує небезпека — телефонуй <b style="color:#f87171;">102</b> (поліція) або <b style="color:#f87171;">103</b> (швидка)
+    </div>
+    <button class="btn-secondary" onclick="history.back()" style="margin-top:8px;">← Назад</button>
+  `;
 }
 
 // Init
