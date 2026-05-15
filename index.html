@@ -3911,10 +3911,11 @@ async function renderCabinet() {
       <p style="font-size:0.88rem;color:#8888b0;line-height:1.5;margin-bottom:12px;">Зареєструйся щоб результати зберігались назавжди — навіть якщо зміниш браузер або пристрій</p>
       <button class="btn-primary" onclick="openAuthModal('register')" style="margin-bottom:8px;">Зареєструватись безкоштовно →</button>
       <br><button onclick="openAuthModal('login')" style="background:none;border:none;color:#a78bfa;font-size:0.85rem;cursor:pointer;text-decoration:underline;">Вже є акаунт? Увійти</button>
-    </div>` : currentUser && !currentUser.email ? `
+    </div>` : currentUser && !currentUser.email && !getStorage().dismissedEmailHint ? `
     <div style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:20px;padding:14px 16px;margin-bottom:16px;text-align:center;">
-      <p style="font-size:0.85rem;color:#f97316;margin-bottom:10px;">⚡ Ти зайшов без email — додай його щоб не втратити акаунт</p>
+      <p style="font-size:0.85rem;color:#f97316;margin-bottom:10px;">⚡ Ти зайшов без email — додай його щоб не втратити акаунт при зміні браузера</p>
       <button onclick="openAuthModal('addEmail')" style="background:none;border:1px solid rgba(249,115,22,0.4);color:#f97316;padding:8px 16px;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;">Додати email →</button>
+      <button onclick="(function(){const s=getStorage();s.dismissedEmailHint=true;saveStorage(s);this.closest('div[style]').remove()}).call(this)" style="background:none;border:none;color:#888;font-size:0.78rem;cursor:pointer;margin-left:10px;">Пізніше</button>
     </div>` : ''}
     <button class="btn-secondary" onclick="showScreen('diagnostics')">🧠 Пройти тести</button>
   `;
@@ -5006,6 +5007,10 @@ function authViews() {
       <input id="regEmail" type="email" placeholder="Email (необов'язково)" style="${authInputStyle}">
       ${passFieldHtml('regPass', 'Пароль (мін. 4 символи)')}
       <button onclick="doRegister()" style="${authBtnStyle}">Зареєструватись →</button>
+      <div id="regLoginHint" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(127,90,240,0.1);border:1px solid rgba(127,90,240,0.25);border-radius:12px;text-align:center;">
+        <p style="font-size:0.85rem;color:#8888b0;margin-bottom:8px;">Такий email вже є в системі — увійди в існуючий акаунт</p>
+        <button onclick="openAuthModal('login')" style="${authBtnStyle};padding:10px;">Увійти →</button>
+      </div>
       <p style="text-align:center;margin-top:14px;font-size:0.88rem;color:#8888b0;">
         Вже є акаунт? <button onclick="openAuthModal('login')" style="${authLinkStyle}">Увійти</button>
       </p>
@@ -5163,7 +5168,14 @@ async function doRegister() {
   try {
     const r = await fetch('/api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, email: email || null, password}) });
     const data = await r.json();
-    if (!r.ok) { err.textContent = data.error; return; }
+    if (!r.ok) {
+      err.textContent = data.error;
+      if (data.error && data.error.includes('вже зареєстровано')) {
+        const hint = document.getElementById('regLoginHint');
+        if (hint) hint.style.display = 'block';
+      }
+      return;
+    }
     localStorage.setItem('psy_token', data.token);
     localStorage.setItem('psy_user', JSON.stringify(data.user));
     currentUser = data.user;
