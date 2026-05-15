@@ -4410,27 +4410,11 @@ function viewLesson(id) {
         <button class="slide-nav-btn" id="slideNext" onclick="nextSlide()">${slides.length > 1 ? 'Далі →' : '✓'}</button>
       </div>
     </div>
-    <div class="section-title" style="margin-top:40px;">Питання для закріплення</div>
-    <div id="lAcc"></div>
     <button class="btn-primary" style="margin-top:28px;" onclick="startQuiz('${id}')">✍️ Почати квіз за темою</button>
     <button class="btn-secondary" style="margin-top:12px;" id="genQuizBtn" onclick="generateLessonQuiz('${quiz.title}')">🤖 Перевірити знання з Gemini</button>
     <div id="genQuizLoading" style="display:none; text-align:center; color:#a78bfa; margin-top:12px; font-size:0.9rem;">✨ Gemini генерує питання...</div>
   `;
 
-  const acc = document.getElementById('lAcc');
-  quiz.questions.forEach(q => {
-    const item = document.createElement('div');
-    item.className = 'lesson-item';
-    item.innerHTML = `
-      <div class="lesson-header" onclick="this.parentElement.classList.toggle('active')">
-        <h4>${q.q}</h4><span class="chev">▾</span>
-      </div>
-      <div class="lesson-content">
-        <div class="lesson-body"><b>Відповідь:</b> ${q.opts[q.ans]}<br><br>${q.info}</div>
-      </div>
-    `;
-    acc.appendChild(item);
-  });
   showScreen('lesson-detail');
 }
 
