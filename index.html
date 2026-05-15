@@ -3862,7 +3862,7 @@ async function renderCabinet() {
 
   // Quiz name fallback
   const quizNameMap = {};
-  (lessonsData || []).forEach(l => { if (l.id && l.title) quizNameMap[l.id] = l.title; });
+  getCurrentQuizzes().forEach(q => { if (q.id && q.title) quizNameMap[q.id] = q.title; });
 
   const isNewUser = passedQuizzes === 0 && diagCount === 0;
 
