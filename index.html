@@ -3800,33 +3800,42 @@ function showToast(msg) {
   t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2500);
 }
 
+function getXpLevel(xp) {
+  if (xp >= 500) return { label: 'Експерт',      icon: '🏆', next: null, color: '#f59e0b' };
+  if (xp >= 200) return { label: 'Знавець',       icon: '⭐', next: 500,  color: '#a855f7' };
+  if (xp >= 80)  return { label: 'Учень',         icon: '📚', next: 200,  color: '#06b6d4' };
+  return            { label: 'Початківець',  icon: '🌱', next: 80,   color: '#22c55e' };
+}
+
 async function renderCabinet() {
   const el = document.getElementById('cabinetContent');
   const storage = getStorage();
   const localDiag = storage.diagResults || [];
-  const quizResults = storage.results || [];
+
+  // Fetch quiz results from server if logged in, fallback to localStorage
+  let quizResults = storage.results || [];
+  const token = localStorage.getItem('psy_token');
+  if (currentUser && token) {
+    try {
+      const r = await fetch('/api/results/my', { headers: { Authorization: 'Bearer ' + token } });
+      if (r.ok) { const srv = await r.json(); if (srv.length) quizResults = srv; }
+    } catch {}
+  }
 
   const levelLabel = { junior: '🌈 Молодша школа', mid: '⚡ Середня школа', senior: '🎯 Старша школа' };
   const lvl = levelLabel[currentLevel] || '—';
   const name = currentUser ? currentUser.name : 'Гість';
-  const avatarEmojis = ['🦊','🐼','🦁','🐬','🦋','🌟','🎯','🚀'];
-  const avatar = avatarEmojis[(name.charCodeAt(0) || 0) % avatarEmojis.length];
-  const diagCount = localDiag.length;
   const xp = storage.xp || 0;
+  const lvlData = getXpLevel(xp);
+  const xpPct = lvlData.next ? Math.min(100, Math.round((xp / lvlData.next) * 100)) : 100;
 
-  // Psychological profile tags — one per test (latest result)
-  const seenTests = new Set();
-  const profileTags = [];
-  localDiag.forEach(r => {
-    if (!seenTests.has(r.testId) && (r.resultKey || r.resultName)) {
-      seenTests.add(r.testId);
-      profileTags.push({ emoji: r.emoji, label: r.resultName });
-    }
-  });
-
-  // Quiz name fallback map for old results without quizName
-  const quizNameMap = {};
-  (lessonsData || []).forEach(l => { if (l.id && l.title) quizNameMap[l.id] = l.title; });
+  // Avatar: saved choice or generated from name
+  const avatarEmojis = ['🦊','🐼','🦁','🐬','🦋','🌟','🎯','🚀'];
+  const avatar = storage.avatar || avatarEmojis[(name.charCodeAt(0) || 0) % avatarEmojis.length];
+  const avatarPickerHTML = `
+    <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px;">
+      ${avatarEmojis.map(e => `<button onclick="(function(){var s=getStorage();s.avatar='${e}';saveStorage(s);renderCabinet();})()" style="font-size:1.3rem;background:${avatar===e?'rgba(127,90,240,0.3)':'rgba(255,255,255,0.05)'};border:1px solid ${avatar===e?'rgba(127,90,240,0.6)':'rgba(255,255,255,0.08)'};border-radius:10px;padding:4px 7px;cursor:pointer;">${e}</button>`).join('')}
+    </div>`;
 
   // Deduplicate quiz results — keep best score per quizId
   const seenQuiz = new Map();
@@ -3836,19 +3845,35 @@ async function renderCabinet() {
   });
   const uniqueQuizResults = [...seenQuiz.values()].sort((a, b) => new Date(b.date) - new Date(a.date));
 
+  // Progress: passed / total quizzes for current level
+  const totalQuizzes = getCurrentQuizzes().length;
+  const passedQuizzes = [...seenQuiz.values()].filter(r => r.pct >= PASS_PCT).length;
+  const diagCount = localDiag.length;
+
+  // Psychological profile tags
+  const seenTests = new Set();
+  const profileTags = [];
+  localDiag.forEach(r => {
+    if (!seenTests.has(r.testId) && (r.resultKey || r.resultName)) {
+      seenTests.add(r.testId);
+      profileTags.push({ emoji: r.emoji, label: r.resultName });
+    }
+  });
+
+  // Quiz name fallback
+  const quizNameMap = {};
+  (lessonsData || []).forEach(l => { if (l.id && l.title) quizNameMap[l.id] = l.title; });
+
   const quizHTML = uniqueQuizResults.length === 0
     ? `<div class="cabinet-empty"><span>✍️</span>Ти ще не пройшов жодного квізу.<br>Перейди на вкладку Квізи і спробуй!</div>`
     : uniqueQuizResults.slice(0, 20).map(r => {
         const ago = timeAgo(r.date);
         const pctColor = r.pct >= 90 ? 'var(--orange)' : r.pct >= 70 ? 'var(--purple-l)' : 'var(--green)';
         const badge = r.pct >= 90 ? '🏆' : r.pct >= 70 ? '⭐' : '💪';
-        const name = r.quizName || quizNameMap[r.quizId] || r.quizId;
+        const qname = r.quizName || quizNameMap[r.quizId] || r.quizId;
         return `<div class="cabinet-diag-item">
           <div class="cabinet-diag-icon">${badge}</div>
-          <div class="cabinet-diag-body">
-            <h4>${name}</h4>
-            <p style="color:${pctColor};font-weight:700;">${r.pct}%</p>
-          </div>
+          <div class="cabinet-diag-body"><h4>${qname}</h4><p style="color:${pctColor};font-weight:700;">${r.pct}%</p></div>
           <div class="cabinet-diag-date">${ago}</div>
         </div>`;
       }).join('');
@@ -3859,10 +3884,7 @@ async function renderCabinet() {
         const ago = timeAgo(r.date);
         return `<div class="cabinet-diag-item">
           <div class="cabinet-diag-icon">${r.emoji}</div>
-          <div class="cabinet-diag-body">
-            <h4>${r.resultName}</h4>
-            <p>${r.testName}</p>
-          </div>
+          <div class="cabinet-diag-body"><h4>${r.resultName}</h4><p>${r.testName}</p></div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
             <div class="cabinet-diag-date">${ago}</div>
             <button onclick="startDiag('${r.testId}')" style="font-size:0.75rem;padding:4px 10px;border-radius:8px;border:1px solid rgba(127,90,240,0.4);background:rgba(127,90,240,0.1);color:#a78bfa;cursor:pointer;font-weight:600;white-space:nowrap;">↩ Перепройти</button>
@@ -3878,26 +3900,41 @@ async function renderCabinet() {
       </div>
     </div>` : '';
 
+  // Smart CTA
+  const nextUnpassed = getCurrentQuizzes().find(q => (seenQuiz.get(q.id)?.pct || 0) < PASS_PCT);
+  let ctaHTML;
+  if (nextUnpassed) {
+    ctaHTML = `<button class="btn-primary" onclick="startQuiz('${nextUnpassed.id}')">🎯 Далі: ${nextUnpassed.title} →</button>`;
+  } else if (diagCount < 3) {
+    ctaHTML = `<button class="btn-primary" onclick="showScreen('diagnostics')">🧠 Пройти діагностику →</button>`;
+  } else {
+    ctaHTML = `<button class="btn-secondary" onclick="showScreen('home')">🔄 Повторити квізи</button>`;
+  }
+
   el.innerHTML = `
-    <div class="cabinet-hero">
-      <div class="cabinet-avatar">${avatar}</div>
-      <div class="cabinet-hero-info">
+    <div class="cabinet-hero" style="flex-direction:column;align-items:center;text-align:center;">
+      <div class="cabinet-avatar" style="cursor:default;">${avatar}</div>
+      ${avatarPickerHTML}
+      <div class="cabinet-hero-info" style="margin-top:10px;">
         <h2>${name}</h2>
         <p>${lvl}${currentUser ? ' · <span style="color:var(--green)">●</span> Онлайн' : ' · Гість'}</p>
       </div>
     </div>
     <div class="cabinet-stats">
       <div class="cabinet-stat">
-        <div class="cabinet-stat-val" style="color:var(--purple-l)">${seenQuiz.size}</div>
+        <div class="cabinet-stat-val" style="color:var(--purple-l)">${passedQuizzes}<span style="font-size:0.9rem;color:var(--text2)">/${totalQuizzes}</span></div>
         <div class="cabinet-stat-lbl">Квізів</div>
       </div>
       <div class="cabinet-stat">
         <div class="cabinet-stat-val" style="color:#06b6d4">${diagCount}</div>
         <div class="cabinet-stat-lbl">Тестів</div>
       </div>
-      <div class="cabinet-stat">
-        <div class="cabinet-stat-val" style="color:var(--orange)">${xp}</div>
-        <div class="cabinet-stat-lbl">XP</div>
+      <div class="cabinet-stat" title="${lvlData.next ? xp + ' / ' + lvlData.next + ' XP' : 'Максимальний рівень'}">
+        <div class="cabinet-stat-val" style="color:${lvlData.color}">${lvlData.icon} ${lvlData.label}</div>
+        <div style="margin-top:6px;background:rgba(255,255,255,0.08);border-radius:100px;height:5px;overflow:hidden;">
+          <div style="width:${xpPct}%;height:100%;background:${lvlData.color};border-radius:100px;transition:width 0.5s;"></div>
+        </div>
+        <div class="cabinet-stat-lbl" style="margin-top:4px;">${xp} XP${lvlData.next ? ' → ' + lvlData.next : ''}</div>
       </div>
     </div>
     ${profileHTML}
@@ -3917,7 +3954,7 @@ async function renderCabinet() {
       <button onclick="openAuthModal('addEmail')" style="background:none;border:1px solid rgba(249,115,22,0.4);color:#f97316;padding:8px 16px;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;">Додати email →</button>
       <button onclick="(function(){const s=getStorage();s.dismissedEmailHint=true;saveStorage(s);this.closest('div[style]').remove()}).call(this)" style="background:none;border:none;color:#888;font-size:0.78rem;cursor:pointer;margin-left:10px;">Пізніше</button>
     </div>` : ''}
-    <button class="btn-secondary" onclick="showScreen('diagnostics')">🧠 Пройти тести</button>
+    <div style="margin-top:8px;">${ctaHTML}</div>
   `;
 }
 
