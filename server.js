@@ -68,7 +68,7 @@ app.post('/api/register', async (req, res) => {
       data: { name, email: email ? email.toLowerCase() : null, password: hash }
     });
     const token = jwt.sign({ id: user.id, name: user.name, role: user.role, isPremium: false }, SECRET);
-    res.json({ token, user: { id: user.id, name: user.name, role: user.role, isPremium: false } });
+    res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, isPremium: false } });
   } catch (e) {
     if (e.code === 'P2002') return res.status(400).json({ error: 'Цей email вже зареєстровано' });
     res.status(500).json({ error: 'Помилка сервера' });
@@ -90,7 +90,7 @@ app.post('/api/login', async (req, res) => {
   if (!ok) return res.status(400).json({ error: 'Невірний пароль' });
   const premium = user.isPremium && (!user.premiumUntil || user.premiumUntil > new Date());
   const token = jwt.sign({ id: user.id, name: user.name, role: user.role, isPremium: premium }, SECRET);
-  res.json({ token, user: { id: user.id, name: user.name, role: user.role, isPremium: premium } });
+  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, isPremium: premium } });
 });
 
 // ── Quick login (nickname only) ───────────────────────────────────────────────
@@ -102,7 +102,7 @@ app.post('/api/quick-login', async (req, res) => {
     let user = await prisma.user.findFirst({ where: { name: name.trim(), email: null } });
     if (!user) user = await prisma.user.create({ data: { name: name.trim() } });
     const token = jwt.sign({ id: user.id, name: user.name, role: user.role, isPremium: false }, SECRET);
-    res.json({ token, user: { id: user.id, name: user.name, role: user.role, isPremium: false } });
+    res.json({ token, user: { id: user.id, name: user.name, email: user.email || null, role: user.role, isPremium: false } });
   } catch {
     res.status(500).json({ error: 'Помилка сервера' });
   }
@@ -113,7 +113,7 @@ app.get('/api/me', auth, async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user) return res.status(404).json({ error: 'Не знайдено' });
   const premium = user.isPremium && (!user.premiumUntil || user.premiumUntil > new Date());
-  res.json({ id: user.id, name: user.name, role: user.role, isPremium: premium, premiumUntil: user.premiumUntil });
+  res.json({ id: user.id, name: user.name, email: user.email, role: user.role, isPremium: premium, premiumUntil: user.premiumUntil });
 });
 
 // ── Save result ──────────────────────────────────────────────────────────────

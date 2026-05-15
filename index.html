@@ -4906,6 +4906,7 @@ function loadAuthState() {
       .then(data => {
         if (data && currentUser) {
           currentUser.isPremium = data.isPremium;
+          if (data.email) currentUser.email = data.email;
           localStorage.setItem('psy_user', JSON.stringify(currentUser));
           updateAuthUI();
           if (currentUser.role === 'admin') { showAdminDashboard(); return; }
